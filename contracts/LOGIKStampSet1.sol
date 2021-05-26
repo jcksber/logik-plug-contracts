@@ -25,7 +25,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 contract LOGIKStampSet1 is ERC1155, Ownable {
-	string public constant BASE_URI = "https://logik-genesis-api.herokuapp.com/"
+	string public constant BASE_URI = "https://logik-genesis-api.herokuapp.com/";
     uint256 public constant NUM_PASSPORTS = 8;
 
     // Country token id's - each corresponds to a different token uri
