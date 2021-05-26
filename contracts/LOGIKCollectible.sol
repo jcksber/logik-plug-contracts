@@ -19,10 +19,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // need a mapping from addresses to account balances
 
 contract LOGIKCollectible is ERC1155, Ownable {
-	string public constant BASE_URI = "https://logik-genesis-api.herokuapp.com/";
 	uint256 public constant NUM_COLLECTIBLES = 1000;
 
-	constructor() public ERC1155(BASE_URI + "api/other/collectible.json") {
+	constructor() public ERC1155("https://logik-genesis-api.herokuapp.com/api/other/collectible.json") {
 		_mint(msg.sender, 0, NUM_COLLECTIBLES, ""); //1000 with id=0
 	}
 }

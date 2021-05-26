@@ -25,7 +25,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 contract LOGIKStampSet1 is ERC1155, Ownable {
-	string public constant BASE_URI = "https://logik-genesis-api.herokuapp.com/";
     uint256 public constant NUM_PASSPORTS = 8;
 
     // Country token id's - each corresponds to a different token uri
@@ -40,7 +39,7 @@ contract LOGIKStampSet1 is ERC1155, Ownable {
 
 	// For simplicity we will mint all items in the constructor but you could add minting 
 	// functionality to the contract to mint on demand to customers.
-	constructor() public ERC1155(BASE_URI + "api/stamps/0/{id}.json") {
+	constructor() public ERC1155("https://logik-genesis-api.herokuapp.com/api/stamps/0/{id}.json") {
 		_mint(msg.sender, USA, NUM_PASSPORTS, "");
 		_mint(msg.sender, MEXICO, NUM_PASSPORTS, "");
 		_mint(msg.sender, JAPAN, NUM_PASSPORTS, "");

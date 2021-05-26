@@ -21,10 +21,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // need a mapping from addresses to account balances !!!!!!!!!!!!!
 
 contract LOGIKPassport is ERC1155, Ownable {
-	string public constant BASE_URI = "https://logik-genesis-api.herokuapp.com/";
 	uint256 public constant NUM_PASSPORTS = 8;
 
-	constructor() public ERC1155(BASE_URI + "api/other/passport-cover.json") {
+	constructor() public ERC1155("https://logik-genesis-api.herokuapp.com/api/other/passport-cover.json") {
 		_mint(msg.sender, 0, NUM_PASSPORTS, ""); //8 with id=0
 		// initialize msg.sender's accounts balance to [1,1,1,1,1,1,1]
 	}
