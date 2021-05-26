@@ -20,11 +20,12 @@
 pragma solidity ^0.7.3;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+//import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 contract LOGIKStampSet1 is ERC1155, Ownable {
+	string public constant BASE_URI = "https://logik-genesis-api.herokuapp.com/"
     uint256 public constant NUM_PASSPORTS = 8;
 
     // Country token id's - each corresponds to a different token uri
@@ -39,8 +40,7 @@ contract LOGIKStampSet1 is ERC1155, Ownable {
 
 	// For simplicity we will mint all items in the constructor but you could add minting 
 	// functionality to the contract to mint on demand to customers.
-	// uri example: "https://passport.nft/api/{id}.json"
-	constructor() public ERC1155("../uri/metadata{id}.json") {
+	constructor() public ERC1155(BASE_URI + "api/stamps/0/{id}.json") {
 		_mint(msg.sender, USA, NUM_PASSPORTS, "");
 		_mint(msg.sender, MEXICO, NUM_PASSPORTS, "");
 		_mint(msg.sender, JAPAN, NUM_PASSPORTS, "");
@@ -50,24 +50,6 @@ contract LOGIKStampSet1 is ERC1155, Ownable {
 		_mint(msg.sender, COUNTRY6, NUM_PASSPORTS, "");
 		_mint(msg.sender, COUNTRY7, NUM_PASSPORTS, "");
 	}
-
-	// the counter thing is what's confusing me here... not sure how to 
-	// make use of this code....
-	// using Counters for Counters.Counter;
- //    Counters.Counter private _tokenIds;
-
- //    function mintNFT(address recipient, string memory tokenURI)
- //        public onlyOwner
- //        returns (uint256)
- //    {
- //        _tokenIds.increment();
-
- //        uint256 newItemId = _tokenIds.current();
- //        _mint(recipient, newItemId);
- //        _setTokenURI(newItemId, tokenURI);
-
- //        return newItemId;
- //    }
 }
 
 
