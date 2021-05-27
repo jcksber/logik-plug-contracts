@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 /*
  * LOGIKGif.sol
  *
@@ -13,15 +14,12 @@
 pragma solidity ^0.7.3;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-//import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-
-// need a mapping from addresses to account balances !!!!!!!!!!!!!
 
 contract LOGIKGif is ERC1155, Ownable {
 	uint256 public constant NUM_GIFFYS = 100;
 
-	constructor() public ERC1155("https://logik-genesis-api.herokuapp.com/api/other/giffy.json") {
+	constructor() ERC1155("https://logik-genesis-api.herokuapp.com/api/other/giffy.json") {
 		_mint(msg.sender, 0, NUM_GIFFYS, ""); //100 with id=0
 	}
 }

@@ -14,7 +14,7 @@
  *
  * Price: free to LOGIKPassport holders
  *
- * Address: 0x8322ff6ACa5EDB0c7575Fe853327b0Dd08f26e07
+ * Address: 
  */
 
 pragma solidity ^0.7.3;
@@ -38,7 +38,7 @@ contract LOGIKStampSet1 is ERC1155, Ownable {
 
 	// For simplicity we will mint all items in the constructor but you could add minting 
 	// functionality to the contract to mint on demand to customers.
-	constructor() public ERC1155("https://logik-genesis-api.herokuapp.com/api/stamps/0/{id}.json")
+	constructor() ERC1155("https://logik-genesis-api.herokuapp.com/api/stamps/0/{id}.json")
 	{
 		_mint(msg.sender, USA, NUM_PASSPORTS, "");
 		_mint(msg.sender, MEXICO, NUM_PASSPORTS, "");
