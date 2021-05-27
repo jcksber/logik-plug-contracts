@@ -13,7 +13,6 @@
 pragma solidity ^0.7.3;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-//import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // need a mapping from addresses to account balances
