@@ -1,3 +1,5 @@
+const { ethers } = require("hardhat");
+
 async function main() {
 	const LOGIKStamp = await ethers.getContractFactory("LOGIKStamp");
 

@@ -1,5 +1,5 @@
 // NOTE: in the future, let's make these non-main methods and consolidate into one script?
-
+const { ethers } = require("hardhat");
 
 // DEPLOY TIER 2 GIF'S
 
