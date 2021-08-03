@@ -397,8 +397,8 @@
       ]
     },
     "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/contracts/LOGIKStampSet1.sol": {
-      "lastModificationDate": 1622601606733,
-      "contentHash": "da593e92724d0af03cd1e94716828abc",
+      "lastModificationDate": 1622619457793,
+      "contentHash": "dd5b6d65e9782bb895f77e1ec96c349b",
       "sourceName": "contracts/LOGIKStampSet1.sol",
       "solcConfig": {
         "version": "0.7.3",
@@ -938,8 +938,8 @@
       ]
     },
     "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/contracts/BLMTest.sol": {
-      "lastModificationDate": 1622603533952,
-      "contentHash": "230a4899f25c7ee7d8349fdd4de15d7e",
+      "lastModificationDate": 1622623462188,
+      "contentHash": "88d28b35ea370ea46df552ae7ce384e2",
       "sourceName": "contracts/BLMTest.sol",
       "solcConfig": {
         "version": "0.7.3",

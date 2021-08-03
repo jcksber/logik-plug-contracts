@@ -6,16 +6,27 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL);
 
 async function main() {
-	const collectibleContract = require("../artifacts/contracts/LOGIKCollectible.sol/LOGIKCollectible.json");
-	const collectibleContractAddress = "0x2AE7271F29d231133C1fC987b928378695Bdcdb9";
-	const collectibleNFT = new web3.eth.Contract(collectibleContract.abi, collectibleContractAddress);
-	//collectibleNFT.methods.transferOwnership("0xEAb4Aea5cD7376C04923236c504e7e91362566D1");
-	console.log(collectibleNFT.methods.ownerOf(0));
+	const blmContract = require("../artifacts/contracts/BLMTest.sol/BLMTest.json");
+	const blmContractAddress = "0x43dCF5A67192DE38A97cba05aB053FC186DF2d5d";
+	const blmNFT = new web3.eth.Contract(blmContract.abi, blmContractAddress);
+	const hour = blmNFT.methods.hourNow().call();
+	return hour;
+}
+
+async function test() {
+	// const hour = blmNFT.methods.hourNow().call();
+	// return hour;
 }
 
 main()
-	.then(() => process.exit(0))
+	.then((hour) => {
+		console.log(hour);
+		process.exit(0);
+	})
 	.catch(error => {
 		console.log(error);
 		process.exit(1);
 	});
+
+// test()
+// 	.then((hour) => console.log('hour: ', hour));
