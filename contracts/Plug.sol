@@ -95,8 +95,13 @@ contract Plug is ERC721, Ownable {
 		return string(abi.encodePacked(baseURI, hash));
 	}
 
-	// override _safeTransfer to include logic to reset _lastTransferTime &
-	// MAYBE burn the token if it's been transferred more than X times
+	// override safeTransferFrom to update _lastTransferTime 
+	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
+	{
+		_lastTransferTime = block.timestamp;
+		safeTransferFrom(from, to, tokenId, "");
+	}
+
 
 	// Mint a single Plug
 	function mintPlug(address recipient) public onlyOwner returns (uint256)
