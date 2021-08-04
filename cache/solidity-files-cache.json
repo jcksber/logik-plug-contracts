@@ -935,8 +935,8 @@
       ]
     },
     "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/contracts/Plug.sol": {
-      "lastModificationDate": 1628110985848,
-      "contentHash": "7800e56fca960ab75c43abf19865a1a2",
+      "lastModificationDate": 1628115361988,
+      "contentHash": "6a46f3602a1a29bac13c297c4bc96beb",
       "sourceName": "contracts/Plug.sol",
       "solcConfig": {
         "version": "0.7.3",

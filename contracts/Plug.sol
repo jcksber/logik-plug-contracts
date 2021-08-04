@@ -8,7 +8,8 @@
  * Price: ~0.35 ETH
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
- * 				(2) trades between owners
+ * 				(2) trades between owners; the different versions give you access to airdrops.
+ *
  *  - As long as the owner remains the same, every 60 days, the asset will acquire more "juice" 
  * 	  not only updating the asset, but allowing the owner to receive more airdrops from other 
  *    artists.  This means after a year, the final asset (and most valuable) will now be in the 
@@ -69,7 +70,7 @@ contract Plug is ERC721, Ownable {
 		return string(abi.encodePacked(baseURI, hash));
 	}
 
-	// override safeTransferFrom to update _lastTransferTime 
+	// Override safeTransferFrom to update _lastTransferTime 
 	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
 	{
 		/*
@@ -110,7 +111,7 @@ contract Plug is ERC721, Ownable {
 		for (i = 1; i <= NUM_PLUGS; i++) {
 			string memory hash = _tokenHash(i);
 
-			if (stringsEqual(hash, assetHash)) {
+			if (_stringsEqual(hash, assetHash)) {
 				address owner = ownerOf(i);
 				owners[counter] = owner;
 				counter++;
@@ -118,6 +119,12 @@ contract Plug is ERC721, Ownable {
 		}
 
 		return owners;
+	}
+
+	// All of the asset's will be pinned to IPFS
+	function _baseURI() internal view virtual returns (string memory)
+	{
+		return "https://ipfs.io/ipfs/";
 	}
 
 	// Based on the number of days that have passed since the last transfer of
@@ -147,29 +154,24 @@ contract Plug is ERC721, Ownable {
 		}
 	}
 
-	// All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual returns (string memory)
-	{
-		return "https://ipfs.io/ipfs/";
-	}
-
-	// Determine if 'assetHash' is one of the ipfs hashes for Plug
+	// Determine if 'assetHash' is one of the IPFS hashes for Plug
 	function _hashExists(string memory assetHash) internal returns (bool) 
 	{
-		return stringsEqual(assetHash, HASH_0) || 
-			   stringsEqual(assetHash, HASH_1) ||
-			   stringsEqual(assetHash, HASH_2) ||
-			   stringsEqual(assetHash, HASH_3) ||
-			   stringsEqual(assetHash, HASH_4) ||
-			   stringsEqual(assetHash, HASH_5) ||
-			   stringsEqual(assetHash, HASH_6);
+		return _stringsEqual(assetHash, HASH_0) || 
+			   _stringsEqual(assetHash, HASH_1) ||
+			   _stringsEqual(assetHash, HASH_2) ||
+			   _stringsEqual(assetHash, HASH_3) ||
+			   _stringsEqual(assetHash, HASH_4) ||
+			   _stringsEqual(assetHash, HASH_5) ||
+			   _stringsEqual(assetHash, HASH_6);
 	}
 
-	// Determine if two strings are equal
-	function stringsEqual(string memory a, string memory b) internal returns (bool)
+	// Determine if two strings are equal using the length + hash method
+	function _stringsEqual(string memory a, string memory b) internal returns (bool)
 	{
 		bytes memory A = bytes(a);
 		bytes memory B = bytes(b);
+
 		if (A.length != B.length) {
 			return false;
 		} else {
@@ -177,22 +179,4 @@ contract Plug is ERC721, Ownable {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
