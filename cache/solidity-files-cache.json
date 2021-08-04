@@ -463,43 +463,6 @@
         "LOGIKPassport"
       ]
     },
-    "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/contracts/LOGIKGif.sol": {
-      "lastModificationDate": 1622083242923,
-      "contentHash": "e2c378aa3981740e18118ab29f5b593e",
-      "sourceName": "contracts/LOGIKGif.sol",
-      "solcConfig": {
-        "version": "0.7.3",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC1155/ERC1155.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
-      ],
-      "versionPragmas": [
-        "^0.7.3"
-      ],
-      "artifacts": [
-        "LOGIKGif"
-      ]
-    },
     "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol": {
       "lastModificationDate": 1621474823285,
       "contentHash": "cb86e074831206814aeff91ab249dd2c",
@@ -937,44 +900,6 @@
         "LOGIK721Test"
       ]
     },
-    "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/contracts/BLMTest.sol": {
-      "lastModificationDate": 1622623462188,
-      "contentHash": "88d28b35ea370ea46df552ae7ce384e2",
-      "sourceName": "contracts/BLMTest.sol",
-      "solcConfig": {
-        "version": "0.7.3",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/utils/Counters.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
-      ],
-      "versionPragmas": [
-        "^0.7.3"
-      ],
-      "artifacts": [
-        "BLMTest"
-      ]
-    },
     "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/node_modules/@openzeppelin/contracts/utils/Context.sol": {
       "lastModificationDate": 1622598649209,
       "contentHash": "2adbd82f6d055a4751566d4671512b03",
@@ -1007,6 +932,44 @@
       ],
       "artifacts": [
         "Context"
+      ]
+    },
+    "/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/contracts/Plug.sol": {
+      "lastModificationDate": 1628110985848,
+      "contentHash": "7800e56fca960ab75c43abf19865a1a2",
+      "sourceName": "contracts/Plug.sol",
+      "solcConfig": {
+        "version": "0.7.3",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.3"
+      ],
+      "artifacts": [
+        "Plug"
       ]
     }
   }

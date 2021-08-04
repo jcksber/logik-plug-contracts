@@ -49,17 +49,80 @@ contract Plug is ERC721, Ownable {
 	string constant HASH_4 = "hash4";
 	string constant HASH_5 = "hash5";
 	string constant HASH_6 = "hash6"; //corresponds to 100% juice gold Plug
-	string[NUM_ASSETS] = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
+
+	string[NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
 
 	// Initialize _lastTransferTime & create token
-	constructor() ERC721("https://logik-genesis-api.herokuapp.com/api/other/giffy.json") 
+	constructor() ERC721("LOGIK: Plug", "") 
 	{
 		_lastTransferTime = block.timestamp;
 	}
 
+	// Override 'tokenURI' to account for asset/hash cycling
+	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
+	{	
+		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+
+		string memory baseURI = _baseURI();
+		string memory hash = _tokenHash(tokenId);
+		
+		return string(abi.encodePacked(baseURI, hash));
+	}
+
+	// override safeTransferFrom to update _lastTransferTime 
+	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
+	{
+		/*
+		if we want to add some logic to burn this Plug if it's been transferred too many
+		times, this is probably the place to do it... e.g.
+
+			_numTransfers++;
+			if (_numTransfers >= MAX_NUM_TRANSFERS) {
+				_burn(tokenId); //CANNOT USE THIS FUNCTION,
+				return;			//NEED ERC721BURNABLE.SOL
+			}
+		*/
+		_lastTransferTime = block.timestamp;
+		safeTransferFrom(from, to, tokenId, "");
+	}
+
+	// Mint a single Plug
+	function mintPlug(address recipient) public onlyOwner returns (uint256)
+	{
+		_tokenIds.increment();
+
+		// Each new Plug will have an id = (previous Plug + 1)
+		uint256 newId = _tokenIds.current();
+		_safeMint(recipient, newId);
+
+		return newId;
+	}
+
+	// List the owners for a certain level (determined by assetHash)
+	// We'll need this for airdrops and benefits
+	function listLevelOwners(string memory assetHash) public returns (address[] memory)
+	{
+		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
+
+		address[] memory owners;
+		uint counter = 0;
+		uint i;//double check this logic but i think the id's start at 1 (not 0)
+		for (i = 1; i <= NUM_PLUGS; i++) {
+			string memory hash = _tokenHash(i);
+
+			if (stringsEqual(hash, assetHash)) {
+				address owner = ownerOf(i);
+				owners[counter] = owner;
+				counter++;
+			}
+		}
+
+		return owners;
+	}
+
 	// Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
-	function tokenHash(uint256 tokenId) internal returns (string memory)
+	function _tokenHash(uint256 tokenId) internal view virtual returns (string memory)
 	{
 		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
@@ -84,58 +147,8 @@ contract Plug is ERC721, Ownable {
 		}
 	}
 
-	// Override 'tokenURI' to account for asset/hash cycling
-	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
-	{	
-		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-		string memory baseURI = _baseURI();
-		string memory hash = tokenHash(tokenId);
-		
-		return string(abi.encodePacked(baseURI, hash));
-	}
-
-	// override safeTransferFrom to update _lastTransferTime 
-	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
-	{
-		_lastTransferTime = block.timestamp;
-		safeTransferFrom(from, to, tokenId, "");
-	}
-
-
-	// Mint a single Plug
-	function mintPlug(address recipient) public onlyOwner returns (uint256)
-	{
-		_tokenIds.increment();
-
-		// Each new Plug will have an id = (previous Plug + 1)
-		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
-
-		return newId;
-	}
-
-	// List the owners for a certain level (determined by assetHash)
-	// We'll need this for airdrops and benefits
-	function listLevelOwners(string memory assetHash) public returns (address[])
-	{
-		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
-
-		address[] owners;
-		uint i;//double check this logic but i think the id's start at 1 (not 0)
-		for (i = 1; i <= NUM_PLUGS; i++) {
-			hash = tokenHash(i);
-			if (hash == assetHash) {
-				owner = ownerOf(i);
-				owners.push(owner);
-			}
-		}
-
-		return owners;
-	}
-
 	// All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual override returns (string memory)
+	function _baseURI() internal view virtual returns (string memory)
 	{
 		return "https://ipfs.io/ipfs/";
 	}
@@ -143,13 +156,25 @@ contract Plug is ERC721, Ownable {
 	// Determine if 'assetHash' is one of the ipfs hashes for Plug
 	function _hashExists(string memory assetHash) internal returns (bool) 
 	{
-		return assetHash == HASH_0 || 
-			   assetHash == HASH_1 ||
-			   assetHash == HASH_2 ||
-			   assetHash == HASH_3 ||
-			   assetHash == HASH_4 ||
-			   assetHash == HASH_5 ||
-			   assetHash == HASH_6;
+		return stringsEqual(assetHash, HASH_0) || 
+			   stringsEqual(assetHash, HASH_1) ||
+			   stringsEqual(assetHash, HASH_2) ||
+			   stringsEqual(assetHash, HASH_3) ||
+			   stringsEqual(assetHash, HASH_4) ||
+			   stringsEqual(assetHash, HASH_5) ||
+			   stringsEqual(assetHash, HASH_6);
+	}
+
+	// Determine if two strings are equal
+	function stringsEqual(string memory a, string memory b) internal returns (bool)
+	{
+		bytes memory A = bytes(a);
+		bytes memory B = bytes(b);
+		if (A.length != B.length) {
+			return false;
+		} else {
+			return keccak256(A) == keccak256(B);
+		}
 	}
 }
 
