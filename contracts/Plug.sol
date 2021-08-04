@@ -15,19 +15,18 @@
  *    owner's wallet (naturally each time, the previous asset is replaced).
  *  - If the NFT changes owners, the initial/day 0 asset is now what will be seen by the owner,
  *    and they'll have to wait a full year to achieve "final asset status" (gold)
- *  - Asset cycle: 1. 0 months: 0% juice
- *				   2. 2 months: 20% juice
- *				   3. 4 months: 40% juice
- 				   4. 6 months: 60% juice
- 				   5. 8 months: 80% juice
- 				   6. 10 months: 100% juice / silver
- 				   7. 12 months: 100% juice / gold
- *
+ *  - Asset cycle: 1. 0 months (< 60 days): 0% juice
+ *				   2. 2 months (60 days): 20% juice
+ *				   3. 4 months (120 days): 40% juice
+ *				   4. 6 months (180 days): 60% juice
+ *				   5. 8 months (240 days): 80% juice
+ *				   6. 10 months (300 days): 100% juice / silver
+ *				   7. 12 months (360 days): 100% juice / gold
  */
 
 pragma solidity ^0.7.3;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -36,19 +35,21 @@ contract Plug is ERC721, Ownable {
 	Counters.Counter private _tokenIds;
 
 	uint constant NUM_ASSETS = 7;
+	uint constant NUM_PLUGS = 10;
 	uint constant MAX_NUM_TRANSFERS = 1000;
 
 	uint16 private _numTransfers = 0; //16 bits should be plenty
 	uint8 private _currentHashIdx = 0;
-	uint private _lastTransferTime; //represented in UTC
+	uint private _lastTransferTime; //represented in UTC (seconds)
 
-	string[NUM_ASSETS] = ["hash0",
-						  "hash1",
-						  "hash2",
-						  "hash3",
-						  "hash4",
-						  "hash5",
-						  "hash6"];
+	string constant HASH_0 = "hash0"; //corresponds to 0% juice (initial Plug)
+	string constant HASH_1 = "hash1";
+	string constant HASH_2 = "hash2";
+	string constant HASH_3 = "hash3";
+	string constant HASH_4 = "hash4";
+	string constant HASH_5 = "hash5";
+	string constant HASH_6 = "hash6"; //corresponds to 100% juice gold Plug
+	string[NUM_ASSETS] = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
 
 	// Initialize _lastTransferTime & create token
 	constructor() ERC721("https://logik-genesis-api.herokuapp.com/api/other/giffy.json") 
@@ -56,21 +57,34 @@ contract Plug is ERC721, Ownable {
 		_lastTransferTime = block.timestamp;
 	}
 
-	function _baseURI() internal view virtual override returns (string memory)
-	{
-		return "https://ipfs.io/ipfs/";
-	}
-
+	// Based on the number of days that have passed since the last transfer of
+	// ownership, this function returns the appropriate IPFS hash
 	function tokenHash(uint256 tokenId) internal returns (string memory)
 	{
 		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-		// logic to handle assigning the URI based on days passed
-		// since _lastTransferTime
+		// Calculate days gone by
+		uint daysPassed = (block.timestamp - _lastTransferTime) / 1 days;
+
+		// The logic here is "reversed" for cleaner code
+		if (daysPassed >= 360) {
+			return HASH_6;
+		} else if (daysPassed >= 300) {
+			return HASH_5;
+		} else if (daysPassed >= 240) {
+			return HASH_4;
+		} else if (daysPassed >= 180) {
+			return HASH_3;
+		} else if (daysPassed >= 120) {
+			return HASH_2;
+		} else if (daysPassed >= 60) {
+			return HASH_1;
+		} else { //if 60 days haven't passed, the initial asset/Plug is returned
+			return HASH_0; 
+		}
 	}
 
-	// Overriding this function in order to include logic for changing
-	// the URI based on days passed since transfer of ownership
+	// Override 'tokenURI' to account for asset/hash cycling
 	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
 	{	
 		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
@@ -89,20 +103,66 @@ contract Plug is ERC721, Ownable {
 	{
 		_tokenIds.increment();
 
+		// Each new Plug will have an id = (previous Plug + 1)
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 
 		return newId;
 	}
 
-	// Gives us the ability to determine the addresses of the owners
-	// for each of the Plug levels (for airdrops & benefits)
-	function listLevelOwners(string memory assetHash) public returns (string[])
+	// List the owners for a certain level (determined by assetHash)
+	// We'll need this for airdrops and benefits
+	function listLevelOwners(string memory assetHash) public returns (address[])
 	{
-		// loop through the global owner list, and call tokenHash,
-		// if this hash matches assetHash, add it to an array that 
-		// we will return 
+		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
+
+		address[] owners;
+		uint i;//double check this logic but i think the id's start at 1 (not 0)
+		for (i = 1; i <= NUM_PLUGS; i++) {
+			hash = tokenHash(i);
+			if (hash == assetHash) {
+				owner = ownerOf(i);
+				owners.push(owner);
+			}
+		}
+
+		return owners;
 	}
 
+	// All of the asset's will be pinned to IPFS
+	function _baseURI() internal view virtual override returns (string memory)
+	{
+		return "https://ipfs.io/ipfs/";
+	}
+
+	// Determine if 'assetHash' is one of the ipfs hashes for Plug
+	function _hashExists(string memory assetHash) internal returns (bool) 
+	{
+		return assetHash == HASH_0 || 
+			   assetHash == HASH_1 ||
+			   assetHash == HASH_2 ||
+			   assetHash == HASH_3 ||
+			   assetHash == HASH_4 ||
+			   assetHash == HASH_5 ||
+			   assetHash == HASH_6;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
