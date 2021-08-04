@@ -1,14 +1,17 @@
-// NOTE: in the future, let's make these non-main methods and consolidate into one script?
+/*
+ * Deployment script for Plug.sol
+ *
+ * Created: June 3, 2021
+ * Author: Jack Kasbeer
+ */
 const { ethers } = require("hardhat");
 
-// DEPLOY TIER 2 GIF'S
-
 async function main() {
-	const Gif = await ethers.getContractFactory("LOGIKGif");
+	const Plug = await ethers.getContractFactory("Plug");
 
 	// Start deployment
-	const gif = await Gif.deploy();
-	console.log("LOGIKGif contract deployed to address:", gif.address);
+	const plug = await Plug.deploy();
+	console.log("Plug contract deployed to address:", plug.address);
 }
 
 main()
