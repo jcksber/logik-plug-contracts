@@ -108,12 +108,13 @@ contract Plug is ERC721, Ownable {
 
 		address[] memory owners;
 		uint counter = 0;
-		uint i;//double check this logic but i think the id's start at 1 (not 0)
-		for (i = 1; i <= NUM_PLUGS; i++) {
-			string memory hash = _tokenHash(i);
+		uint i;
+		for (i = 0; i < NUM_PLUGS; i++) {
+			uint tokenId = i + 1;
+			string memory hash = _tokenHash(tokenId);
 
 			if (_stringsEqual(hash, assetHash)) {
-				address owner = ownerOf(i);
+				address owner = ownerOf(tokenId);
 				owners[counter] = owner;
 				counter++;
 			}
