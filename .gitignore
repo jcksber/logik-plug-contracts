@@ -7,3 +7,4 @@ artifacts/
 
 # Unimportant extras
 cache/
+*/.DS_Store
