@@ -43,13 +43,14 @@ contract Plug is ERC721, Ownable {
 	uint8 private _currentHashIdx = 0;
 	uint private _lastTransferTime; //represented in UTC (seconds)
 
-	string constant HASH_0 = "hash0"; //corresponds to 0% juice (initial Plug)
-	string constant HASH_1 = "hash1";
-	string constant HASH_2 = "hash2";
-	string constant HASH_3 = "hash3";
-	string constant HASH_4 = "hash4";
-	string constant HASH_5 = "hash5";
-	string constant HASH_6 = "hash6"; //corresponds to 100% juice gold Plug
+	// NOTE: these are currently hashes that lead to the asset, not the json 
+	string constant HASH_0 = "QmRSLjh3zNn1TyoErCMZ8ypvMB5oaboztx6XA18NhfGu6i"; //1% Plug
+	string constant HASH_1 = "QmYdR2LUWzuYqvWGvwMPqarsuGr3VkxkYBiWm3i1PmoBo1";
+	string constant HASH_2 = "QmXVoh9J7eogZTUWYC3a1YpJ6Gq4RK2b2L3nDL75QLg6Qb";
+	string constant HASH_3 = "QmTfJihRqX7Cn13ZWVT9NF2T4UUuupA1d5Rfrt61Qra4Rb";
+	string constant HASH_4 = "QmY4RfM3qfw5z2onq2Ka3HAR9dA4H9jgwNiz3VrVXFMPZd";
+	string constant HASH_5 = "QmVCKN6avYJJUCuekV1DTHhyfVHjfzqw78bZsKm9PRTb1K";
+	string constant HASH_6 = "QmecazUrvcdDPZ8zQ3Ndm4vWhCmjK1WG4hJsSPYZaG1ayX"; //100% Plug
 
 	string[NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
 
@@ -136,18 +137,37 @@ contract Plug is ERC721, Ownable {
 		// Calculate days gone by
 		uint daysPassed = (block.timestamp - _lastTransferTime) / 1 days;
 
+		// PRODUCTION LOGIC ///////////////////////////////////////////////////////
+		// // The logic here is "reversed" for cleaner code
+		// if (daysPassed >= 360) {
+		// 	return HASH_6;
+		// } else if (daysPassed >= 300) {
+		// 	return HASH_5;
+		// } else if (daysPassed >= 240) {
+		// 	return HASH_4;
+		// } else if (daysPassed >= 180) {
+		// 	return HASH_3;
+		// } else if (daysPassed >= 120) {
+		// 	return HASH_2;
+		// } else if (daysPassed >= 60) {
+		// 	return HASH_1;
+		// } else { //if 60 days haven't passed, the initial asset/Plug is returned
+		// 	return HASH_0; 
+		// }
+
+		// TEST LOGIC /////////////////////////////////////////////////////////////
 		// The logic here is "reversed" for cleaner code
-		if (daysPassed >= 360) {
+		if (daysPassed >= 6) {
 			return HASH_6;
-		} else if (daysPassed >= 300) {
+		} else if (daysPassed >= 5) {
 			return HASH_5;
-		} else if (daysPassed >= 240) {
+		} else if (daysPassed >= 4) {
 			return HASH_4;
-		} else if (daysPassed >= 180) {
+		} else if (daysPassed >= 3) {
 			return HASH_3;
-		} else if (daysPassed >= 120) {
+		} else if (daysPassed >= 2) {
 			return HASH_2;
-		} else if (daysPassed >= 60) {
+		} else if (daysPassed >= 1) {
 			return HASH_1;
 		} else { //if 60 days haven't passed, the initial asset/Plug is returned
 			return HASH_0; 
