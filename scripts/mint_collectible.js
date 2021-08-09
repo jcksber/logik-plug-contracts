@@ -8,7 +8,7 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL);
 
 // First we need to "construct" the contract
-const collectibleContract = require("../../artifacts/contracts/LOGIK721Test.sol/LOGIK721Test.json");
+const collectibleContract = require("../artifacts/contracts/LOGIK721Test.sol/LOGIK721Test.json");
 const collectibleContractAddress = "0x731d2e8937B32C9C4a8F11ae3C0DcbeE9B9454f3";
 const collectibleNFT = new web3.eth.Contract(collectibleContract.abi, collectibleContractAddress);
 
