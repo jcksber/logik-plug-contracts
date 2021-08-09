@@ -3,3 +3,7 @@
 
 # Physical dependencies
 node_modules/
+artifacts/
+
+# Unimportant extras
+cache/
