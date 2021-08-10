@@ -44,15 +44,15 @@ contract Plug is ERC721, Ownable {
 	uint private _lastTransferTime; //represented in UTC (seconds)
 
 	// NOTE: these are currently hashes that lead to the asset, not the json 
-	string constant HASH_0 = "QmRSLjh3zNn1TyoErCMZ8ypvMB5oaboztx6XA18NhfGu6i"; //1% Plug
-	string constant HASH_1 = "QmYdR2LUWzuYqvWGvwMPqarsuGr3VkxkYBiWm3i1PmoBo1";
-	string constant HASH_2 = "QmXVoh9J7eogZTUWYC3a1YpJ6Gq4RK2b2L3nDL75QLg6Qb";
-	string constant HASH_3 = "QmTfJihRqX7Cn13ZWVT9NF2T4UUuupA1d5Rfrt61Qra4Rb";
-	string constant HASH_4 = "QmY4RfM3qfw5z2onq2Ka3HAR9dA4H9jgwNiz3VrVXFMPZd";
-	string constant HASH_5 = "QmVCKN6avYJJUCuekV1DTHhyfVHjfzqw78bZsKm9PRTb1K";
-	string constant HASH_6 = "QmecazUrvcdDPZ8zQ3Ndm4vWhCmjK1WG4hJsSPYZaG1ayX"; //100% Plug
+	string constant HASH_0 = "QmaKwPTSuFmYCEinmymGUKRWG2XifXjTbBh4VPCCM88s7D"; //1% Plug
+	string constant HASH_1 = "QmRSTxmDqMDfNbUqcAS1MK72cEnMBDtCYjEmboJiPSVuWS";
+	string constant HASH_2 = "QmXSi2EQAAerhvd5VoFwyJGoZXt5aRNH8TZM3dX3Lv4c45";
+	string constant HASH_3 = "QmdufpR1DaW4v4vJRucBDU4S5w3YRYopZhJhkTrmBEGBV3";
+	string constant HASH_4 = "QmWFqeEosWWTeKmcokdacjPwnT5ynsvteCTV6Stqc8G86s";
+	string constant HASH_5 = "QmTCtjL6cscTrqu9NVUmK5Zo4b4U3QHqYBxGn2cG3yCXhN";
+	string constant HASH_6 = "QmWcxue1zcmLRVYT9ZNwiJRvkqCzaPPAp3UVCppfczV9z8"; //100% Plug
 
-	string[NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
+	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
 
 	// Initialize _lastTransferTime & create token
 	constructor() ERC721("LOGIK: Plug", "") 
@@ -104,13 +104,14 @@ contract Plug is ERC721, Ownable {
 	// We'll need this for airdrops and benefits
 	function listLevelOwners(string memory assetHash) public returns (address[] memory)
 	{
-		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
+		//require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
 
 		address[] memory owners;
 		uint counter = 0;
 		uint i;
-		for (i = 0; i < NUM_PLUGS; i++) {
-			uint tokenId = i + 1;
+		uint tokenId = i;
+		for (i = 0; i < _tokenIds; i++) {
+			tokenId = i + 1;
 			string memory hash = _tokenHash(tokenId);
 
 			if (_stringsEqual(hash, assetHash)) {
