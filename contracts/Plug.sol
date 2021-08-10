@@ -110,7 +110,7 @@ contract Plug is ERC721, Ownable {
 		uint counter = 0;
 		uint i;
 		uint tokenId = i;
-		for (i = 0; i < _tokenIds; i++) {
+		for (i = 0; i < NUM_PLUGS; i++) {
 			tokenId = i + 1;
 			string memory hash = _tokenHash(tokenId);
 
