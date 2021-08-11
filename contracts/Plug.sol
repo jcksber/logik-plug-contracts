@@ -36,7 +36,6 @@ contract Plug is ERC721, Ownable {
 	Counters.Counter private _tokenIds;
 
 	uint constant NUM_ASSETS = 7;
-	uint constant NUM_PLUGS = 10;
 	uint constant MAX_NUM_TRANSFERS = 1000;
 
 	uint16 private _numTransfers = 0; //16 bits should be plenty
@@ -182,7 +181,7 @@ contract Plug is ERC721, Ownable {
 	}
 
 	// Determine if 'assetHash' is one of the IPFS hashes for Plug
-	function _hashExists(string memory assetHash) internal returns (bool) 
+	function _hashExists(string memory assetHash) internal pure returns (bool) 
 	{
 		return _stringsEqual(assetHash, HASH_0) || 
 			   _stringsEqual(assetHash, HASH_1) ||
@@ -194,7 +193,7 @@ contract Plug is ERC721, Ownable {
 	}
 
 	// Determine if two strings are equal using the length + hash method
-	function _stringsEqual(string memory a, string memory b) internal returns (bool)
+	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
 	{
 		bytes memory A = bytes(a);
 		bytes memory B = bytes(b);
