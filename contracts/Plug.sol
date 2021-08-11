@@ -37,6 +37,8 @@ contract Plug is ERC721, Ownable {
 	Counters.Counter private _tokenIds;
 
 	uint constant NUM_ASSETS = 7;
+	uint constant MAX_NUM_PLUGS = 10;//this number is important
+
 	// Production hashes
 	string constant HASH_0 = "Qmf17yfaQsBmZkyVfc3JfiSqGifN5VQaKJmTGdQnAuAkmE"; //1% Plug
 	string constant HASH_1 = "QmemZy6Ysr4tafv6F7Xm613ACgpr9LscrGNCqh67dcV8fS";
@@ -45,6 +47,7 @@ contract Plug is ERC721, Ownable {
 	string constant HASH_4 = "QmbKYkSBuencis49GjKqCc4jPWyCRpHsmA1JtqWBoiLojf";
 	string constant HASH_5 = "QmShxEMhMSanqYLV2dhweivjyrVbdVLDpP5QhJ7cmbCwEK";
 	string constant HASH_6 = "QmYg1u1b39nWbv4TcsxU4Jgrv8qwsDzUiuShmi1RiU5t98"; //100% Plug
+
 	// Our list of IPFS hashes for each of the 7 Plugs (varying juice levels)
 	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
 
@@ -52,40 +55,46 @@ contract Plug is ERC721, Ownable {
 	mapping(uint256 => uint) private _lastTransferTimes;
 
 	// Create Plug
-	constructor() ERC721("LOGIK: Plug", "") 
+	constructor() ERC721("LOGIK: Plug", "") {}
+
+
+	/*** TRANSFER FUNCTIONS ***/
+
+	// Override transferFrom to update the last transfer time for 'tokenId'
+	function transferFrom(address from, address to, uint256 tokenId) public virtual override
 	{
-		// nothing to be done here i don't beleive
-	}
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
 
-	// Override 'tokenURI' to account for asset/hash cycling
-	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
-	{	
-		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-		string memory baseURI = _baseURI();
-		string memory hash = _tokenHash(tokenId);
-		
-		return string(abi.encodePacked(baseURI, hash));
+		_lastTransferTimes[tokenId] = block.timestamp;
+		transferFrom(from, to, tokenId);
 	}
 
 	// Override safeTransferFrom to update the last transfer time for 'tokenId'
 	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
 	{
-		/*
-		global: uint constant MAX_NUM_TRANSFERS = 1000;
-				uint16 private _numTransfers = 0; //16 bits should be plenty
-		if we want to add some logic to burn this Plug if it's been transferred too many
-		times, this is probably the place to do it... e.g.
+		require(_exists(tokenId), "Plug (ERC721Metadata): transfer attempt for nonexistent token");
 
-			_numTransfers++;
-			if (_numTransfers >= MAX_NUM_TRANSFERS) {
-				_burn(tokenId); //CANNOT USE THIS FUNCTION,
-				return;			//NEED ERC721BURNABLE.SOL
-			}
-		*/
 		_lastTransferTimes[tokenId] = block.timestamp;
 		safeTransferFrom(from, to, tokenId, "");
 	}
+
+	function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) 
+	public virtual override
+	{
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
+
+		_lastTransferTimes[tokenId] = block.timestamp;
+		_safeTransfer(from, to, tokenId, _data);
+	}
+
+	//NOTE: i think we either need just this function or all of them above it
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
+    {
+        _lastTransferTimes[tokenId] = block.timestamp;
+    }
+
+
+	/*** MINT & BURN ***/
 
 	// Mint a single Plug
 	function mintPlug(address recipient) public onlyOwner returns (uint256)
@@ -94,6 +103,7 @@ contract Plug is ERC721, Ownable {
 
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
+
 		// Add this to our mapping of "last transfer times"
 		_lastTransferTimes[newId] = block.timestamp;
 
@@ -101,23 +111,40 @@ contract Plug is ERC721, Ownable {
 	}
 
 	// Burn a single Plug (destroy forever)
-	function burn(uint256 tokenId) public virtual {
+	function burnPlug(uint256 tokenId) public virtual 
+	{
 		require(_isApprovedOrOwner(_msgSender(), tokenId), "Burnable: caller is not approved to burn");
-		_burn(tokenId);//don't actually know if this works yet
+
+		_burn(tokenId);
+	}
+
+
+	/*** "THE PLUG" FUNCTIONS **/
+
+	// Override 'tokenURI' to account for asset/hash cycling
+	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
+	{	
+		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
+
+		string memory baseURI = _baseURI();
+		string memory hash = _tokenHash(tokenId);
+		
+		return string(abi.encodePacked(baseURI, hash));
 	}
 
 	// List the owners for a certain level (determined by assetHash)
 	// We'll need this for airdrops and benefits
 	function listLevelOwners(string memory assetHash) public view returns (address[] memory)
 	{
-		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
+		require(_hashExists(assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
 
-		address[] memory owners;
-		uint tokenId;
+		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
+
 		uint lastTokenId = _tokenIds.current();
 		uint counter = 0; //keeps track of where we are in 'owners'
 
 		// Go thru list of created token id's (existing Plugs) so far
+		uint tokenId;
 		for (tokenId = 1; tokenId <= lastTokenId; tokenId++) {
 
 			// Find the IPFS hash associated with this token ID
@@ -127,26 +154,37 @@ contract Plug is ERC721, Ownable {
 			// then determine the owner of the token and add it to our list
 			if (_stringsEqual(hash, assetHash)) {
 				address owner = ownerOf(tokenId);
-				owners[counter] = owner;
+				levelOwners[counter] = owner;
 				counter++;
 			}
 		}
 
-		return owners;
-	}
-	
-	// Function to help with testing: number of hours since transfer/mint
-	function howManyHoursPassed(uint256 tokenId) public returns (uint8) 
-	{
-		return uint8((block.timestamp - _lastTransferTimes[tokenId]) / 1 hours);
+		return levelOwners;
 	}
 
-	// Function to help with testing: number of days since transfer/mint
-	function howManyDaysPassed(uint256 tokenId) public returns (uint8) 
+	// Number of minutes that have passed since transfer/mint
+	function countMinutesPassed(uint256 tokenId) public view returns (uint) 
 	{
-		return uint8((block.timestamp - _lastTransferTimes[tokenId]) / 1 days);
+	    require(_exists(tokenId), "ERC721Metadata: time (minutes) query for nonexistent token");
+		return uint8((block.timestamp - _lastTransferTimes[tokenId]) / 1 minutes);
 	}
 
+	// Number of hours that have passed since transfer/mint
+	function countHoursPassed(uint256 tokenId) public view returns (uint16) 
+	{
+		require(_exists(tokenId), "ERC721Metadata: time (hours) query for nonexistent token");
+		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 hours);
+	}
+
+	// Number of days that have passed since transfer/mint
+	function countDaysPassed(uint256 tokenId) public view returns (uint16) 
+	{
+		require(_exists(tokenId), "ERC721Metadata: time (days) query for nonexistent token");
+		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 days);
+	}
+
+
+	/*** HELPER FUNCTIONS ***/
 
 	// All of the asset's will be pinned to IPFS
 	function _baseURI() internal view virtual returns (string memory)
@@ -182,8 +220,8 @@ contract Plug is ERC721, Ownable {
 
 		// TEST LOGIC /////////////////////////////////////////////////////////////
 		// Calculate the number of hours that have passed for 'tokenId'
-		uint hoursPassed = (block.timestamp - _lastTransferTimes[tokenId]) / 1 hours;
-		// The logic here is "reversed" for cleaner code
+		uint hoursPassed = countHoursPassed(tokenId);
+		// Order is "reversed" for cleaner code
 		if (hoursPassed >= 12) {
 			return HASH_6;
 		} else if (hoursPassed >= 10) {
