@@ -104,16 +104,21 @@ contract Plug is ERC721, Ownable {
 	// We'll need this for airdrops and benefits
 	function listLevelOwners(string memory assetHash) public returns (address[] memory)
 	{
-		//require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
+		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
 
 		address[] memory owners;
-		uint counter = 0;
-		uint i;
-		uint tokenId = i;
-		for (i = 0; i < NUM_PLUGS; i++) {
-			tokenId = i + 1;
+		uint tokenId;
+		uint lastTokenId = _tokenIds.current();
+		uint counter = 0; //keeps track of where we are in 'owners'
+
+		// Go thru list of created token id's (existing Plugs) so far
+		for (tokenId = 1; tokenId <= lastTokenId; tokenId++) {
+
+			// Find the IPFS hash associated with this token ID
 			string memory hash = _tokenHash(tokenId);
 
+			// If this is equal to the hash we're looking for (assetHash)
+			// then determine the owner of the token and add it to our list
 			if (_stringsEqual(hash, assetHash)) {
 				address owner = ownerOf(tokenId);
 				owners[counter] = owner;
