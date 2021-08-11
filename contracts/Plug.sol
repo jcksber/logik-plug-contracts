@@ -30,33 +30,31 @@ pragma solidity ^0.7.3;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 contract Plug is ERC721, Ownable {
 	using Counters for Counters.Counter;
 	Counters.Counter private _tokenIds;
 
 	uint constant NUM_ASSETS = 7;
-	uint constant MAX_NUM_TRANSFERS = 1000;
-
-	uint16 private _numTransfers = 0; //16 bits should be plenty
-	uint8 private _currentHashIdx = 0;
-	uint private _lastTransferTime; //represented in UTC (seconds)
-
-	// NOTE: these are currently hashes that lead to the asset, not the json 
-	string constant HASH_0 = "QmaKwPTSuFmYCEinmymGUKRWG2XifXjTbBh4VPCCM88s7D"; //1% Plug
-	string constant HASH_1 = "QmRSTxmDqMDfNbUqcAS1MK72cEnMBDtCYjEmboJiPSVuWS";
-	string constant HASH_2 = "QmXSi2EQAAerhvd5VoFwyJGoZXt5aRNH8TZM3dX3Lv4c45";
-	string constant HASH_3 = "QmdufpR1DaW4v4vJRucBDU4S5w3YRYopZhJhkTrmBEGBV3";
-	string constant HASH_4 = "QmWFqeEosWWTeKmcokdacjPwnT5ynsvteCTV6Stqc8G86s";
-	string constant HASH_5 = "QmTCtjL6cscTrqu9NVUmK5Zo4b4U3QHqYBxGn2cG3yCXhN";
-	string constant HASH_6 = "QmWcxue1zcmLRVYT9ZNwiJRvkqCzaPPAp3UVCppfczV9z8"; //100% Plug
-
+	// Production hashes
+	string constant HASH_0 = "Qmf17yfaQsBmZkyVfc3JfiSqGifN5VQaKJmTGdQnAuAkmE"; //1% Plug
+	string constant HASH_1 = "QmemZy6Ysr4tafv6F7Xm613ACgpr9LscrGNCqh67dcV8fS";
+	string constant HASH_2 = "QmXdnXnHKQ4piXKv1aRkdy9BhuxQWBFcZjR6RcyHXhq6N2";
+	string constant HASH_3 = "Qmd8HyLnhvZbAVNqPMcah6bYHLVcc9Aumhohpr7azcuTP4";
+	string constant HASH_4 = "QmbKYkSBuencis49GjKqCc4jPWyCRpHsmA1JtqWBoiLojf";
+	string constant HASH_5 = "QmShxEMhMSanqYLV2dhweivjyrVbdVLDpP5QhJ7cmbCwEK";
+	string constant HASH_6 = "QmYg1u1b39nWbv4TcsxU4Jgrv8qwsDzUiuShmi1RiU5t98"; //100% Plug
+	// Our list of IPFS hashes for each of the 7 Plugs (varying juice levels)
 	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
 
-	// Initialize _lastTransferTime & create token
+	// Keep track of the "last transfer time" (o.t.w. mint time) for each token ID
+	mapping(uint256 => uint) private _lastTransferTimes;
+
+	// Create Plug
 	constructor() ERC721("LOGIK: Plug", "") 
 	{
-		_lastTransferTime = block.timestamp;
+		// nothing to be done here i don't beleive
 	}
 
 	// Override 'tokenURI' to account for asset/hash cycling
@@ -70,10 +68,12 @@ contract Plug is ERC721, Ownable {
 		return string(abi.encodePacked(baseURI, hash));
 	}
 
-	// Override safeTransferFrom to update _lastTransferTime 
+	// Override safeTransferFrom to update the last transfer time for 'tokenId'
 	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
 	{
 		/*
+		global: uint constant MAX_NUM_TRANSFERS = 1000;
+				uint16 private _numTransfers = 0; //16 bits should be plenty
 		if we want to add some logic to burn this Plug if it's been transferred too many
 		times, this is probably the place to do it... e.g.
 
@@ -83,7 +83,7 @@ contract Plug is ERC721, Ownable {
 				return;			//NEED ERC721BURNABLE.SOL
 			}
 		*/
-		_lastTransferTime = block.timestamp;
+		_lastTransferTimes[tokenId] = block.timestamp;
 		safeTransferFrom(from, to, tokenId, "");
 	}
 
@@ -92,16 +92,23 @@ contract Plug is ERC721, Ownable {
 	{
 		_tokenIds.increment();
 
-		// Each new Plug will have an id = (previous Plug + 1)
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
+		// Add this to our mapping of "last transfer times"
+		_lastTransferTimes[newId] = block.timestamp;
 
 		return newId;
 	}
 
+	// Burn a single Plug (destroy forever)
+	function burn(uint256 tokenId) public virtual {
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Burnable: caller is not approved to burn");
+		_burn(tokenId);//don't actually know if this works yet
+	}
+
 	// List the owners for a certain level (determined by assetHash)
 	// We'll need this for airdrops and benefits
-	function listLevelOwners(string memory assetHash) public returns (address[] memory)
+	function listLevelOwners(string memory assetHash) public view returns (address[] memory)
 	{
 		require(_hashExists(assetHash), "ERC721Metadata: IPFS hash nonexistent");
 
@@ -127,6 +134,19 @@ contract Plug is ERC721, Ownable {
 
 		return owners;
 	}
+	
+	// Function to help with testing: number of hours since transfer/mint
+	function howManyHoursPassed(uint256 tokenId) public returns (uint8) 
+	{
+		return uint8((block.timestamp - _lastTransferTimes[tokenId]) / 1 hours);
+	}
+
+	// Function to help with testing: number of days since transfer/mint
+	function howManyDaysPassed(uint256 tokenId) public returns (uint8) 
+	{
+		return uint8((block.timestamp - _lastTransferTimes[tokenId]) / 1 days);
+	}
+
 
 	// All of the asset's will be pinned to IPFS
 	function _baseURI() internal view virtual returns (string memory)
@@ -140,10 +160,9 @@ contract Plug is ERC721, Ownable {
 	{
 		require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-		// Calculate days gone by
-		uint daysPassed = (block.timestamp - _lastTransferTime) / 1 days;
-
 		// PRODUCTION LOGIC ///////////////////////////////////////////////////////
+		// Calculate days gone by for this particular token with 'tokenId'
+		// uint daysPassed = (block.timestamp - _lastTransferTimes[tokenId]) / 1 days;
 		// // The logic here is "reversed" for cleaner code
 		// if (daysPassed >= 360) {
 		// 	return HASH_6;
@@ -162,20 +181,22 @@ contract Plug is ERC721, Ownable {
 		// }
 
 		// TEST LOGIC /////////////////////////////////////////////////////////////
+		// Calculate the number of hours that have passed for 'tokenId'
+		uint hoursPassed = (block.timestamp - _lastTransferTimes[tokenId]) / 1 hours;
 		// The logic here is "reversed" for cleaner code
-		if (daysPassed >= 6) {
+		if (hoursPassed >= 12) {
 			return HASH_6;
-		} else if (daysPassed >= 5) {
+		} else if (hoursPassed >= 10) {
 			return HASH_5;
-		} else if (daysPassed >= 4) {
+		} else if (hoursPassed >= 8) {
 			return HASH_4;
-		} else if (daysPassed >= 3) {
+		} else if (hoursPassed >= 6) {
 			return HASH_3;
-		} else if (daysPassed >= 2) {
+		} else if (hoursPassed >= 4) {
 			return HASH_2;
-		} else if (daysPassed >= 1) {
+		} else if (hoursPassed >= 2) {
 			return HASH_1;
-		} else { //if 60 days haven't passed, the initial asset/Plug is returned
+		} else {
 			return HASH_0; 
 		}
 	}
