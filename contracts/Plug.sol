@@ -30,7 +30,6 @@ pragma solidity ^0.7.3;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 contract Plug is ERC721, Ownable {
 	using Counters for Counters.Counter;
@@ -56,14 +55,6 @@ contract Plug is ERC721, Ownable {
 
 	// Create Plug
 	constructor() ERC721("LOGIK: Plug (test 2)", "") {}
-
-
-	/*** TRANSFER FUNCTION ***/
-	/*
-	 * Test #1: only using _beforeTransfer (0xeA7657BaE5C75e537a6BB30d39AFEc3F4d591F8a) 
-	 * Test #2: using all transfer functions (0xc61C88a955b1B69d9f51F5c380fF547115BA63C4)
-	 * Test #3: 0x50cEe6842e712E1e4bc16752e39AB2A97C98001a
-	 */
 
 
 	/*** CORE FUNCTIONS ***/
@@ -140,10 +131,10 @@ contract Plug is ERC721, Ownable {
 	}
 
 	// Number of minutes that have passed since transfer/mint
-	function countMinutesPassed(uint256 tokenId) public view returns (uint) 
+	function countMinutesPassed(uint256 tokenId) public view returns (uint16) 
 	{
 	    require(_exists(tokenId), "ERC721Metadata: time (minutes) query for nonexistent token");
-		return uint8((block.timestamp - _lastTransferTimes[tokenId]) / 1 minutes);
+		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 minutes);
 	}
 
 	// Number of hours that have passed since transfer/mint
@@ -242,3 +233,8 @@ contract Plug is ERC721, Ownable {
 	}
 }
 
+/*
+	 * Test #1: only using _beforeTransfer (0xeA7657BaE5C75e537a6BB30d39AFEc3F4d591F8a) 
+	 * Test #2: using all transfer functions (0xc61C88a955b1B69d9f51F5c380fF547115BA63C4)
+	 * Test #3: 0x50cEe6842e712E1e4bc16752e39AB2A97C98001a
+	 */
