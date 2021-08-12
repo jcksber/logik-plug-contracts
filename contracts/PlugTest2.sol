@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /*
- * Plug.sol
+ * PlugTest2.sol
  *
  * Author: Jack Kasbeer
  * Created: August 3, 2021
@@ -32,7 +32,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
-contract Plug is ERC721, Ownable {
+contract PlugTest2 is ERC721, Ownable {
 	using Counters for Counters.Counter;
 	Counters.Counter private _tokenIds;
 
@@ -58,15 +58,47 @@ contract Plug is ERC721, Ownable {
 	constructor() ERC721("LOGIK: Plug (test 2)", "") {}
 
 
-	/*** TRANSFER FUNCTION ***/
+	/*** TRANSFER FUNCTIONS ***/
 	/*
 	 * Test #1: only using _beforeTransfer (0xeA7657BaE5C75e537a6BB30d39AFEc3F4d591F8a) 
 	 * Test #2: using all transfer functions (0xc61C88a955b1B69d9f51F5c380fF547115BA63C4)
 	 * Test #3: 0x50cEe6842e712E1e4bc16752e39AB2A97C98001a
 	 */
 
+	// Override transferFrom to update the last transfer time for 'tokenId'
+	function transferFrom(address from, address to, uint256 tokenId) public virtual override
+	{
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
 
-	/*** CORE FUNCTIONS ***/
+		_lastTransferTimes[tokenId] = block.timestamp;
+		transferFrom(from, to, tokenId);
+	}
+
+	// Override safeTransferFrom to update the last transfer time for 'tokenId'
+	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
+	{
+		require(_exists(tokenId), "Plug (ERC721Metadata): transfer attempt for nonexistent token");
+
+		_lastTransferTimes[tokenId] = block.timestamp;
+		safeTransferFrom(from, to, tokenId, "");
+	}
+	function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) 
+	public virtual override
+	{
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
+
+		_lastTransferTimes[tokenId] = block.timestamp;
+		_safeTransfer(from, to, tokenId, _data);
+	}
+
+	//NOTE: i think we either need just this function or all of them above it
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
+    {
+        _lastTransferTimes[tokenId] = block.timestamp;
+    }
+
+
+	/*** MINT & BURN ***/
 
 	// Mint a single Plug
 	function mintPlug(address recipient) public onlyOwner returns (uint256)
@@ -89,12 +121,6 @@ contract Plug is ERC721, Ownable {
 
 		_burn(tokenId);
 	}
-
-	// Any Plug transfer this will be called beforehand (updating the transfer time)	
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
-    {
-        _lastTransferTimes[tokenId] = block.timestamp;
-    }
 
 
 	/*** "THE PLUG" FUNCTIONS **/

@@ -8,7 +8,7 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-	const Plug = await ethers.getContractFactory("Plug");
+	const Plug = await ethers.getContractFactory("PlugTest2");
 
 	// Start deployment
 	const plug = await Plug.deploy();
