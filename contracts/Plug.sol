@@ -40,13 +40,13 @@ contract Plug is ERC721, Ownable {
 	uint constant MAX_NUM_PLUGS = 10;//this number is important
 
 	// Production hashes
-	string constant HASH_0 = "Qmf17yfaQsBmZkyVfc3JfiSqGifN5VQaKJmTGdQnAuAkmE"; //1% Plug
-	string constant HASH_1 = "QmemZy6Ysr4tafv6F7Xm613ACgpr9LscrGNCqh67dcV8fS";
-	string constant HASH_2 = "QmXdnXnHKQ4piXKv1aRkdy9BhuxQWBFcZjR6RcyHXhq6N2";
-	string constant HASH_3 = "Qmd8HyLnhvZbAVNqPMcah6bYHLVcc9Aumhohpr7azcuTP4";
-	string constant HASH_4 = "QmbKYkSBuencis49GjKqCc4jPWyCRpHsmA1JtqWBoiLojf";
-	string constant HASH_5 = "QmShxEMhMSanqYLV2dhweivjyrVbdVLDpP5QhJ7cmbCwEK";
-	string constant HASH_6 = "QmYg1u1b39nWbv4TcsxU4Jgrv8qwsDzUiuShmi1RiU5t98"; //100% Plug
+	string constant HASH_0 = "QmPCBhqdSXGMo7AS7NqgbV17w5sFJ7bSP5gpCPj4uARyNW"; //1% Plug
+	string constant HASH_1 = "QmcvsfEg1r9f43mZDd5pSXUdfb89GE1Jf72XMmrW87LqkZ";
+	string constant HASH_2 = "QmXrJgAJCcmh38tXCBBetcXx3Wxrctqsg6ve8J76FDorkF";
+	string constant HASH_3 = "Qmbborkd6TyXofhWsFD9c2H6PzYii1VNkW7GjqT99kon6t";
+	string constant HASH_4 = "QmUwgMPZKYQJ7B7C7aV3AUnA3hqBxrEFKpNKUGYuh4YBf4";
+	string constant HASH_5 = "QmYSa8bVxwS8tQ4fRtaqZjucEVpQJNDHg2TuT4P12aqchX";
+	string constant HASH_6 = "QmeJPegPQLG3tfvmzVueWtbAr1Ww5PZ6b2ZFwrht71xTNx"; //100% Plug
 
 	// Our list of IPFS hashes for each of the 7 Plugs (varying juice levels)
 	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6];
@@ -61,31 +61,30 @@ contract Plug is ERC721, Ownable {
 	/*** TRANSFER FUNCTIONS ***/
 
 	// Override transferFrom to update the last transfer time for 'tokenId'
-	// function transferFrom(address from, address to, uint256 tokenId) public virtual override
-	// {
-	// 	require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
+	function transferFrom(address from, address to, uint256 tokenId) public virtual override
+	{
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
 
-	// 	_lastTransferTimes[tokenId] = block.timestamp;
-	// 	transferFrom(from, to, tokenId);
-	// }
+		_lastTransferTimes[tokenId] = block.timestamp;
+		transferFrom(from, to, tokenId);
+	}
 
-	// // Override safeTransferFrom to update the last transfer time for 'tokenId'
-	// function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
-	// {
-	// 	require(_exists(tokenId), "Plug (ERC721Metadata): transfer attempt for nonexistent token");
+	// Override safeTransferFrom to update the last transfer time for 'tokenId'
+	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
+	{
+		require(_exists(tokenId), "Plug (ERC721Metadata): transfer attempt for nonexistent token");
 
-	// 	_lastTransferTimes[tokenId] = block.timestamp;
-	// 	safeTransferFrom(from, to, tokenId, "");
-	// }
+		_lastTransferTimes[tokenId] = block.timestamp;
+		safeTransferFrom(from, to, tokenId, "");
+	}
+	function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) 
+	public virtual override
+	{
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
 
-	// function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) 
-	// public virtual override
-	// {
-	// 	require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
-
-	// 	_lastTransferTimes[tokenId] = block.timestamp;
-	// 	_safeTransfer(from, to, tokenId, _data);
-	// }
+		_lastTransferTimes[tokenId] = block.timestamp;
+		_safeTransfer(from, to, tokenId, _data);
+	}
 
 	//NOTE: i think we either need just this function or all of them above it
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override

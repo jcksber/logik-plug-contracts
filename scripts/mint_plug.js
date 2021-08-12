@@ -14,7 +14,7 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(ALCHEMY_API_URL);
 
 const plugContract=require("../artifacts/contracts/Plug.sol/Plug.json");
-const plugAddress = "0xeA7657BaE5C75e537a6BB30d39AFEc3F4d591F8a";//rinkeby
+const plugAddress = "0xc61C88a955b1B69d9f51F5c380fF547115BA63C4";//rinkeby
 const plugNFT = new web3.eth.Contract(plugContract.abi, plugAddress);
 
 async function mintPlug() {
