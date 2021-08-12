@@ -16,13 +16,13 @@
  *    owner's wallet (naturally each time, the previous asset is replaced).
  *  - If the NFT changes owners, the initial/day 0 asset is now what will be seen by the owner,
  *    and they'll have to wait a full year to achieve "final asset status" (gold)
- *  - Asset cycle: 1. 0 months (< 60 days): 0% juice
- *				   2. 2 months (60 days): 20% juice
- *				   3. 4 months (120 days): 40% juice
- *				   4. 6 months (180 days): 60% juice
- *				   5. 8 months (240 days): 80% juice
- *				   6. 10 months (300 days): 100% juice / silver
- *				   7. 12 months (360 days): 100% juice / gold
+ *  - Asset cycle: 1. 0 months (< 60 days): 1% juice
+ *				   2. 2 months (60 days): 17% juice
+ *				   3. 4 months (120 days): 33% juice
+ *				   4. 6 months (180 days): 50% juice
+ *				   5. 8 months (240 days): 66% juice
+ *				   6. 10 months (300 days): 87% juice 
+ *				   7. 12 months (360 days): 100% juice
  */
 
 pragma solidity ^0.7.3;
@@ -61,31 +61,31 @@ contract Plug is ERC721, Ownable {
 	/*** TRANSFER FUNCTIONS ***/
 
 	// Override transferFrom to update the last transfer time for 'tokenId'
-	function transferFrom(address from, address to, uint256 tokenId) public virtual override
-	{
-		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
+	// function transferFrom(address from, address to, uint256 tokenId) public virtual override
+	// {
+	// 	require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
 
-		_lastTransferTimes[tokenId] = block.timestamp;
-		transferFrom(from, to, tokenId);
-	}
+	// 	_lastTransferTimes[tokenId] = block.timestamp;
+	// 	transferFrom(from, to, tokenId);
+	// }
 
-	// Override safeTransferFrom to update the last transfer time for 'tokenId'
-	function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
-	{
-		require(_exists(tokenId), "Plug (ERC721Metadata): transfer attempt for nonexistent token");
+	// // Override safeTransferFrom to update the last transfer time for 'tokenId'
+	// function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override 
+	// {
+	// 	require(_exists(tokenId), "Plug (ERC721Metadata): transfer attempt for nonexistent token");
 
-		_lastTransferTimes[tokenId] = block.timestamp;
-		safeTransferFrom(from, to, tokenId, "");
-	}
+	// 	_lastTransferTimes[tokenId] = block.timestamp;
+	// 	safeTransferFrom(from, to, tokenId, "");
+	// }
 
-	function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) 
-	public virtual override
-	{
-		require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
+	// function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) 
+	// public virtual override
+	// {
+	// 	require(_isApprovedOrOwner(_msgSender(), tokenId), "Plug (ERC721): caller not owner or approved");
 
-		_lastTransferTimes[tokenId] = block.timestamp;
-		_safeTransfer(from, to, tokenId, _data);
-	}
+	// 	_lastTransferTimes[tokenId] = block.timestamp;
+	// 	_safeTransfer(from, to, tokenId, _data);
+	// }
 
 	//NOTE: i think we either need just this function or all of them above it
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
@@ -139,12 +139,11 @@ contract Plug is ERC721, Ownable {
 		require(_hashExists(assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
 
 		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
-
-		uint lastTokenId = _tokenIds.current();
 		uint counter = 0; //keeps track of where we are in 'owners'
 
 		// Go thru list of created token id's (existing Plugs) so far
 		uint tokenId;
+		uint lastTokenId = _tokenIds.current();
 		for (tokenId = 1; tokenId <= lastTokenId; tokenId++) {
 
 			// Find the IPFS hash associated with this token ID
