@@ -13,8 +13,8 @@ const PUBLIC_KEY = process.env.STAGING_PUBLIC_KEY;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(ALCHEMY_API_URL);
 
-const plugContract=require("../artifacts/contracts/Plug.sol/PlugTest2.json");
-const plugAddress = "0x50cEe6842e712E1e4bc16752e39AB2A97C98001a";//rinkeby
+const plugContract=require("../artifacts/contracts/test-code/PlugTest4.sol/PlugTest4.json");
+const plugAddress = "0x62d521e8D595668d9A8686bCBCCc6407ED834Db2";//rinkeby
 const plugNFT = new web3.eth.Contract(plugContract.abi, plugAddress);
 
 async function mintPlug() {

@@ -3,9 +3,21 @@
 */
 require('dotenv').config();
 require("@nomiclabs/hardhat-ethers");
+require("@openzeppelin/hardhat-upgrades");
 const { STAGING_ALCHEMY_API_URL, STAGING_PRIVATE_KEY } = process.env;
 module.exports = {
-   solidity: "0.7.3",
+   solidity: {
+      compilers: [
+         {
+            version: '0.7.3',
+            settings: {}
+         },
+         {
+            version: '0.8.0',
+            settings: {}
+         }
+      ]
+   },
    defaultNetwork: "rinkeby",
    networks: {
       hardhat: {},

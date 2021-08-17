@@ -28,22 +28,23 @@
  *    even if it is transferred.
  */
 
-pragma solidity ^0.7.3;
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract Plug is ERC721, Ownable {
-	using Counters for Counters.Counter;
-	Counters.Counter private _tokenIds;
+contract PlugTest4 is ERC721Upgradeable, OwnableUpgradeable {
+
+	using CountersUpgradeable for CountersUpgradeable.Counter;
+	CountersUpgradeable.Counter private _tokenIds;
 
 	uint constant NUM_ASSETS = 8;
 	uint constant MAX_NUM_PLUGS = 88;//this number is important
 
 	// Production hashes
-	string constant HASH_0 = "QmPCBhqdSXGMo7AS7NqgbV17w5sFJ7bSP5gpCPj4uARyNW"; //1% Plug
-	string constant HASH_1 = "QmcvsfEg1r9f43mZDd5pSXUdfb89GE1Jf72XMmrW87LqkZ";
+	string constant HASH_0 = "QmeyKF86ke66i339GAbHrtiG5DHchqo7oRLb5ky419bhG4"; //1% Plug
+	string constant HASH_1 = "QmTe7qzmMAV7NMGGvaqRcnaoFUoAYdcKz1cyZz4Yd8vBNV";
 	string constant HASH_2 = "QmXrJgAJCcmh38tXCBBetcXx3Wxrctqsg6ve8J76FDorkF";
 	string constant HASH_3 = "Qmbborkd6TyXofhWsFD9c2H6PzYii1VNkW7GjqT99kon6t";
 	string constant HASH_4 = "QmUwgMPZKYQJ7B7C7aV3AUnA3hqBxrEFKpNKUGYuh4YBf4";
@@ -65,7 +66,9 @@ contract Plug is ERC721, Ownable {
 	mapping(uint256 => bool) private _grandfatherPlugs;
 
 	// Create Plug
-	constructor() ERC721("the Plug", "") {}
+	function __Plug_init() internal initializer { 
+		__ERC721_init("the Plug", "");
+	}
 
 
 	/*** CORE FUNCTIONS ***/
@@ -97,7 +100,7 @@ contract Plug is ERC721, Ownable {
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {	
     	// If the "4 years" have passed, this is now a Grandfather token
-    	if (countDaysPassed(tokenId) >= 1440) {
+    	if (_exists(tokenId) && countDaysPassed(tokenId) >= 1440 && !_isGrandfather(tokenId)) {
 			_setGrandfather(tokenId);
 		} else {// o.t.w. change the timestamp on a transfer
 			_lastTransferTimes[tokenId] = block.timestamp;
@@ -173,7 +176,7 @@ contract Plug is ERC721, Ownable {
 	/*** HELPER FUNCTIONS ***/
 
 	// All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual returns (string memory)
+	function _baseURI() internal view virtual override returns (string memory)
 	{
 		return "https://ipfs.io/ipfs/";
 	}
@@ -282,9 +285,3 @@ contract Plug is ERC721, Ownable {
 		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 days);
 	}
 }
-
-/*
-	 * Test #1: only using _beforeTransfer (0xeA7657BaE5C75e537a6BB30d39AFEc3F4d591F8a) 
-	 * Test #2: using all transfer functions (0xc61C88a955b1B69d9f51F5c380fF547115BA63C4)
-	 * Test #3: 0x50cEe6842e712E1e4bc16752e39AB2A97C98001a
-	 */
