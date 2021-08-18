@@ -34,13 +34,14 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract PlugTest4 is ERC721Upgradeable, OwnableUpgradeable {
+contract PlugUpgradeable is ERC721Upgradeable, OwnableUpgradeable {
 
 	using CountersUpgradeable for CountersUpgradeable.Counter;
 	CountersUpgradeable.Counter private _tokenIds;
 
+	// Important numbers
 	uint constant NUM_ASSETS = 8;
-	uint constant MAX_NUM_PLUGS = 88;//this number is important
+	uint constant MAX_NUM_PLUGS = 88;
 
 	// Production hashes
 	string constant HASH_0 = "QmeyKF86ke66i339GAbHrtiG5DHchqo7oRLb5ky419bhG4"; //1% Plug
@@ -50,13 +51,10 @@ contract PlugTest4 is ERC721Upgradeable, OwnableUpgradeable {
 	string constant HASH_4 = "QmUwgMPZKYQJ7B7C7aV3AUnA3hqBxrEFKpNKUGYuh4YBf4";
 	string constant HASH_5 = "QmYSa8bVxwS8tQ4fRtaqZjucEVpQJNDHg2TuT4P12aqchX";
 	string constant HASH_6 = "QmeJPegPQLG3tfvmzVueWtbAr1Ww5PZ6b2ZFwrht71xTNx"; //100% Plug
-	string constant HASH_7 = ""; //grandfather Plug
+	string constant HASH_7 = "QmSsFEPJeqMeJZ5RcPekPCYX4JRbhMs1mdYKrzDw6DXGqT"; //grandfather Plug
 
 	// Our list of IPFS hashes for each of the 7 Plugs (varying juice levels)
-	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, 
-										HASH_2, HASH_3, 
-										HASH_4, HASH_5, 
-										HASH_6, HASH_7];
+	string [NUM_ASSETS] _assetHashes;
 
 	// Keep track of the "last transfer time" (o.t.w. mint time) for each token ID
 	// tokenID -> UTCTime
@@ -66,15 +64,17 @@ contract PlugTest4 is ERC721Upgradeable, OwnableUpgradeable {
 	mapping(uint256 => bool) private _grandfatherPlugs;
 
 	// Create Plug
-	function __Plug_init() internal initializer { 
+	function __Plug_init() internal initializer {
+		__Ownable_init_unchained();
 		__ERC721_init("the Plug", "");
+		_assetHashes = [HASH_0, HASH_1, HASH_2, HASH_3, HASH_4, HASH_5, HASH_6, HASH_7];
 	}
 
 
 	/*** CORE FUNCTIONS ***/
 
 	// Mint a single Plug
-	function mintPlug(address recipient) public onlyOwner returns (uint256)
+	function mintPlug(address recipient) public isAllowed returns (uint256)
 	{
 		_tokenIds.increment();
 
@@ -256,6 +256,15 @@ contract PlugTest4 is ERC721Upgradeable, OwnableUpgradeable {
 		} else {
 			return keccak256(A) == keccak256(B);
 		}
+	}
+
+	// Ownership
+	modifier isAllowed()
+	{
+		// Can easily add a few other addresses
+		require(_msgSender() == 0xEAb4Aea5cD7376C04923236c504e7e91362566D1, 
+			"Plug: Caller not permitted.");
+		_;
 	}
 
 

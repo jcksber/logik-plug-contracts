@@ -3,7 +3,6 @@
 ## The Plug 
 
 ### Notes for completing The Plug (pre-production)
-- Need to **make Plug.sol upgradable** just in case for emergencies in the future
 - IPFS hashes need to be updated with **new JSON pins** (need to research "About" section)
   -> https://docs.opensea.io/docs/metadata-standards'
 

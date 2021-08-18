@@ -49,7 +49,7 @@ contract Plug is ERC721, Ownable {
 	string constant HASH_4 = "QmUwgMPZKYQJ7B7C7aV3AUnA3hqBxrEFKpNKUGYuh4YBf4";
 	string constant HASH_5 = "QmYSa8bVxwS8tQ4fRtaqZjucEVpQJNDHg2TuT4P12aqchX";
 	string constant HASH_6 = "QmeJPegPQLG3tfvmzVueWtbAr1Ww5PZ6b2ZFwrht71xTNx"; //100% Plug
-	string constant HASH_7 = ""; //grandfather Plug
+	string constant HASH_7 = "QmSsFEPJeqMeJZ5RcPekPCYX4JRbhMs1mdYKrzDw6DXGqT"; //grandfather Plug
 
 	// Our list of IPFS hashes for each of the 7 Plugs (varying juice levels)
 	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, 
@@ -79,7 +79,7 @@ contract Plug is ERC721, Ownable {
 		_safeMint(recipient, newId);
 
 		// Add this to our mapping of "last transfer times"
-		_lastTransferTimes[newId] = block.timestamp;
+		_setLastTransferTime(newId);
 
 		return newId;
 	}
@@ -100,7 +100,7 @@ contract Plug is ERC721, Ownable {
     	if (countDaysPassed(tokenId) >= 1440) {
 			_setGrandfather(tokenId);
 		} else {// o.t.w. change the timestamp on a transfer
-			_lastTransferTimes[tokenId] = block.timestamp;
+			_setLastTransferTime(tokenId);
 		}
     }
 
@@ -157,6 +157,18 @@ contract Plug is ERC721, Ownable {
 		}
 	}
 
+	// Get the last transfer time for a tokenId
+	function _getLastTransferTime(uint256 tokenId) internal view returns (uint)
+	{
+		return _lastTransferTimes[tokenId];
+	}
+
+	// Set the last transfer time for a tokenId
+	function _setLastTransferTime(uint256 tokenId) internal
+	{
+		_lastTransferTimes[tokenId] = block.timestamp;
+	}
+
 	// Determine if a particular Plug is "grandfather"d in
 	function _isGrandfather(uint256 tokenId) internal view returns (bool)
 	{
@@ -167,15 +179,6 @@ contract Plug is ERC721, Ownable {
 	function _setGrandfather(uint256 tokenId) internal
 	{
 		_grandfatherPlugs[tokenId] = true;
-	}
-
-
-	/*** HELPER FUNCTIONS ***/
-
-	// All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual returns (string memory)
-	{
-		return "https://ipfs.io/ipfs/";
 	}
 
 	// Based on the number of days that have passed since the last transfer of
@@ -242,6 +245,15 @@ contract Plug is ERC721, Ownable {
 			   _stringsEqual(assetHash, HASH_7);
 	}
 
+
+	/*** HELPER FUNCTIONS ***/
+
+	// All of the asset's will be pinned to IPFS
+	function _baseURI() internal view virtual returns (string memory)
+	{
+		return "https://ipfs.io/ipfs/";
+	}
+
 	// Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
 	{
@@ -255,7 +267,6 @@ contract Plug is ERC721, Ownable {
 		}
 	}
 
-
 	/****** TIME SHIT ******/
 
 	// Number of minutes that have passed since transfer/mint
@@ -263,7 +274,7 @@ contract Plug is ERC721, Ownable {
 	{
 	    require(_exists(tokenId), 
 	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
-		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 minutes);
+		return uint16((block.timestamp - _getLastTransferTime(tokenId)) / 1 minutes);
 	}
 
 	// Number of hours that have passed since transfer/mint
@@ -271,7 +282,7 @@ contract Plug is ERC721, Ownable {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (hours) query for nonexistent token");
-		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 hours);
+		return uint16((block.timestamp - _getLastTransferTime(tokenId)) / 1 hours);
 	}
 
 	// Number of days that have passed since transfer/mint
@@ -279,12 +290,7 @@ contract Plug is ERC721, Ownable {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (days) query for nonexistent token");
-		return uint16((block.timestamp - _lastTransferTimes[tokenId]) / 1 days);
+		return uint16((block.timestamp - _getLastTransferTime(tokenId)) / 1 days);
 	}
 }
 
-/*
-	 * Test #1: only using _beforeTransfer (0xeA7657BaE5C75e537a6BB30d39AFEc3F4d591F8a) 
-	 * Test #2: using all transfer functions (0xc61C88a955b1B69d9f51F5c380fF547115BA63C4)
-	 * Test #3: 0x50cEe6842e712E1e4bc16752e39AB2A97C98001a
-	 */
