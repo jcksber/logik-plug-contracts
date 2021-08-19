@@ -33,81 +33,26 @@ pragma solidity ^0.7.3;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./KasbeerMade.sol";
+import "./PlugStorage.sol";
 
-contract Plug is ERC721, Ownable {
+contract Plug is ERC721, Ownable, KasbeerMade, PlugStorage {
 	using Counters for Counters.Counter;
 	Counters.Counter private _tokenIds;
 
-	uint constant NUM_ASSETS = 8;
-	uint constant MAX_NUM_PLUGS = 88;//this number is important
-
-	// Production hashes
-	string constant HASH_0 = "QmPCBhqdSXGMo7AS7NqgbV17w5sFJ7bSP5gpCPj4uARyNW"; //1% Plug
-	string constant HASH_1 = "QmcvsfEg1r9f43mZDd5pSXUdfb89GE1Jf72XMmrW87LqkZ";
-	string constant HASH_2 = "QmXrJgAJCcmh38tXCBBetcXx3Wxrctqsg6ve8J76FDorkF";
-	string constant HASH_3 = "Qmbborkd6TyXofhWsFD9c2H6PzYii1VNkW7GjqT99kon6t";
-	string constant HASH_4 = "QmUwgMPZKYQJ7B7C7aV3AUnA3hqBxrEFKpNKUGYuh4YBf4";
-	string constant HASH_5 = "QmYSa8bVxwS8tQ4fRtaqZjucEVpQJNDHg2TuT4P12aqchX";
-	string constant HASH_6 = "QmeJPegPQLG3tfvmzVueWtbAr1Ww5PZ6b2ZFwrht71xTNx"; //100% Plug
-	string constant HASH_7 = "QmSsFEPJeqMeJZ5RcPekPCYX4JRbhMs1mdYKrzDw6DXGqT"; //grandfather Plug
-
-	// Our list of IPFS hashes for each of the 7 Plugs (varying juice levels)
-	string [NUM_ASSETS] _assetHashes = [HASH_0, HASH_1, 
-										HASH_2, HASH_3, 
-										HASH_4, HASH_5, 
-										HASH_6, HASH_7];
-
-	// Keep track of the "last transfer time" (o.t.w. mint time) for each token ID
-	// tokenID -> UTCTime
-	mapping(uint256 => uint) private _lastTransferTimes;
-	// Keep track of "grandfather" Plugs
-	// tokenID -> true/false
-	mapping(uint256 => bool) private _grandfatherPlugs;
-
-	// Create Plug
+	// @dev Create Plug
 	constructor() ERC721("the Plug", "") {}
 
 
 	/*** CORE FUNCTIONS ***/
 
-	// Mint a single Plug
-	function mintPlug(address recipient) public onlyOwner returns (uint256)
+	// @dev All of the asset's will be pinned to IPFS
+	function _baseURI() internal view virtual returns (string memory)
 	{
-		_tokenIds.increment();
-
-		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
-
-		// Add this to our mapping of "last transfer times"
-		_setLastTransferTime(newId);
-
-		return newId;
+		return "https://ipfs.io/ipfs/";
 	}
 
-	// Burn a single Plug (destroy forever)
-	function burnPlug(uint256 tokenId) public virtual 
-	{
-		require(_isApprovedOrOwner(_msgSender(), tokenId), "Burnable: caller is not approved to burn");
-
-		_burn(tokenId);
-	}
-
-	// Any Plug transfer this will be called beforehand (updating the transfer time)
-	// If a Plug is now a Grandfather, it's timestamp won't be updated so its	
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
-    {	
-    	// If the "4 years" have passed, this is now a Grandfather token
-    	if (countDaysPassed(tokenId) >= 1440) {
-			_setGrandfather(tokenId);
-		} else {// o.t.w. change the timestamp on a transfer
-			_setLastTransferTime(tokenId);
-		}
-    }
-
-
-	/*** "THE PLUG" FUNCTIONS **/
-
-	// Override 'tokenURI' to account for asset/hash cycling
+	// @dev Override 'tokenURI' to account for asset/hash cycling
 	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
 	{	
 		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
@@ -118,11 +63,45 @@ contract Plug is ERC721, Ownable {
 		return string(abi.encodePacked(baseURI, hash));
 	}
 
-	// List the owners for a certain level (determined by assetHash)
-	// We'll need this for airdrops and benefits
-	function listLevelOwners(string memory assetHash) public view returns (address[] memory)
+	// @dev Any Plug transfer this will be called beforehand (updating the transfer time)
+	// If a Plug is now a Grandfather, it's timestamp won't be updated so its	
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
+    {	
+    	// If the "4 years" have passed, don't change birthday
+    	if (_exists(tokenId) && !isSensei(tokenId)) {
+    		_setBirthday(tokenId);
+    	}
+    }
+
+    // @dev Mint a single Plug
+	function mintPlug(address recipient) public onlyOwner returns (uint256)
 	{
-		require(_hashExists(assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
+		_tokenIds.increment();
+
+		uint256 newId = _tokenIds.current();
+		_safeMint(recipient, newId);
+		// Add this to our mapping of "birthdays"
+		_setBirthday(newId);
+
+		return newId;
+	}
+
+	// @dev Burn a single Plug (destroy forever)
+	function burnPlug(uint256 tokenId) public virtual 
+	{
+		require(_isApprovedOrOwner(_msgSender(), tokenId), "Burnable: caller is not approved to burn");
+
+		_burn(tokenId);
+	}
+
+
+	/*** "THE PLUG" FUNCTIONS **/
+
+	// @dev List the owners for a certain level (determined by assetHash)
+	// We'll need this for airdrops and benefits
+	function listLevelOwners(string memory _assetHash) public view returns (address[] memory)
+	{
+		require(_hashExists(_assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
 
 		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
 		uint counter = 0; //keeps track of where we are in 'owners'
@@ -137,7 +116,7 @@ contract Plug is ERC721, Ownable {
 
 			// If this is equal to the hash we're looking for (assetHash)
 			// then determine the owner of the token and add it to our list
-			if (_stringsEqual(hash, assetHash)) {
+			if (_stringsEqual(hash, _assetHash)) {
 				address owner = ownerOf(tokenId);
 				levelOwners[counter] = owner;
 				counter++;
@@ -147,63 +126,68 @@ contract Plug is ERC721, Ownable {
 		return levelOwners;
 	}
 
-	// Turn a Plug into a Grandfather Plug
-	function claimGrandfatherPlug(uint256 tokenId) public onlyOwner
-	{
-		require(!_isGrandfather(tokenId), "Plug: tokenId is already Grandfather");
+	// // @dev Turn a Plug into a Grandfather Plug
+	// function claimGrandfatherPlug(uint256 tokenId) public onlyOwner
+	// {
+	// 	require(!isGrandfather(tokenId), "Plug: tokenId is already Grandfather");
 
-		if (countDaysPassed(tokenId) >= 1440) {
-			_setGrandfather(tokenId);
-		}
+	// 	if (countDaysPassed(tokenId) >= 1440) {
+	// 		_setGrandfather(tokenId);
+	// 	}
+	// }
+
+	// @dev Get the last transfer time for a tokenId
+	function getBirthday(uint256 tokenId) public view returns (uint)
+	{
+		return _birthdays[tokenId];
 	}
 
-	// Get the last transfer time for a tokenId
-	function _getLastTransferTime(uint256 tokenId) internal view returns (uint)
+	// @dev Set the last transfer time for a tokenId
+	function _setBirthday(uint256 tokenId) internal
 	{
-		return _lastTransferTimes[tokenId];
+		_birthdays[tokenId] = block.timestamp;
 	}
 
-	// Set the last transfer time for a tokenId
-	function _setLastTransferTime(uint256 tokenId) internal
+	function isSensei(uint256 tokenId) public view returns (bool)
 	{
-		_lastTransferTimes[tokenId] = block.timestamp;
+		return countDaysPassed(tokenId) >= 1440;
 	}
 
-	// Determine if a particular Plug is "grandfather"d in
-	function _isGrandfather(uint256 tokenId) internal view returns (bool)
-	{
-		return _grandfatherPlugs[tokenId];
-	}
+	// // @dev Determine if a particular Plug is "grandfather"d in
+	// function isGrandfather(uint256 tokenId) public view returns (bool)
+	// {
+	// 	return _grandfatherPlugs[tokenId];
+	// }
 
-	// Set tokenId as a Grandfather Plug
-	function _setGrandfather(uint256 tokenId) internal
-	{
-		_grandfatherPlugs[tokenId] = true;
-	}
+	// // @dev Set tokenId as a Grandfather Plug
+	// function _setGrandfather(uint256 tokenId) internal
+	// {
+	// 	_grandfatherPlugs[tokenId] = true;
+	// }
 
-	// Based on the number of days that have passed since the last transfer of
+	// @dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
 	function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
 	{
 		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
 
 		// TEST LOGIC /////////////////////////////////////////////////////////////
-		// Calculate the number of hours that have passed for 'tokenId'
-		uint hoursPassed = countHoursPassed(tokenId);
+		// Calculate the number of minutes that have passed for 'tokenId'
+		uint minsPassed = countMinutesPassed(tokenId);
 		// Order is "reversed" for cleaner code
-		if (hoursPassed >= 24 || _isGrandfather(tokenId)) {
+		if (minsPassed >= 45 || isSensei(tokenId)) {
 			return HASH_7;
-		} else if (hoursPassed >= 6) {
+		} else if (minsPassed >= 30) {
 			return HASH_6;
-		} else if (hoursPassed >= 5) {
+		} else if (minsPassed >= 25) {
 			return HASH_5;
-		} else if (hoursPassed >= 4) {
+		} else if (minsPassed >= 20) {
 			return HASH_4;
-		} else if (hoursPassed >= 3) {
+		} else if (minsPassed >= 15) {
 			return HASH_3;
-		} else if (hoursPassed >= 2) {
+		} else if (minsPassed >= 10) {
 			return HASH_2;
-		} else if (hoursPassed >= 1) {
+		} else if (minsPassed >= 5) {
 			return HASH_1;
 		} else {
 			return HASH_0; 
@@ -232,40 +216,26 @@ contract Plug is ERC721, Ownable {
 		// }
 	}
 
-	// Determine if 'assetHash' is one of the IPFS hashes for Plug
-	function _hashExists(string memory assetHash) internal pure returns (bool) 
+	// @dev Determine if 'assetHash' is one of the IPFS hashes for Plug
+	function _hashExists(string memory _assetHash) internal view returns (bool) 
 	{
-		return _stringsEqual(assetHash, HASH_0) || 
-			   _stringsEqual(assetHash, HASH_1) ||
-			   _stringsEqual(assetHash, HASH_2) ||
-			   _stringsEqual(assetHash, HASH_3) ||
-			   _stringsEqual(assetHash, HASH_4) ||
-			   _stringsEqual(assetHash, HASH_5) ||
-			   _stringsEqual(assetHash, HASH_6) ||
-			   _stringsEqual(assetHash, HASH_7);
-	}
-
-
-	/*** HELPER FUNCTIONS ***/
-
-	// All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual returns (string memory)
-	{
-		return "https://ipfs.io/ipfs/";
-	}
-
-	// Determine if two strings are equal using the length + hash method
-	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
-	{
-		bytes memory A = bytes(a);
-		bytes memory B = bytes(b);
-
-		if (A.length != B.length) {
-			return false;
-		} else {
-			return keccak256(A) == keccak256(B);
+		uint8 i;
+		for (i = 0; i < NUM_ASSETS; i++) {
+			if (!_stringsEqual(_assetHash, assetHashes[i])) {
+				return false;
+			}
 		}
+		return true;
 	}
+
+	// @dev Allows us to update the IPFS hash values
+	function updateHash(uint8 _hash_num, string memory _str) public isMe {
+		require(0 <= _hash_num && _hash_num < NUM_ASSETS, 
+			"PlugStorage: _hash_num out of bounds");
+		// Can only update one hash at a time...
+		assetHashes[_hash_num] = _str;
+	}
+
 
 	/****** TIME SHIT ******/
 
@@ -274,7 +244,7 @@ contract Plug is ERC721, Ownable {
 	{
 	    require(_exists(tokenId), 
 	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
-		return uint16((block.timestamp - _getLastTransferTime(tokenId)) / 1 minutes);
+		return uint16((block.timestamp - _birthdays[tokenId]) / 1 minutes);
 	}
 
 	// Number of hours that have passed since transfer/mint
@@ -282,7 +252,7 @@ contract Plug is ERC721, Ownable {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (hours) query for nonexistent token");
-		return uint16((block.timestamp - _getLastTransferTime(tokenId)) / 1 hours);
+		return uint16((block.timestamp - _birthdays[tokenId]) / 1 hours);
 	}
 
 	// Number of days that have passed since transfer/mint
@@ -290,7 +260,7 @@ contract Plug is ERC721, Ownable {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (days) query for nonexistent token");
-		return uint16((block.timestamp - _getLastTransferTime(tokenId)) / 1 days);
+		return uint16((block.timestamp - _birthdays[tokenId]) / 1 days);
 	}
 }
 

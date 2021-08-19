@@ -123,7 +123,7 @@ contract PlugUpgradeable is ERC721Upgradeable, OwnableUpgradeable {
 
 	// List the owners for a certain level (determined by assetHash)
 	// We'll need this for airdrops and benefits
-	function listLevelOwners(string memory assetHash) public view returns (address[] memory)
+	function listLevelOwners(string memory assetHash) external view returns (address[] memory)
 	{
 		require(_hashExists(assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
 
