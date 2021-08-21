@@ -179,6 +179,14 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
 ````
 
 
+8.21.21. -
+
+- NOTE: the `_squad` variable may be improperly used right now since I have that 
+  Gnosis wallet (or whatever) ... it's useful for testing that's for sure
+
+- Kind of want to try refactoring even more to make `KasbeerMade721` to handle a bunch
+  of the stuff I'd want done for every ERC721 i make...
+
 
 
 
