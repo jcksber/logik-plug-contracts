@@ -195,7 +195,7 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
   in order to focus more on the code that matters for this particular NFT
   -> so far so good
 
-
+- Opensea testnet sucks
 
 
 
