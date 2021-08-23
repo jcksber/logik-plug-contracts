@@ -8,8 +8,8 @@ const { STAGING_ALCHEMY_API_URL, STAGING_PRIVATE_KEY } = process.env;
 module.exports = {
    solidity: {
       compilers: [
-         {
-            version: '0.7.3',
+      {
+            version: '0.8.1',
             settings: {}
          },
          {

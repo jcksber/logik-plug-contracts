@@ -13,12 +13,14 @@ const PUBLIC_KEY = process.env.STAGING_PUBLIC_KEY;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(ALCHEMY_API_URL);
 
-const plugContract = require("../artifacts/contracts/Plug.sol/Plug.json");
-const plugAddress = "0x03D3F3AC3aaE24F46A6c31708fe2f9aFEB232f62";//rinkeby
+const plugContract = require("../artifacts/contracts/temp/Plug.sol/Plug.json");
+const plugAddress = "0xbeBA10E84f48e76EfffC83B43C4da7e0df97A11a";//rinkeby
 const plugNFT = new web3.eth.Contract(plugContract.abi, plugAddress);
 
 async function mintPlug() {
 	const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest');
+
+	console.log(plugContract.abi);
 
 	// the transaction
 	const tx = {
@@ -26,7 +28,7 @@ async function mintPlug() {
 		'to': plugAddress,
 		'nonce': nonce,
 		'gas': 500000,
-		'data': plugNFT.methods.mintPlug(PUBLIC_KEY).encodeABI()
+		'data': plugNFT.methods.mint721(PUBLIC_KEY).encodeABI()
 	};
 
 	const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);

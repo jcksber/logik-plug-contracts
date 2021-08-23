@@ -188,6 +188,16 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
   of the stuff I'd want done for every ERC721 i make...
 
 
+8.23.21  -
+
+- Refactored the code and am now testing it ... all of the ownership logic, 
+  custom hash stuff, and erc721 overrides have been taken out of `Plug.sol` 
+  in order to focus more on the code that matters for this particular NFT
+  -> so far so good
+
+
+
+
 
 
 

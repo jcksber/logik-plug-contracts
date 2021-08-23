@@ -23,55 +23,48 @@
  *				   5. 8 months (240 days): 66% juice
  *				   6. 10 months (300 days): 87% juice 
  *				   7. 12 months (360 days): 100% juice
- *				   8. 48 months (1440 days): Permanent 100% (sensei)
+ *				   8. 48 months (1440 days): Permanent 100% (alchemist)
  *  - If a Plug is a Alchemist (final state), it means that it will never lose juice again,
  *    even if it is transferred.
  */
 
-pragma solidity ^0.7.3;
+pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./KasbeerMade.sol";
-import "./PlugStorage.sol";
+import "./KasbeerMade721.sol";
+import "./KasbeerStorage.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (@jcksber, @satoshigoat)
-contract Plug is ERC721, KasbeerMade, PlugStorage {
+contract Plug is KasbeerMade721 {
 
 	using Counters for Counters.Counter;
 
-	// @dev Create Plug
-	constructor() ERC721("the Plug", "") {}
+	//@dev Important number - cannot be changed
+	uint constant MAX_NUM_PLUGS = 88;
+
+	//@dev Keep track of the birthday (mint/last transfer) for each token ID
+	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
+
+	//@dev Create Plug
+	constructor() KasbeerMade721("the Plug v10", "") {
+		// Add LOGIK's dev address
+		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
+		addToSquad(logik);
+	}
 
 
 	/*** CORE FUNCTIONS ***/
 
-	// @dev Override 'tokenURI' to account for asset/hash cycling
-	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
-	{	
-		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
-
-		string memory baseURI = _baseURI();
-		string memory hash = _tokenHash(tokenId);
-		
-		return string(abi.encodePacked(baseURI, hash));
-	}
-
-	// @dev All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual returns (string memory)
-	{
-		return "https://ipfs.io/ipfs/";
-	}
-
-	// @dev Based on the number of days that have passed since the last transfer of
+	//@dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
-	function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
+	function _tokenHash(uint256 tokenId) internal virtual view override returns (string memory)
 	{
 		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
 
 		// TEST LOGIC 
-		// Calculate the number of minutes that have passed for 'tokenId'
 		uint minsPassed = countMinutesPassed(tokenId);
+
 		// Order is "reversed" for cleaner code
 		if (minsPassed >= 45) {
 			return HASH_7;
@@ -92,8 +85,8 @@ contract Plug is ERC721, KasbeerMade, PlugStorage {
 		}
 	}
 
-	// @dev Any Plug transfer this will be called beforehand (updating the transfer time)
-	// If a Plug is now a Grandfather, it's timestamp won't be updated so its	
+	//@dev Any Plug transfer this will be called beforehand (updating the transfer time)
+	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {	
     	// If the "4 years" have passed, don't change birthday
@@ -103,44 +96,37 @@ contract Plug is ERC721, KasbeerMade, PlugStorage {
     }
 
 
-    // @dev Mint a single Plug
-	function mintPlug(address recipient) public onlyOwner returns (uint256)
+    //@dev Mint a single Plug
+	function mint721(address recipient) public virtual override onlyOwner returns (uint256)
 	{
 		_tokenIds.increment();
 
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 		_setBirthday(newId); //setup this token & its "birthday"
+		emit ERC721Minted(newId);
 
 		return newId;
-	}
-
-	// @dev Burn a single Plug (destroy forever)
-	function burnPlug(uint256 tokenId) public virtual isSquad
-	{
-		require(_isApprovedOrOwner(_msgSender(), tokenId), "Burnable: caller is not approved to burn");
-
-		_burn(tokenId);
 	}
 
 
 	/*** "THE PLUG" FUNCTIONS 
 		 & PUBLIC FACING FUNCTIONS FOR CHANGES **/
 
-	// @dev Get the last transfer time for a tokenId
+	//@dev Get the last transfer time for a tokenId
 	function getBirthday(uint256 tokenId) public view returns (uint)
 	{
 		return _birthdays[tokenId];
 	}
 
-	// @dev Determine if a token has reached alchemist status
+	//@dev Determine if a token has reached alchemist status
 	function isAlchemist(uint256 tokenId) public view returns (bool)
 	{
 		return countMinutesPassed(tokenId) >= 45;//testing
 		//return countDaysPassed(tokenId) >= 1440;
 	}
 
-	// @dev List the owners for a certain level (determined by _assetHash)
+	//@dev List the owners for a certain level (determined by _assetHash)
 	// We'll need this for airdrops and benefits
 	function listLevelOwners(string memory _assetHash) public view isSquad returns (address[] memory)
 	{
@@ -169,37 +155,14 @@ contract Plug is ERC721, KasbeerMade, PlugStorage {
 		return levelOwners;
 	}
 
-	// @dev Allows us to update the IPFS hash values
-	function updateHash(uint8 _hash_num, string memory _str) public isSquad {
-		require(0 <= _hash_num && _hash_num < NUM_ASSETS, 
-			"PlugStorage: _hash_num out of bounds");
-		// Can only update one hash at a time...
-		assetHashes[_hash_num] = _str;
-	}
-
 
 	/*** HELPER FUNCTIONS ***/
 
-	// @dev Determine if 'assetHash' is one of the IPFS hashes for Plug
-	function _hashExists(string memory _assetHash) internal view returns (bool) 
-	{
-		uint8 i;
-		for (i = 0; i < NUM_ASSETS; i++) {
-			if (!_stringsEqual(_assetHash, assetHashes[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	// @dev Set the last transfer time for a tokenId
+	//@dev Set the last transfer time for a tokenId
 	function _setBirthday(uint256 tokenId) private
 	{
 		_birthdays[tokenId] = block.timestamp;
 	}
-
-
-	/****** TIME SHIT ******/
 
 	// Number of minutes that have passed since transfer/mint
 	function countMinutesPassed(uint256 tokenId) public view returns (uint16) 
