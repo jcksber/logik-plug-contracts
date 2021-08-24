@@ -32,6 +32,8 @@ contract KasbeerStorage {
 	//@dev Ownership
 	mapping (address => bool) internal _squad;
 
+	//NOTE: maybe replace this with a struct that has a number of assets,
+	// and a mapping from ipfsHash -> position
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
 	//@dev Production hashes

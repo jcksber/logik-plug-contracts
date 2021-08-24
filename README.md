@@ -213,6 +213,9 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
 
 - Should have never added truffle....... hardhat already has testing abilities!!
 
+- Removed truffle, added mocha (for hardhat)
+
+- I think everything gets even cleaner with interfaces....
 
 
 
