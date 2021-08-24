@@ -198,6 +198,20 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
 - Opensea testnet sucks
 
 
+8.24.21 - 
+
+- My build environmnent was broken for a solid few hours,,,,,,,,,,,,:|
+
+- Did some Zombie Truffle tutorials and that's why I got into intalling truffle and
+  eveything went to shit
+
+- This is all a massive headache 
+
+- Okay i fixed all of the issues that somehow arose ... i don't rememeber exactly 
+  what broke everything but `solc` was suddenly a problem and then upon re-installation 
+  the versions for everything were fkd up
+
+
 
 
 

@@ -28,7 +28,7 @@
  *    even if it is transferred.
  */
 
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity >=0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./KasbeerMade721.sol";
