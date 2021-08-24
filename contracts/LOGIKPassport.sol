@@ -13,7 +13,7 @@
 //  * Price: ~8 ETH
 //  */
 
-pragma solidity ^0.8.0;
+pragma solidity >=0.5.16 <0.9.0;
 
 // import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 // //import "@openzeppelin/contracts/utils/Counters.sol";

@@ -28,7 +28,7 @@
  *    even if it is transferred.
  */
 
-pragma solidity >=0.8.0;
+pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./KasbeerMade721.sol";
@@ -37,6 +37,8 @@ import "./KasbeerStorage.sol";
 //@title The Plug
 //@author Jack Kasbeer (@jcksber, @satoshigoat)
 contract Plug is KasbeerMade721 {
+
+	// event AlchemistBorn(address indexed owner, uint256 indexed tokenId);
 
 	using Counters for Counters.Counter;
 

@@ -6,7 +6,7 @@
  * Created: August 21, 2021
  */
 
-pragma solidity >=0.8.0;
+pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";

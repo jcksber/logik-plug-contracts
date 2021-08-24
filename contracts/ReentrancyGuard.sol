@@ -16,7 +16,7 @@
  * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
  */
 
-pragma solidity >=0.6.12;
+pragma solidity >=0.5.16 <0.9.0;
 
 abstract contract ReentrancyGuard {
     // Booleans are more expensive than uint256 or any type that takes up a full

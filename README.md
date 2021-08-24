@@ -211,6 +211,8 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
   what broke everything but `solc` was suddenly a problem and then upon re-installation 
   the versions for everything were fkd up
 
+- Should have never added truffle....... hardhat already has testing abilities!!
+
 
 
 
