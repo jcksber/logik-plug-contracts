@@ -146,8 +146,8 @@ contract Plug is KasbeerMade721 {
 	//@dev Determine if a token has reached alchemist status
 	function isAlchemist(uint256 tokenId) public view returns (bool)
 	{
-		return countMinutesPassed(tokenId) >= 45;//testing
-		//return countDaysPassed(tokenId) >= 1440;
+		//return countMinutesPassed(tokenId) >= 45;//testing
+		return countDaysPassed(tokenId) >= 1440;
 	}
 
 	//@dev List the owners for a certain level (determined by _assetHash)

@@ -169,6 +169,13 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		selfdestruct(payable(owner()));
 	}
 
+	function getHashByIndex(uint256 idx) public view returns (string memory)
+	{
+		require(0 <= idx && idx < NUM_ASSETS, 
+			"KasbeerMade721: idx out of bounds");
+		return assetHashes[idx];
+	}
+
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
 	{

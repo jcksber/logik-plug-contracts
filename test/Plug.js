@@ -131,8 +131,40 @@ describe("Plug contract", function () {
 	});
 
 	describe("Time-triggered asset cycling", function () {
-		it("Plug should update it's hash every 60 days", async function () {
+		it("Plug should update it's hash every 60 days for the first year", async function () {
 			// First we need to mint a token
+			const id = await hardhatPlug.mint721(alice);
+			const baseURI = "https://ipfs.io/ipfs/";
+
+			// Next, increase time until 1 year has passed (pre-alchemist) 
+			// (in 60 day increments)
+			var i, j, uri, hash;
+			for (i = 0; i <= 360; i += 60) {
+				// Increase time (after first iteration)
+				await time.increase(time.duration.days(i));
+				// Find out what the token's current URI is & compare
+				j = i / 60;
+
+				uri = await hardhatPlug.tokenURI(id);
+				hash = await hardhatPlug.getHashByIndex(j);
+				URI = baseURI + hash;
+
+				expect(uri).to.equal(URI);
+			}
+		});
+
+		it("Plug should turn into an Alchemist after 4 years", async function () {
+			// First, mint a token
+			const id = await hardhatPlug.mint721(trent);
+			const baseURI = "https://ipfs.io/ipfs/";
+			const hash = await hardhatPlug.getHashByIndex(7);
+			const URI = baseURI + hash;
+
+			// Go 4 years into the future
+			await time.increase(time.duration.days(1440));
+
+			expect(await hardhatPlug.isAlchemist(id)).to.equal(true);
+			expect(await hardhatPlug.tokenURI(id)).to.equal(URI);
 		});
 	});
 
