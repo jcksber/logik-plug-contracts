@@ -37,6 +37,7 @@ describe("Plug contract", function () {
 
   	let Plug;
   	let hardhatPlug;
+  	let owner;
   	let alice;
   	let bob;
   	let trent;
@@ -47,15 +48,15 @@ describe("Plug contract", function () {
     beforeEach(async function () {
     	Plug = await ethers.getContractFactory("Plug");
     	[owner, alice, bob, trent, ...addrs] = await ethers.getSigners();
-
-    	hardhatPlug = await PLug.deploy();
+    	
+    	hardhatPlug = await Plug.deploy();
     });
 
     // `afterEach` will run after each test, destroying the deployed contract
     // every time.
-    afterEach(async function () {
-    	await hardhatPlug.kill();
-    });
+    // afterEach(async function () {
+    // 	await hardhatPlug.kill();
+    // });
 
     // You can nest describe calls to create subsections.
     describe("Deployment", function () {
@@ -78,50 +79,51 @@ describe("Plug contract", function () {
 
 	describe("Squad functionality", function () {
 		it("Squad members should be addable", async function () {
-			expect(isInSquad(alice)).to.equal(false);
+			await hardhatPlug.removeFromSquad(owner.address);
+			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(false);
 
 			// Add alice to the squad
-			await hardhatPlug.addToSquad(alice);
+			await hardhatPlug.addToSquad(owner.address);
 
-			expect(isInSquad(alice)).to.equal(true);
+			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(true);
 		});
 
 		it("Squad members should be removable", async function () {
-			expect(isInSquad(alice)).to.equal(false);
+			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(false);
 
 			// Add alice to the squad then remove her
-			await hardhatPlug.addToSquad(alice);
-			await hardhatPlug.removeFromSquad(alice);
+			await hardhatPlug.addToSquad(owner.address);
+			await hardhatPlug.removeFromSquad(owner.address);
 
-			expect(isInSquad(alice)).to.equal(false);
+			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(false);
 		});
 	});
 
 	describe("Minting & burning", function () {
 		it("Minting should increment the token id by 1 each time", async function () {
-			let id = await hardhatPlug.mint721(owner);
-			expect(id).to.equal(1);
-			id = await hardhatPlug.mint721(alice);
-			expect(id).to.equal(2);
+			const id1 = await hardhatPlug.mint721(owner.address);
+			expect(id1).to.equal(1);
+			const id2 = await hardhatPlug.mint721(owner.address);
+			expect(id2).to.equal(2);
 		});
 
 		it("Minting should set the birthday of `tokenId` to the current time", async function () {
-			const aliceId = await hardhatPlug.mint721(alice);
-			const aliceBday = await hardhatPlug.getBirthday(aliceId);
-			let daysPassed = await hardhatPlug.countDaysPassed(aliceId);
-			expect(daysPassed).to.equal(0);
+			const id = await hardhatPlug.mint721(owner.address);
+			const bday = await hardhatPlug.getBirthday(id);
+			const daysPassed1 = await hardhatPlug.countDaysPassed(id);
+			expect(daysPassed1).to.equal(0);
 
 			// Go 1 day into the future
 			await time.increase(time.duration.days(1));
 
-			daysPassed = await hardhatPlug.countDaysPassed(aliceId);
-			expect(daysPassed).to.equal(1);
+			const daysPassed2 = await hardhatPlug.countDaysPassed(id);
+			expect(daysPassed2).to.equal(1);
 		});
 
 		it("Burning should remove a token permnently", async function () {
-			const id = await hardhatPlug.mint721(owner);
+			const id = await hardhatPlug.mint721(owner.address);
 			const initialOwner = await hardhatPlug.ownerOf(id);
-			expect(initialOwner).to.equal(owner);
+			expect(initialOwner).to.equal(owner.address);
 
 			// Burn the token
 			await hardhatPlug.burn721(id);
@@ -133,7 +135,7 @@ describe("Plug contract", function () {
 	describe("Time-triggered asset cycling", function () {
 		it("Plug should update it's hash every 60 days for the first year", async function () {
 			// First we need to mint a token
-			const id = await hardhatPlug.mint721(alice);
+			const id = await hardhatPlug.mint721(owner.address);
 			const baseURI = "https://ipfs.io/ipfs/";
 
 			// Next, increase time until 1 year has passed (pre-alchemist) 
@@ -155,7 +157,7 @@ describe("Plug contract", function () {
 
 		it("Plug should turn into an Alchemist after 4 years", async function () {
 			// First, mint a token
-			const id = await hardhatPlug.mint721(trent);
+			const id = await hardhatPlug.mint721(owner.address);
 			const baseURI = "https://ipfs.io/ipfs/";
 			const hash = await hardhatPlug.getHashByIndex(7);
 			const URI = baseURI + hash;
