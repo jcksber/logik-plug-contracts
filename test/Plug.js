@@ -8,8 +8,15 @@
  *
  */
 
+require('dotenv').config();
+const API_URL = process.env.STAGING_ALCHEMY_API_URL;
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
+const utils = require("./helpers/utils");
+const time = require("./helpers/time");
+const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const web3 = createAlchemyWeb3(API_URL);
+
 
 // `describe` is a Mocha function that allows you to organize your tests. It's
 // not actually needed, but having your tests organized makes debugging them
@@ -49,7 +56,7 @@ describe("Plug contract", function () {
     afterEach(async function () {
     	await hardhatPlug.kill();
     });
-    
+
     // You can nest describe calls to create subsections.
     describe("Deployment", function () {
     	// `it` is another Mocha function. This is the one you use to define your
@@ -60,22 +67,80 @@ describe("Plug contract", function () {
 			// Expect receives a value, and wraps it in an Assertion object. These
       		// objects have a lot of utility methods to assert values.
 			const jackAddress = "0xEAb4Aea5cD7376C04923236c504e7e91362566D1";
-
 			expect(await hardhatPlug.isInSquad(jackAddress)).to.equal(true);
 		});
 
 		it("Deployment should add logik's dev address to `_squad`", async function () {
 			const logikAddress = "0x6b8C6E15818C74895c31A1C91390b3d42B336799";
-
 			expect(await hardhatPlug.isInSquad(logikAddress)).to.equal(true);
 		});
 	});
 
-	describe("Time-Triggered Asset Cycling", function () {
+	describe("Squad functionality", function () {
+		it("Squad members should be addable", async function () {
+			expect(isInSquad(alice)).to.equal(false);
 
+			// Add alice to the squad
+			await hardhatPlug.addToSquad(alice);
+
+			expect(isInSquad(alice)).to.equal(true);
+		});
+
+		it("Squad members should be removable", async function () {
+			expect(isInSquad(alice)).to.equal(false);
+
+			// Add alice to the squad then remove her
+			await hardhatPlug.addToSquad(alice);
+			await hardhatPlug.removeFromSquad(alice);
+
+			expect(isInSquad(alice)).to.equal(false);
+		});
+	});
+
+	describe("Minting & burning", function () {
+		it("Minting should increment the token id by 1 each time", async function () {
+			let id = await hardhatPlug.mint721(owner);
+			expect(id).to.equal(1);
+			id = await hardhatPlug.mint721(alice);
+			expect(id).to.equal(2);
+		});
+
+		it("Minting should set the birthday of `tokenId` to the current time", async function () {
+			const aliceId = await hardhatPlug.mint721(alice);
+			const aliceBday = await hardhatPlug.getBirthday(aliceId);
+			let daysPassed = await hardhatPlug.countDaysPassed(aliceId);
+			expect(daysPassed).to.equal(0);
+
+			// Go 1 day into the future
+			await time.increase(time.duration.days(1));
+
+			daysPassed = await hardhatPlug.countDaysPassed(aliceId);
+			expect(daysPassed).to.equal(1);
+		});
+
+		it("Burning should remove a token permnently", async function () {
+			const id = await hardhatPlug.mint721(owner);
+			const initialOwner = await hardhatPlug.ownerOf(id);
+			expect(initialOwner).to.equal(owner);
+
+			// Burn the token
+			await hardhatPlug.burn721(id);
+
+			utils.shouldThrow(await hardhatPlug.getBirthday(id));
+		});
+	});
+
+	describe("Time-triggered asset cycling", function () {
+		it("Plug should update it's hash every 60 days", async function () {
+			// First we need to mint a token
+		});
 	});
 
 	describe("Transfers", function () {
+		//take this from zombies
+	});
+
+	describe("Miscellaneous", function () {
 
 	});
 });

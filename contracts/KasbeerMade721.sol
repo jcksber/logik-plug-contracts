@@ -164,6 +164,11 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	/*** HELPER FUNCTIONS ***/
 
+	function kill() public onlyOwner
+	{
+		selfdestruct(payable(owner()));
+	}
+
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
 	{
