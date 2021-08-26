@@ -42,6 +42,22 @@ describe('KasbeerMade721 contract', () => {
 
 	});
 
+	describe("Squad functionality", function () {
+		it("Squad members should be addable", async function () {
+			// Add alice to the squad
+			shouldNotThrow(await token.addToSquad(alice.address));
+			expect(await token.isInSquad(alice.address)).to.equal(true);
+		});
+
+		it("Squad members should be removable", async function () {
+			// Add alice to the squad then remove her
+			shouldNotThrow(await token.addToSquad(alice.address));
+			shouldNotThrow(await token.removeFromSquad(alice.address));
+
+			expect(await token.isInSquad(alice.address)).to.equal(false);
+		});
+	});
+
 	// it('Assigns initial balance', async () => {
 	// 	expect(await token.balanceOf(wallet.address)).to.equal(1000);
 	// });
