@@ -1,7 +1,15 @@
+const { ethers } = require("hardhat");
+const { expect } = require("chai");
+
+require('dotenv').config();
+const API_URL = process.env.STAGING_ALCHEMY_API_URL;
+const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const web3 = createAlchemyWeb3(API_URL);
+
 async function increase(duration) {
 
     //first, let's increase time
-    await web3.currentProvider.sendAsync({
+    await web3.currentProvider.send({
         jsonrpc: "2.0",
         method: "evm_increaseTime",
         params: [duration], // there are 86400 seconds in a day
@@ -9,7 +17,7 @@ async function increase(duration) {
     }, () => {});
 
     //next, let's mine a new block
-    web3.currentProvider.send({
+    await web3.currentProvider.send({
         jsonrpc: '2.0',
         method: 'evm_mine',
         params: [],

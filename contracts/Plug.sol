@@ -85,6 +85,7 @@ contract Plug is KasbeerMade721 {
 		// } else {
 		// 	return HASH_0; 
 		// }
+		
 		// Calculate days gone by for this particular token with 'tokenId'
 		uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
 		// // The logic here is "reversed" for cleaner code
@@ -126,7 +127,7 @@ contract Plug is KasbeerMade721 {
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 		_setBirthday(newId); //setup this token & its "birthday"
-		emit ERC721Minted(newId);
+		//emit ERC721Minted(newId);
 
 		return newId;
 	}

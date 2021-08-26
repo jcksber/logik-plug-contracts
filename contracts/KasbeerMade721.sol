@@ -79,7 +79,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 			"KasbeerMade721: _hash_num out of bounds");
 
 		assetHashes[_hash_num] = _str;
-		emit HashUpdated(_str);
+		//emit HashUpdated(_str);
 	}
 
 	// @dev Add an asset hash
@@ -104,7 +104,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 
-		emit ERC721Minted(newId);
+		//emit ERC721Minted(newId);
 
 		return newId;
 	}
@@ -116,7 +116,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 			"KasbeerMade721 (Burnable): caller is not approved to burn");
 
 		_burn(tokenId);
-		emit ERC721Burned(tokenId);
+		//emit ERC721Burned(tokenId);
 	}
 
 
@@ -140,7 +140,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(!isInSquad(a), "KasbeerMade721: Address already in squad.");
 
 		_squad[a] = true;
-		emit SquadMemberAdded(a);
+		//emit SquadMemberAdded(a);
 	}
 
 	//@dev Remove someone from the squad
@@ -149,7 +149,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(isInSquad(a), "KasbeerMade721: Address already not in squad.");
 
 		_squad[a] = false;
-		emit SquadMemberRemoved(a);
+		//emit SquadMemberRemoved(a);
 	}
 
 

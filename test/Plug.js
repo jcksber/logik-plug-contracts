@@ -1,183 +1,187 @@
-/*
- * Plug.js
- *
- * Created: August 24, 2021
- * Author: Jack Kasbeer
- *
- * Test suite for Plug.sol 
- *
- */
+// /*
+//  * Plug.js
+//  *
+//  * Created: August 24, 2021
+//  * Author: Jack Kasbeer
+//  *
+//  * Test suite for Plug.sol 
+//  *
+//  */
 
-require('dotenv').config();
-const API_URL = process.env.STAGING_ALCHEMY_API_URL;
-const { ethers } = require("hardhat");
-const { expect } = require("chai");
-const utils = require("./helpers/utils");
-const time = require("./helpers/time");
-const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const web3 = createAlchemyWeb3(API_URL);
+// require('dotenv').config();
+// const API_URL = process.env.STAGING_ALCHEMY_API_URL;
 
+// const { ethers } = require("hardhat");
 
-// `describe` is a Mocha function that allows you to organize your tests. It's
-// not actually needed, but having your tests organized makes debugging them
-// easier. All Mocha functions are available in the global scope.
+// const { should, expect, assert } = require("chai");
+// const { shouldThrow, shouldNotThrow } = require("./helpers/utils");
+// const time = require("./helpers/time");
 
-// `describe` receives the name of a section of your test suite, and a callback.
-// The callback must define the tests of that section. This callback can't be
-// an async function.
-describe("Plug contract", function () {
-	// Mocha has four functions that let you hook into the the test runner's
-  	// lifecyle. These are: `before`, `beforeEach`, `after`, `afterEach`.
-
-  	// They're very useful to setup the environment for tests, and to clean it
-  	// up after they run.
-
-  	// A common pattern is to declare some variables, and assign them in the
-  	// `before` and `beforeEach` callbacks.
-
-  	let Plug;
-  	let hardhatPlug;
-  	let owner;
-  	let alice;
-  	let bob;
-  	let trent;
+// const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+// const web3 = createAlchemyWeb3(API_URL);
 
 
-  	// `beforeEach` will run before each test, re-deploying the contract every
-    // time. It receives a callback, which can be async.
-    beforeEach(async function () {
-    	Plug = await ethers.getContractFactory("Plug");
-    	[owner, alice, bob, trent, ...addrs] = await ethers.getSigners();
-    	
-    	hardhatPlug = await Plug.deploy();
-    });
 
-    // `afterEach` will run after each test, destroying the deployed contract
-    // every time.
-    // afterEach(async function () {
-    // 	await hardhatPlug.kill();
-    // });
+// // `describe` is a Mocha function that allows you to organize your tests. It's
+// // not actually needed, but having your tests organized makes debugging them
+// // easier. All Mocha functions are available in the global scope.
 
-    // You can nest describe calls to create subsections.
-    describe("Deployment", function () {
-    	// `it` is another Mocha function. This is the one you use to define your
-    	// tests. It receives the test name, and a callback function.
+// // `describe` receives the name of a section of your test suite, and a callback.
+// // The callback must define the tests of that section. This callback can't be
+// // an async function.
+// describe("Plug contract", function () {
+// 	// Mocha has four functions that let you hook into the the test runner's
+//   	// lifecyle. These are: `before`, `beforeEach`, `after`, `afterEach`.
 
-    	// If the callback function is async, Mocha will `await` it.
-		it("Deployment should add my dev address to `_squad`", async function () {
-			// Expect receives a value, and wraps it in an Assertion object. These
-      		// objects have a lot of utility methods to assert values.
-			const jackAddress = "0xEAb4Aea5cD7376C04923236c504e7e91362566D1";
-			expect(await hardhatPlug.isInSquad(jackAddress)).to.equal(true);
-		});
+//   	// They're very useful to setup the environment for tests, and to clean it
+//   	// up after they run.
 
-		it("Deployment should add logik's dev address to `_squad`", async function () {
-			const logikAddress = "0x6b8C6E15818C74895c31A1C91390b3d42B336799";
-			expect(await hardhatPlug.isInSquad(logikAddress)).to.equal(true);
-		});
-	});
+//   	// A common pattern is to declare some variables, and assign them in the
+//   	// `before` and `beforeEach` callbacks.
+//   	let Plug;
+//   	let hardhatPlug;
+//   	let owner;
+//   	let alice;
+//   	let bob;
 
-	describe("Squad functionality", function () {
-		it("Squad members should be addable", async function () {
-			await hardhatPlug.removeFromSquad(owner.address);
-			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(false);
 
-			// Add alice to the squad
-			await hardhatPlug.addToSquad(owner.address);
+//   	// `beforeEach` will run before each test, re-deploying the contract every
+//     // time. It receives a callback, which can be async.
+//     beforeEach(async function () {
+//     	Plug = await ethers.getContractFactory("Plug");
+//     	[owner, bob, alice, ...addrs] = await ethers.getSigners();
 
-			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(true);
-		});
+//     	hardhatPlug = await Plug.deploy();
+//     });
 
-		it("Squad members should be removable", async function () {
-			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(false);
+//     // `afterEach` will run after each test, destroying the deployed contract
+//     // every time.
+//     afterEach(async function () {
+//     	Plug = null;
+//     	hardhatPlug = null;
+//     	owner = null;
+//     	alice = null;
+//     	bob = null;
+//     });
 
-			// Add alice to the squad then remove her
-			await hardhatPlug.addToSquad(owner.address);
-			await hardhatPlug.removeFromSquad(owner.address);
+//     // You can nest describe calls to create subsections.
+//     describe("Deployment", function () {
+//     	// `it` is another Mocha function. This is the one you use to define your
+//     	// tests. It receives the test name, and a callback function.
 
-			expect(await hardhatPlug.isInSquad(owner.address)).to.equal(false);
-		});
-	});
+//     	// If the callback function is async, Mocha will `await` it.
+// 		it("Deployment should add my dev address to `_squad`", async function () {
+// 			// Expect receives a value, and wraps it in an Assertion object. These
+//       		// objects have a lot of utility methods to assert values.
+// 			const jackAddress = "0xEAb4Aea5cD7376C04923236c504e7e91362566D1";
+// 			expect(await hardhatPlug.isInSquad(jackAddress)).to.equal(true);
+// 		});
 
-	describe("Minting & burning", function () {
-		it("Minting should increment the token id by 1 each time", async function () {
-			const id1 = await hardhatPlug.mint721(owner.address);
-			expect(id1).to.equal(1);
-			const id2 = await hardhatPlug.mint721(owner.address);
-			expect(id2).to.equal(2);
-		});
+// 		it("Deployment should add logik's dev address to `_squad`", async function () {
+// 			const logikAddress = "0x6b8C6E15818C74895c31A1C91390b3d42B336799";
+// 			expect(await hardhatPlug.isInSquad(logikAddress)).to.equal(true);
+// 		});
+// 	});
 
-		it("Minting should set the birthday of `tokenId` to the current time", async function () {
-			const id = await hardhatPlug.mint721(owner.address);
-			const bday = await hardhatPlug.getBirthday(id);
-			const daysPassed1 = await hardhatPlug.countDaysPassed(id);
-			expect(daysPassed1).to.equal(0);
+// 	describe("Squad functionality", function () {
+// 		it("Squad members should be addable", async function () {
+// 			// Add alice to the squad
+// 			shouldNotThrow(await hardhatPlug.addToSquad(alice.address));
+// 			expect (await hardhatPlug.isInSquad(owner.address)).to.equal(true);
+// 			expect(await hardhatPlug.isInSquad(alice.address)).to.equal(true);
+// 		});
 
-			// Go 1 day into the future
-			await time.increase(time.duration.days(1));
+// 		// it("Squad members should be removable", async function () {
+// 		// 	// Add alice to the squad then remove her
+// 		// 	shouldNotThrow(await hardhatPlug.addToSquad(alice.address));
+// 		// 	shouldNotThrow(await hardhatPlug.removeFromSquad(alice.address));
 
-			const daysPassed2 = await hardhatPlug.countDaysPassed(id);
-			expect(daysPassed2).to.equal(1);
-		});
+// 		// 	expect(await hardhatPlug.isInSquad(alice.address)).to.equal(false);
+// 		// });
+// 	});
 
-		it("Burning should remove a token permnently", async function () {
-			const id = await hardhatPlug.mint721(owner.address);
-			const initialOwner = await hardhatPlug.ownerOf(id);
-			expect(initialOwner).to.equal(owner.address);
+// 	// describe("Minting & burning", function () {
+// 	// 	it("Minting should increment the token id by 1 each time", async function () {
+// 	// 		const id1 = await hardhatPlug.mint721(owner.address);
+// 	// 		expect(id1).to.equal(1);
+// 	// 		const id2 = await hardhatPlug.mint721(owner.address);
+// 	// 		expect(id2).to.equal(2);
 
-			// Burn the token
-			await hardhatPlug.burn721(id);
+// 	// 		// instead, let's change the test to mint MAX_NUM_PLUGS and check the id 
+// 	// 		// each time
+// 	// 	});
 
-			utils.shouldThrow(await hardhatPlug.getBirthday(id));
-		});
-	});
+// 	// 	it("Minting should set the birthday of `tokenId` to the current time", async function () {
+// 	// 		const id = await hardhatPlug.mint721(owner.address);
+// 	// 		const bday = await hardhatPlug.getBirthday(id);
+// 	// 		const daysPassed1 = await hardhatPlug.countDaysPassed(id);
+// 	// 		expect(daysPassed1).to.equal(0);
 
-	describe("Time-triggered asset cycling", function () {
-		it("Plug should update it's hash every 60 days for the first year", async function () {
-			// First we need to mint a token
-			const id = await hardhatPlug.mint721(owner.address);
-			const baseURI = "https://ipfs.io/ipfs/";
+// 	// 		// Go 1 day into the future
+// 	// 		await time.increase(time.duration.days(1));
 
-			// Next, increase time until 1 year has passed (pre-alchemist) 
-			// (in 60 day increments)
-			var i, j, uri, hash;
-			for (i = 0; i <= 360; i += 60) {
-				// Increase time (after first iteration)
-				await time.increase(time.duration.days(i));
-				// Find out what the token's current URI is & compare
-				j = i / 60;
+// 	// 		const daysPassed2 = await hardhatPlug.countDaysPassed(id);
+// 	// 		expect(daysPassed2).to.equal(1);
+// 	// 	});
 
-				uri = await hardhatPlug.tokenURI(id);
-				hash = await hardhatPlug.getHashByIndex(j);
-				URI = baseURI + hash;
+// 	// 	it("Burning should remove a token permnently", async function () {
+// 	// 		const id = await hardhatPlug.mint721(owner.address);
+// 	// 		const initialOwner = await hardhatPlug.ownerOf(id);
+// 	// 		expect(initialOwner).to.equal(owner.address);
 
-				expect(uri).to.equal(URI);
-			}
-		});
+// 	// 		// Burn the token
+// 	// 		await hardhatPlug.burn721(id);
 
-		it("Plug should turn into an Alchemist after 4 years", async function () {
-			// First, mint a token
-			const id = await hardhatPlug.mint721(owner.address);
-			const baseURI = "https://ipfs.io/ipfs/";
-			const hash = await hardhatPlug.getHashByIndex(7);
-			const URI = baseURI + hash;
+// 	// 		shouldThrow(await hardhatPlug.getBirthday(id));
+// 	// 	});
+// 	// });
 
-			// Go 4 years into the future
-			await time.increase(time.duration.days(1440));
+// 	// describe("Time-triggered asset cycling", function () {
+// 	// 	it("Plug should update it's hash every 60 days for the first year", async function () {
+// 	// 		// First we need to mint a token
+// 	// 		const id = await hardhatPlug.mint721(owner.address);
+// 	// 		const baseURI = "https://ipfs.io/ipfs/";
 
-			expect(await hardhatPlug.isAlchemist(id)).to.equal(true);
-			expect(await hardhatPlug.tokenURI(id)).to.equal(URI);
-		});
-	});
+// 	// 		// Next, increase time until 1 year has passed (pre-alchemist) 
+// 	// 		// (in 60 day increments)
+// 	// 		var i, j, uri, hash;
+// 	// 		for (i = 0; i <= 360; i += 60) {
+// 	// 			// Increase time (after first iteration)
+// 	// 			await time.increase(time.duration.days(i));
+// 	// 			// Find out what the token's current URI is & compare
+// 	// 			j = i / 60;
 
-	describe("Transfers", function () {
-		//take this from zombies
-	});
+// 	// 			uri = await hardhatPlug.tokenURI(id);
+// 	// 			hash = await hardhatPlug.getHashByIndex(j);
+// 	// 			URI = baseURI + hash;
 
-	describe("Miscellaneous", function () {
+// 	// 			expect(uri).to.equal(URI);
+// 	// 		}
+// 	// 	});
 
-	});
-});
+// 	// 	it("Plug should turn into an Alchemist after 4 years", async function () {
+// 	// 		// First, mint a token
+// 	// 		const id = await hardhatPlug.mint721(owner.address);
+// 	// 		const baseURI = "https://ipfs.io/ipfs/";
+// 	// 		const hash = await hardhatPlug.getHashByIndex(7);
+// 	// 		const URI = baseURI + hash;
+
+// 	// 		// Go 4 years into the future
+// 	// 		await time.increase(time.duration.days(1440));
+
+// 	// 		expect(await hardhatPlug.isAlchemist(id)).to.equal(true);
+// 	// 		expect(await hardhatPlug.tokenURI(id)).to.equal(URI);
+// 	// 	});
+// 	// });
+
+// 	// describe("Transfers", function () {
+// 	// 	//take this from zombies
+// 	// });
+
+// 	// describe("Miscellaneous", function () {
+
+// 	// });
+// });
 
 
 

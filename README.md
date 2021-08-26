@@ -218,6 +218,103 @@ WAIT MAYBE.... MY APPROACH MAY BE SLIGHTLY DIFFERENT
 - I think everything gets even cleaner with interfaces....
 
 
+8.25.21 - 
+
+- Lots of issues with tests...:
+```
+Plug contract
+    Deployment
+      ✓ Deployment should add my dev address to `_squad` (9436ms)
+      ✓ Deployment should add logik's dev address to `_squad` (13428ms)
+    Squad functionality
+      1) Squad members should be addable
+      2) Squad members should be removable
+    Minting & burning
+      3) Minting should increment the token id by 1 each time
+      4) Minting should set the birthday of `tokenId` to the current time
+      5) Burning should remove a token permnently
+    Time-triggered asset cycling
+      6) Plug should update it's hash every 60 days for the first year
+      7) Plug should turn into an Alchemist after 4 years
+
+
+  2 passing (3m)
+  7 failing
+
+  1) Plug contract
+       Squad functionality
+         Squad members should be addable:
+     Error: Timeout of 20000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/test/Plug.js)
+      at listOnTimeout (internal/timers.js:549:17)
+      at processTimers (internal/timers.js:492:7)
+
+  2) Plug contract
+       Squad functionality
+         Squad members should be removable:
+     Error: Timeout of 20000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/test/Plug.js)
+      at listOnTimeout (internal/timers.js:549:17)
+      at processTimers (internal/timers.js:492:7)
+
+  3) Plug contract
+       Minting & burning
+         Minting should increment the token id by 1 each time:
+     Error: Timeout of 20000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/test/Plug.js)
+      at listOnTimeout (internal/timers.js:549:17)
+      at processTimers (internal/timers.js:492:7)
+
+  4) Plug contract
+       Minting & burning
+         Minting should set the birthday of `tokenId` to the current time:
+     Error: Timeout of 20000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (/Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/test/Plug.js)
+      at listOnTimeout (internal/timers.js:549:17)
+      at processTimers (internal/timers.js:492:7)
+
+  5) Plug contract
+       Minting & burning
+         Burning should remove a token permnently:
+     Error: invalid BigNumber value (argument="value", value={"hash":"0x7475821720995861e6a4361d312ad30d36e3eaeb89e027b61d05de3c4d6a2e89","type":2,"accessList":[],"blockHash":null,"blockNumber":null,"transactionIndex":null,"confirmations":0,"from":"0xEAb4Aea5cD7376C04923236c504e7e91362566D1","gasPrice":{"type":"BigNumber","hex":"0x3b9aca0b"},"maxPriorityFeePerGas":{"type":"BigNumber","hex":"0x3b9aca00"},"maxFeePerGas":{"type":"BigNumber","hex":"0x3b9aca0b"},"gasLimit":{"type":"BigNumber","hex":"0x01c78b"},"to":"0x41e80cBcd4705AFfD5bA39A438169A147DFd65cE","value":{"type":"BigNumber","hex":"0x00"},"nonce":235,"data":"0x815a12f6000000000000000000000000eab4aea5cd7376c04923236c504e7e91362566d1","r":"0x232a494fe1673bdb8796e96d0bb2730ed5f1165782a47b5eaba6750917dfb732","s":"0x1f7e1d7f34175eabbc901c7a17c85260c2cfdb4b14867dc8cd724f2cdcfb6df8","v":0,"creates":null,"chainId":4}, code=INVALID_ARGUMENT, version=bignumber/5.4.1)
+      at Logger.makeError (node_modules/@ethersproject/logger/src.ts/index.ts:213:28)
+      at Logger.throwError (node_modules/@ethersproject/logger/src.ts/index.ts:225:20)
+      at Logger.throwArgumentError (node_modules/@ethersproject/logger/src.ts/index.ts:229:21)
+      at Function.BigNumber.from (node_modules/@ethersproject/bignumber/src.ts/bignumber.ts:291:23)
+      at NumberCoder.encode (node_modules/@ethersproject/abi/src.ts/coders/number.ts:25:27)
+      at /Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/node_modules/@ethersproject/abi/src.ts/coders/array.ts:71:19
+      at Array.forEach (<anonymous>)
+      at Object.pack (node_modules/@ethersproject/abi/src.ts/coders/array.ts:54:12)
+      at TupleCoder.encode (node_modules/@ethersproject/abi/src.ts/coders/tuple.ts:54:16)
+      at AbiCoder.encode (node_modules/@ethersproject/abi/src.ts/abi-coder.ts:112:15)
+      at Interface._encodeParams (node_modules/@ethersproject/abi/src.ts/interface.ts:325:31)
+      at Interface.encodeFunctionData (node_modules/@ethersproject/abi/src.ts/interface.ts:380:18)
+      at /Users/kamikaze/Desktop/localsrc/crypto/logik-genesis-dapp/smart-contracts/node_modules/@ethersproject/contracts/src.ts/index.ts:212:37
+      at step (node_modules/@ethersproject/contracts/lib/index.js:48:23)
+      at Object.next (node_modules/@ethersproject/contracts/lib/index.js:29:53)
+      at fulfilled (node_modules/@ethersproject/contracts/lib/index.js:20:58)
+
+  6) Plug contract
+       Time-triggered asset cycling
+         Plug should update it's hash every 60 days for the first year:
+     ReferenceError: web3 is not defined
+      at Object.increase (test/helpers/time.js:4:5)
+      at Context.<anonymous> (test/Plug.js:154:16)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+
+  7) Plug contract
+       Time-triggered asset cycling
+         Plug should turn into an Alchemist after 4 years:
+     ReferenceError: web3 is not defined
+      at Object.increase (test/helpers/time.js:4:5)
+      at Context.<anonymous> (test/Plug.js:174:15)
+      at runMicrotasks (<anonymous>)
+      at processTicksAndRejections (internal/process/task_queues.js:97:5)
+```
+
+- So... to summarize
+  1) Time-outs: Squad add, squad remove, mint increment, mint birthday
+  2) invalid BigNumber value: burning token
+  3) web3 is not defined: Asset cycling every 60 days, and 4 years
+
+
 
 
 
