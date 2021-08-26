@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "waffle",
-    "test": "export NODE_ENV=test && mocha"
+    "test": "mocha --config=test/.mocharc.json --node-env=test --exit"
   },
   "author": "Jack Kasbeer",
   "license": "ISC",
