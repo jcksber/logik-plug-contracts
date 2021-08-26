@@ -8,17 +8,17 @@
 //  *
 //  */
 
-// require('dotenv').config();
-// const API_URL = process.env.STAGING_ALCHEMY_API_URL;
+require('dotenv').config();
+const API_URL = process.env.STAGING_ALCHEMY_API_URL;
 
-// const { ethers } = require("hardhat");
+const { ethers } = require("hardhat");
 
-// const { should, expect, assert } = require("chai");
-// const { shouldThrow, shouldNotThrow } = require("./helpers/utils");
-// const time = require("./helpers/time");
+const { should, expect, assert } = require("chai");
+const { shouldThrow, shouldNotThrow } = require("./helpers/utils");
+const time = require("./helpers/time");
 
-// const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-// const web3 = createAlchemyWeb3(API_URL);
+const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const web3 = createAlchemyWeb3(API_URL);
 
 
 

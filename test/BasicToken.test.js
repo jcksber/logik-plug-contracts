@@ -1,13 +1,21 @@
-import {expect, use} from 'chai';
-import {Contract} from 'ethers';
-import {deployContract, MockProvider, solidity} from 'ethereum-waffle';
-import BasicToken from '../artifacts/contracts/BasicToken.sol/BasicToken.json';
+// import {expect, use} from 'chai';
+// import {Contract} from 'ethers';
+require('dotenv').config();
+const API_URL = process.env.STAGING_ALCHEMY_API_URL;
+
+const { ethers } = require("hardhat");
+const { expect, use } = require("chai");
+const { Contract } = require("ethers");
+// import {deployContract, MockProvider, solidity} from 'ethereum-waffle';
+// import BasicToken from '../artifacts/contracts/BasicToken.sol/BasicToken.json';
+const {deployContract, MockProvider, solidity} = require('ethereum-waffle');
+const BasicToken = require('../artifacts/contracts/BasicToken.sol/BasicToken.json');
 
 use(solidity);
 
 describe('BasicToken', () => {
   const [wallet, walletTo] = new MockProvider().getWallets();
-  let token: Contract;
+  let token = Contract;
 
   beforeEach(async () => {
     token = await deployContract(wallet, BasicToken, [1000]);
