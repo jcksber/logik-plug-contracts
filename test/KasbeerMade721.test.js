@@ -9,6 +9,9 @@ const time = require("./helpers/time");
 const { deployContract, MockProvider, solidity } = require('ethereum-waffle');
 const KM721 = require('../artifacts/contracts/KasbeerMade721.sol/KasbeerMade721.json');
 
+// const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+// const web3 = createAlchemyWeb3(API_URL);
+
 const MAX_MINTS = 22;
 const me = "0xEAb4Aea5cD7376C04923236c504e7e91362566D1";
 // NOTE: 'me' is technically not the owner of the contract since 
@@ -68,52 +71,37 @@ describe('KasbeerMade721 contract', () => {
 			}
 		});
 
-		/* This test is failing with this error:
-			Error: cannot estimate gas; transaction may fail or may require manual gas limit (error={"name":"RuntimeError","results":{"0x45cf857cf348509ce80bd5d2634b1a5625fb0f0380f3ba2447bbfd644d183ed6":{"error":"revert","program_counter":4097,"return":"0x08c379a0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000294b6173626565724d6164653732313a2043616c6c6572206e6f742070617274206f662073717561642e0000000000000000000000000000000000000000000000","reason":"KasbeerMade721: Caller not part of squad."}},"hashes":["0x45cf857cf348509ce80bd5d2634b1a5625fb0f0380f3ba2447bbfd644d183ed6"],"message":"VM Exception while processing transaction: revert KasbeerMade721: Caller not part of squad."}, tx={"data":"0xc6eee8a20000000000000000000000000000000000000000000000000000000000000001","to":{},"from":"0x17ec8597ff92C3F44523bDc65BF0f1bE632917ff","gasPrice":{"type":"BigNumber","hex":"0x77359400"},"type":0,"nonce":{},"gasLimit":{},"chainId":{}}, code=UNPREDICTABLE_GAS_LIMIT, version=abstract-signer/5.4.1)
-		*/
-		xit("Burning should remove a token permnently", async function () {
+		it("Burning should remove a token permanently", async function () {
+			// Non-squad member can't burn a token
+			await token.addToSquad(owner.address);
+			expect(await token.isInSquad(owner.address)).to.equal(true);
+
+			// Mint a token to alice before burning it
 			await token.mint721(alice.address);
-			const id = await token.getCurrentTokenId();
+			let id = await token.getCurrentTokenId();
+			id = parseInt(id._hex);
 
 			// Burn the token
-			await token.burn721(id);
-
-			// expect(await token.tokenExists(id)).to.equal(false);
+			await expect(token.burn721(id))
+				.to.emit(token, "ERC721Burned")
+				.withArgs(id);
 		});
 	});
 
-	// it('Assigns initial balance', async () => {
-	// 	expect(await token.balanceOf(wallet.address)).to.equal(1000);
-	// });
+	describe("Token URI", function () {
+		it("KasbeerMade721 should only return a token uri if the token exists & should simply be baseURI", async function () {
+			// Mint a token just so `tokenURI` doesn't fail
+			await token.mint721(alice.address);
+			const id = await token.getCurrentTokenId();
+			const baseURI = "https://ipfs.io/ipfs/";
 
-	// it('Transfer adds amount to destination account', async () => {
-	// 	await token.transfer(walletTo.address, 7);
-	// 	expect(await token.balanceOf(walletTo.address)).to.equal(7);
-	// });
+			const uri = await token.tokenURI(id);
+			expect(uri).to.equal(baseURI);
+		});
 
-	// it('Transfer emits event', async () => {
-	// 	await expect(token.transfer(walletTo.address, 7))
-	// 		.to.emit(token, 'Transfer')
-	// 		.withArgs(wallet.address, walletTo.address, 7);
-	// });
-
-	// it('Can not transfer above the amount', async () => {
-	// 	await expect(token.transfer(walletTo.address, 1007)).to.be.reverted;
-	// });
-
-	// it('Can not transfer from empty account', async () => {
-	// 	const tokenFromOtherWallet = token.connect(walletTo);
-	// 	await expect(tokenFromOtherWallet.transfer(wallet.address, 1))
-	// 		.to.be.reverted;
-	// });
-
-	// it('Calls totalSupply on BasicToken contract', async () => {
-	// 	await token.totalSupply();
-	// 	expect('totalSupply').to.be.calledOnContract(token);
-	// });
-
-	// it('Calls balanceOf with sender address on BasicToken contract', async () => {
-	// 	await token.balanceOf(wallet.address);
-	// 	expect('balanceOf').to.be.calledOnContractWith(token, [wallet.address]);
-	// });
+	});
 });
+
+
+
+
