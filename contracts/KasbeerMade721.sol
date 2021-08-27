@@ -176,6 +176,16 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		return assetHashes[idx];
 	}
 
+	function getCurrentTokenId() public view returns (uint256)
+	{
+		return _tokenIds.current();
+	}
+
+	function tokenExists(uint256 tokenId) public view returns (bool)
+	{
+		return _exists(tokenId);
+	}
+
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
 	{
