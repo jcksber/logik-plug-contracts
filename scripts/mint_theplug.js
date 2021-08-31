@@ -1,7 +1,7 @@
 /*
- * Mint script for Plug.sol
+ * Mint script for PlugERC721.sol
  *
- * Created: August 4, 2021
+ * Created: August 30, 2021
  * Author: Jack Kasbeer
  */
 
@@ -13,8 +13,8 @@ const PUBLIC_KEY = process.env.STAGING_PUBLIC_KEY;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(ALCHEMY_API_URL);
 
-const plugContract = require("../artifacts/contracts/Plug.sol/Plug.json");
-const plugAddress = "0x3EC9a755f86540A8FEb3a7368c522d33eEa88415";//rinkeby
+const plugContract = require("../artifacts/contracts/PlugERC721.sol/ThePlug.json");
+const plugAddress = "0x645d9eA0D0F5c1BC0050869714b5C04523889Ce5";//rinkeby
 const plugNFT = new web3.eth.Contract(plugContract.abi, plugAddress);
 
 async function mintPlug() {
