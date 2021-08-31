@@ -122,7 +122,7 @@ describe("Plug contract", function () {
 			// await time.increase(time.duration.days(1));
 
 			// const daysPassed2 = await plug.countDaysPassed(id);
-			// expect(daysPassed2).to.equal("1");
+			// expect(daysPassed2).to.equal(1);
 		});
 	});
 

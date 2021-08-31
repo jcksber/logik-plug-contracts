@@ -326,8 +326,9 @@ Plug contract
       to the mainnet & how much it will cost,
   (4) flatten the code for an audit & get a professional opinion on deployment
 
-
-
+- Time traveling is turning out to be quite difficult in testing...
+- I'm considering I just ignore this for the time being since I've seen 
+  the time-dependent things happen on opensea first-hand
 
 
 

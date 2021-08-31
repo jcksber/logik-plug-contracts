@@ -65,47 +65,47 @@ contract Plug is KasbeerMade721 {
 		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
 
 		// TEST LOGIC 
-		// uint minsPassed = countMinutesPassed(tokenId);
+		uint minsPassed = countMinutesPassed(tokenId);
 
-		// // Order is "reversed" for cleaner code
-		// if (minsPassed >= 45) {
-		// 	return HASH_7;
-		// } else if (minsPassed >= 30) {
-		// 	return HASH_6;
-		// } else if (minsPassed >= 25) {
-		// 	return HASH_5;
-		// } else if (minsPassed >= 20) {
-		// 	return HASH_4;
-		// } else if (minsPassed >= 15) {
-		// 	return HASH_3;
-		// } else if (minsPassed >= 10) {
-		// 	return HASH_2;
-		// } else if (minsPassed >= 5) {
-		// 	return HASH_1;
-		// } else {
-		// 	return HASH_0; 
-		// }
-		
-		// Calculate days gone by for this particular token with 'tokenId'
-		uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
-		// // The logic here is "reversed" for cleaner code
-		if (daysPassed >= 1440) {
-		 return HASH_7;
-		} else if (daysPassed >= 360) {
+		// Order is "reversed" for cleaner code
+		if (minsPassed >= 45) {
+			return HASH_7;
+		} else if (minsPassed >= 30) {
 			return HASH_6;
-		} else if (daysPassed >= 300) {
+		} else if (minsPassed >= 25) {
 			return HASH_5;
-		} else if (daysPassed >= 240) {
+		} else if (minsPassed >= 20) {
 			return HASH_4;
-		} else if (daysPassed >= 180) {
+		} else if (minsPassed >= 15) {
 			return HASH_3;
-		} else if (daysPassed >= 120) {
+		} else if (minsPassed >= 10) {
 			return HASH_2;
-		} else if (daysPassed >= 60) {
+		} else if (minsPassed >= 5) {
 			return HASH_1;
-		} else { //if 60 days haven't passed, the initial asset/Plug is returned
+		} else {
 			return HASH_0; 
 		}
+		
+		// Calculate days gone by for this particular token with 'tokenId'
+		//uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
+		// // The logic here is "reversed" for cleaner code
+		// if (daysPassed >= 1440) {
+		//  return HASH_7;
+		// } else if (daysPassed >= 360) {
+		// 	return HASH_6;
+		// } else if (daysPassed >= 300) {
+		// 	return HASH_5;
+		// } else if (daysPassed >= 240) {
+		// 	return HASH_4;
+		// } else if (daysPassed >= 180) {
+		// 	return HASH_3;
+		// } else if (daysPassed >= 120) {
+		// 	return HASH_2;
+		// } else if (daysPassed >= 60) {
+		// 	return HASH_1;
+		// } else { //if 60 days haven't passed, the initial asset/Plug is returned
+		// 	return HASH_0; 
+		// }
 	}
 
 	//@dev Any Plug transfer this will be called beforehand (updating the transfer time)
@@ -149,8 +149,8 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
-		//return countMinutesPassed(tokenId) >= 45;//testing
-		return countDaysPassed(tokenId) >= 1440;
+		return countMinutesPassed(tokenId) >= 45;//testing
+		//return countDaysPassed(tokenId) >= 1440;
 	}
 
 	//@dev List the owners for a certain level (determined by _assetHash)
