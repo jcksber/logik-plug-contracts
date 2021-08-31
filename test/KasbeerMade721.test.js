@@ -1,3 +1,12 @@
+/*
+ * KasbeerMade71.test.js
+ *
+ * Created: August304, 2021
+ * Author: Jack Kasbeer
+ *
+ * Test suite for KasbeerMade721.sol 
+ *
+ */
 require('dotenv').config();
 const API_URL = process.env.STAGING_ALCHEMY_API_URL;
 
@@ -5,7 +14,6 @@ const { ethers } = require("hardhat");
 const { expect, use } = require("chai");
 const { Contract } = require("ethers");
 const { shouldThrow, shouldNotThrow } = require("./helpers/utils");
-const time = require("./helpers/time");
 const { deployContract, MockProvider, solidity } = require('ethereum-waffle');
 const KM721 = require('../artifacts/contracts/KasbeerMade721.sol/KasbeerMade721.json');
 
@@ -33,7 +41,7 @@ describe('KasbeerMade721 contract', () => {
 	});
 
 	// You can nest describe calls to create subsections.
-    describe("Deployment", function () {
+    xdescribe("Deployment", function () {
     	// `it` is another Mocha function. This is the one you use to define your
     	// tests. It receives the test name, and a callback function.
     	// console.log(owner.addres);
@@ -46,23 +54,20 @@ describe('KasbeerMade721 contract', () => {
 
 	});
 
-	describe("Squad functionality", function () {
-		it("Squad members should be addable", async function () {
-			// Add alice to the squad
-			shouldNotThrow(await token.addToSquad(alice.address));
-			expect(await token.isInSquad(alice.address)).to.equal(true);
+	xdescribe("Token URI", function () {
+		it("KasbeerMade721 should only return baseURI", async function () {
+			// Mint a token just so `tokenURI` doesn't fail
+			await token.mint721(alice.address);
+			const id = await token.getCurrentTokenId();
+			const baseURI = "https://ipfs.io/ipfs/";
+
+			const uri = await token.tokenURI(id);
+			expect(uri).to.equal(baseURI);
 		});
 
-		it("Squad members should be removable", async function () {
-			// Add alice to the squad then remove her
-			shouldNotThrow(await token.addToSquad(alice.address));
-			shouldNotThrow(await token.removeFromSquad(alice.address));
-
-			expect(await token.isInSquad(alice.address)).to.equal(false);
-		});
 	});
 
-	describe("Minting & burning", function () {
+	xdescribe("Minting & burning", function () {
 		it("Minting should increment the token id by 1 each time", async function () {
 			var i;
 			for (i = 1; i <= MAX_MINTS; i++) {
@@ -88,17 +93,20 @@ describe('KasbeerMade721 contract', () => {
 		});
 	});
 
-	describe("Token URI", function () {
-		it("KasbeerMade721 should only return a token uri if the token exists & should simply be baseURI", async function () {
-			// Mint a token just so `tokenURI` doesn't fail
-			await token.mint721(alice.address);
-			const id = await token.getCurrentTokenId();
-			const baseURI = "https://ipfs.io/ipfs/";
-
-			const uri = await token.tokenURI(id);
-			expect(uri).to.equal(baseURI);
+	xdescribe("Squad functionality", function () {
+		it("Squad members should be addable", async function () {
+			// Add alice to the squad
+			shouldNotThrow(await token.addToSquad(alice.address));
+			expect(await token.isInSquad(alice.address)).to.equal(true);
 		});
 
+		it("Squad members should be removable", async function () {
+			// Add alice to the squad then remove her
+			shouldNotThrow(await token.addToSquad(alice.address));
+			shouldNotThrow(await token.removeFromSquad(alice.address));
+
+			expect(await token.isInSquad(alice.address)).to.equal(false);
+		});
 	});
 });
 

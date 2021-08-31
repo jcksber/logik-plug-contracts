@@ -315,8 +315,16 @@ Plug contract
   3) web3 is not defined: Asset cycling every 60 days, and 4 years
 
 
+8.30.21 - 
 
-
+- Today I'd like to: 
+  (1) finish writing tests for every function associated 
+      with the Plug, 
+  (2) deploy a few to opensea testnet to see if the testnet was the 
+      problem before or if it's related to the code, 
+  (3) research how i'm going to deploy 
+      to the mainnet & how much it will cost,
+  (4) flatten the code for an audit & get a professional opinion on deployment
 
 
 

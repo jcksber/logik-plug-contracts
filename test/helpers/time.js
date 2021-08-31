@@ -9,18 +9,18 @@ const web3 = createAlchemyWeb3(API_URL);
 async function increase(duration) {
 
     //first, let's increase time
-    await web3.currentProvider.send({
-        jsonrpc: "2.0",
-        method: "evm_increaseTime",
-        params: [duration], // there are 86400 seconds in a day
-        id: new Date().getTime()
-    }, () => {});
+    // await web3.currentProvider.send({
+    //     jsonrpc: "2.0",
+    //     method: "evm_increaseTime",
+    //     params: [duration], // there are 86400 seconds in a day
+    //     id: new Date().getTime()
+    // }, () => {});
 
     //next, let's mine a new block
     await web3.currentProvider.send({
         jsonrpc: '2.0',
         method: 'evm_mine',
-        params: [],
+        params: [duration],
         id: new Date().getTime()
     })
 

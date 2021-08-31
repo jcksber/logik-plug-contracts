@@ -82,16 +82,14 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		emit HashUpdated(_str);
 	}
 
-	// @dev Add an asset hash
-	// function _addAssetHash(string memory _assetHash) internal returns (uint)
-	// {
-	// 	_hashIds.increment();
-
-	// 	uint256 newId = _hashIds.current();
-	// 	assetHashes[newId] = _assetHash;
-
-	// 	return newId;
-	// }
+	//@dev Get the hash stored at assetHashes[idx]
+	function getHashByIndex(uint256 idx) public view returns (string memory)
+	{
+		require(0 <= idx && idx < NUM_ASSETS, 
+			"KasbeerMade721: index out of bounds");
+		
+		return assetHashes[idx];
+	}
 
 
 	/*** MINT & BURN ***/
@@ -119,6 +117,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	/*** OWNERSHIP ***/
 
+	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
 	{
 		require(isInSquad(msg.sender), "KasbeerMade721: Caller not part of squad.");
@@ -152,6 +151,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	/*** TRANSFER FUNCTIONS ***/
 
+	//@dev This is here as a reminder to override for custom transfer functionality
 	function _beforeTokenTransfer(
 		address from, 
 		address to, 
@@ -161,23 +161,19 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	/*** HELPER FUNCTIONS ***/
 
+	//@dev This function doesn't work, not exactly sure why
 	function kill() public onlyOwner
 	{
 		selfdestruct(payable(owner()));
 	}
 
-	function getHashByIndex(uint256 idx) public view returns (string memory)
-	{
-		require(0 <= idx && idx < NUM_ASSETS, 
-			"KasbeerMade721: idx out of bounds");
-		return assetHashes[idx];
-	}
-
+	//@dev Returns the most recently minted token id 
 	function getCurrentTokenId() public view returns (uint256)
 	{
 		return _tokenIds.current();
 	}
 
+	//@dev Determine if a token exists 
 	function tokenExists(uint256 tokenId) public view returns (bool)
 	{
 		return _exists(tokenId);
