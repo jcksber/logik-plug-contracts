@@ -331,6 +331,24 @@ Plug contract
   the time-dependent things happen on opensea first-hand
 
 
+8.31.21 - 
+
+- Semi-finished (1), opensea (2) is still seemingly broken and can't rely on it, 
+  didn't quite get to (3), not how necessary flattening is for an audit;
+
+  -> Need to just investigate `listLevelOwners` a little more thoroughly before 
+     I can be confident in the contracts being ready for audit
+
+- UPDATE: now we're making a website where the user mints the Plug for themself 
+          (so opensea's problems aren't even a big deal really)
+          NOTE!!: THIS MEANS `onlyOwner` on the `mint721` function is problematic
+                  ANYONE should be able to mint a plug
+- Tonight:
+  (1) Investigate `listLevelOwners`
+  (2) Create a shell website that we can easily start to customize for visual 
+      purposes (the other site I started for the citizens of the world should
+      essentially suffice, so just use the tutorial from Alchemy)
+
 
 
 
