@@ -34,32 +34,32 @@ contract KasbeerStorage {
 	uint constant NUM_ASSETS = 8;
 	//@dev Production hashes
 	//Normal (non-chicago, non-st louis)
-	string internal NHASH_0 = "QmSJQmBV5crGcmq54WUB22SRw9SGsp1YSaxfenQEbZ5qTD"; //1% Plug
-	string internal NHASH_1 = "QmY7HTXyHk4UQUr8PUQC3rUQD9fFa8dVutyRBZSdorWhMv";
-	string internal NHASH_2 = "QmSUTwTS3aALgZHyuvYV1ys3d5FHbeJ24MDTfA4WCkncop";
-	string internal NHASH_3 = "QmcciA32wMXVJpGQCyAumXSa9QT7FKvh1tDBgYxELm7THu";
-	string internal NHASH_4 = "QmSfr7uuVjm4ddzYkwR1bD1u8KRSueSfKYx7w3tGjstcgt";
-	string internal NHASH_5 = "QmUm9aTEEBgQTSpE24Q1fCHeBzntAd9nguJLFDFkSjmNPv";
-	string internal NHASH_6 = "QmUBsLHrMFLUjApCrnd8DUjk2noe52gN48JHUF1WTCuw6b"; //100% Plug
-	string internal NHASH_7 = "QmPqezAYfYy1pjdi3MstdnT1F9NAmvcqtvrFpY7o6HGTRE"; //alchemist Plug
+	string internal NHASH_0 = "QmPjFtabzu2mNEPE2Wxxt53iWPiCNEtNZW8LisoQRL61ii"; //1% Plug
+	string internal NHASH_1 = "QmSK7ZkbCFPaGzf4NdcadZ8mPMn32qLSgWRyTHGPyV4rpM";
+	string internal NHASH_2 = "Qmd2pWHx6j8fVW7jc3uWh3JcRZmo31D7MxfMSoJh73g7e9";
+	string internal NHASH_3 = "QmT7ZyAcFn991g1TxqV9s4VyAC8Gfw5jaVsqwcpujHDLks";
+	string internal NHASH_4 = "QmPJssrsJiycEs7UXMcSvg5uy93h2Jpc8i8KrQE1kjZXJt";
+	string internal NHASH_5 = "QmYWiPGgQJrdgKJaJqrh1Y1VUu1WPw4yX9pEPCJm1RMKkB";
+	string internal NHASH_6 = "QmQktmf4vVHb2waYfRNpcSj6DuTzkJgzTKByedqASxCMyV"; //100% Plug
+	string internal NHASH_7 = "QmZm3FL4pWcBoVko9ZvWs6Sf8F4T7V9kHH5vsyVcLEr1AA"; //alchemist Plug
 	//Chicago
-	string internal CHASH_0 = ""; //1% Plug
-	string internal CHASH_1 = "";
-	string internal CHASH_2 = "";
-	string internal CHASH_3 = "";
-	string internal CHASH_4 = "";
-	string internal CHASH_5 = "";
-	string internal CHASH_6 = ""; //100% Plug
-	string internal CHASH_7 = ""; //alchemist Plug
+	string internal CHASH_0 = "QmXHMtZSmLmFdHEewMAk53zMfoda1eT7uBB4g49nhfzWGi"; //1% Plug
+	string internal CHASH_1 = "QmWat3juiFf5VAmUBtmcymdFrPsKde4Dn5RVFjDEL2DtBU";
+	string internal CHASH_2 = "QmcdnbgWgQRymURhLshYm4hFNX3NnFmNWibfvG9qiSBtq4";
+	string internal CHASH_3 = "QmcgvSDu2aZ3c7SwrXb6vC2fNQQAhsM9f1jTNbTdunKQmF";
+	string internal CHASH_4 = "QmeuTccK5J9q96Rz2Lc62d7uCqhPwbW7e27KRCmDjAqpNn";
+	string internal CHASH_5 = "Qmcrt2G19uNmRqN6rasfteoe5TaSoEw4RJBcnztchyixYS";
+	string internal CHASH_6 = "QmPKJBx3BCHPFwfRrdyH4jXPKpmgPUTBRjD1ig9V8P7Agm"; //100% Plug
+	string internal CHASH_7 = "QmPBSJucLXTMwyNGevtxiwDcZtmPt8yYdEv5xMryajw56n"; //alchemist Plug
 	//St. Louis
-	string internal LHASH_0 = ""; //1% Plug
-	string internal LHASH_1 = "";
-	string internal LHASH_2 = "";
-	string internal LHASH_3 = "";
-	string internal LHASH_4 = "";
-	string internal LHASH_5 = "";
-	string internal LHASH_6 = ""; //100% Plug
-	string internal LHASH_7 = ""; //alchemist Plug
+	string internal LHASH_0 = "Qmf8MxmKwzdiESeCCUmchoPTKPAgbRgf25MH8DRMLasTwv"; //1% Plug
+	string internal LHASH_1 = "QmUfq7b2A8kwbJv9wLKefUkSyDcGq7N4hWW6DERFuuiLRS";
+	string internal LHASH_2 = "QmVq9JGEAn6J8Nwrx4roiDPkcMuYkLfGzZBjQDeZtcgP48";
+	string internal LHASH_3 = "QmZD4BnkFmLX2tVdtpEh4Lj9VAN26TxB5ZfV53jGDKw2qF";
+	string internal LHASH_4 = "QmZf619kVFEEQ6KU9kpvrMX6SVErTQb4UQkGEZB4je8Wx2";
+	string internal LHASH_5 = "Qmb5rEtNkMzpionqa1syt9gJx5b3JoSijE82GWUoFECUHN";
+	string internal LHASH_6 = "QmQKastBa7voNGsJah8HEo2PWzmq68bUp3mbYjCX3m7ydV"; //100% Plug
+	string internal LHASH_7 = "Qmd87mFanJgibkgqXJkKrExQ1MXZdH9nVUaBGzfmEaR5M8"; //alchemist Plug
 
 	//@dev Our list of IPFS hashes for each of the "normal" 8 Plugs (varying juice levels)
 	string [NUM_ASSETS] normHashes = [NHASH_0, NHASH_1, 

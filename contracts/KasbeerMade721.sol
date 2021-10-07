@@ -61,7 +61,6 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	//@dev Determine if '_assetHash' is one of the IPFS hashes in assetHashes
 	function _hashExists(string memory _assetHash) internal view returns (bool) 
 	{
-		// uint numAssets = _hashIds.current();
 		uint8 i;
 		for (i = 0; i < NUM_ASSETS; i++) {
 			if (_stringsEqual(_assetHash, normHashes[i]) || 

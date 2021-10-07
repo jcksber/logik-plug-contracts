@@ -169,6 +169,7 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): URI query for nonexistent token");
+
 		return _birthdays[tokenId];
 	}
 
@@ -177,6 +178,7 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
+
 		return countDaysPassed(tokenId) >= 557;
 	}
 
@@ -223,6 +225,7 @@ contract Plug is KasbeerMade721 {
 	{
 	    require(_exists(tokenId), 
 	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
+
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
 	}
 
@@ -231,6 +234,7 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (hours) query for nonexistent token");
+
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 hours);
 	}
 
@@ -239,6 +243,7 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (days) query for nonexistent token");
+		
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
 	}
 }
