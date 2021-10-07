@@ -24,6 +24,8 @@ contract KasbeerStorage {
 	event ERC721Burned(uint256 indexed tokenId);
 	//@dev Emitted when an ipfs hash is updated
 	event HashUpdated(uint8 indexed group, string indexed newHash);
+	//@dev Emitted when token is transferred
+	event PlugTransferred(address indexed from, address indexed to);
 
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;
@@ -77,22 +79,3 @@ contract KasbeerStorage {
 								     LHASH_4, LHASH_5,
 								     LHASH_6, LHASH_7];
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

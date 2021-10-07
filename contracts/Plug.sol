@@ -64,7 +64,7 @@ contract Plug is KasbeerMade721 {
 		}
 
 		// Calculate days gone by for this particular token 
-		uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
+		uint daysPassed = countDaysPassed(tokenId);
 
 		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {
@@ -142,6 +142,7 @@ contract Plug is KasbeerMade721 {
     	if (_exists(tokenId) && !isAlchemist(tokenId)) {
     		_setBirthday(tokenId);
     	}
+    	emit PlugTransferred(from, to);
     }
 
 
@@ -243,7 +244,7 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (days) query for nonexistent token");
-		
+
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
 	}
 }

@@ -11,10 +11,6 @@ async function main() {
 	const gas = { 'gasPrice': 50000 }
 	const Plug = await ethers.getContractFactory("Plug");
 	const instance = await Plug.deploy();
-
-	console.log(instance.deployTransaction);
-
-
 	console.log("Plug contract deployed to address:", instance.address);
 }
 
