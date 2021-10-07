@@ -1138,12 +1138,8 @@ contract KasbeerStorage {
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;
 	Counters.Counter internal _tokenIds;
-	// Counters.Counter internal _hashIds;
 	//@dev Ownership
 	mapping (address => bool) internal _squad;
-
-	//NOTE: maybe replace this with a struct that has a number of assets,
-	// and a mapping from ipfsHash -> position
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
 	//@dev Production hashes
@@ -1246,19 +1242,17 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 			"KasbeerMade721: _hash_num out of bounds");
 
 		assetHashes[_hash_num] = _str;
-		//emit HashUpdated(_str);
+		emit HashUpdated(_str);
 	}
 
-	// @dev Add an asset hash
-	// function _addAssetHash(string memory _assetHash) internal returns (uint)
-	// {
-	// 	_hashIds.increment();
-
-	// 	uint256 newId = _hashIds.current();
-	// 	assetHashes[newId] = _assetHash;
-
-	// 	return newId;
-	// }
+	//@dev Get the hash stored at assetHashes[idx]
+	function getHashByIndex(uint256 idx) public view returns (string memory)
+	{
+		require(0 <= idx && idx < NUM_ASSETS, 
+			"KasbeerMade721: index out of bounds");
+		
+		return assetHashes[idx];
+	}
 
 
 	/*** MINT & BURN ***/
@@ -1271,7 +1265,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 
-		//emit ERC721Minted(newId);
+		emit ERC721Minted(newId);
 
 		return newId;
 	}
@@ -1279,16 +1273,14 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	//@dev Custom burn function - nothing special
 	function burn721(uint256 tokenId) public virtual isSquad
 	{
-		require(_isApprovedOrOwner(_msgSender(), tokenId), 
-			"KasbeerMade721 (Burnable): caller is not approved to burn");
-
 		_burn(tokenId);
-		//emit ERC721Burned(tokenId);
+		emit ERC721Burned(tokenId);
 	}
 
 
 	/*** OWNERSHIP ***/
 
+	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
 	{
 		require(isInSquad(msg.sender), "KasbeerMade721: Caller not part of squad.");
@@ -1307,7 +1299,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(!isInSquad(a), "KasbeerMade721: Address already in squad.");
 
 		_squad[a] = true;
-		//emit SquadMemberAdded(a);
+		emit SquadMemberAdded(a);
 	}
 
 	//@dev Remove someone from the squad
@@ -1316,12 +1308,13 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(isInSquad(a), "KasbeerMade721: Address already not in squad.");
 
 		_squad[a] = false;
-		//emit SquadMemberRemoved(a);
+		emit SquadMemberRemoved(a);
 	}
 
 
 	/*** TRANSFER FUNCTIONS ***/
 
+	//@dev This is here as a reminder to override for custom transfer functionality
 	function _beforeTokenTransfer(
 		address from, 
 		address to, 
@@ -1331,16 +1324,22 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	/*** HELPER FUNCTIONS ***/
 
+	//@dev This function doesn't work, not exactly sure why
 	function kill() public onlyOwner
 	{
 		selfdestruct(payable(owner()));
 	}
 
-	function getHashByIndex(uint256 idx) public view returns (string memory)
+	//@dev Returns the most recently minted token id 
+	function getCurrentTokenId() public view returns (uint256)
 	{
-		require(0 <= idx && idx < NUM_ASSETS, 
-			"KasbeerMade721: idx out of bounds");
-		return assetHashes[idx];
+		return _tokenIds.current();
+	}
+
+	//@dev Determine if a token exists 
+	function tokenExists(uint256 tokenId) public view returns (bool)
+	{
+		return _exists(tokenId);
 	}
 
 	//@dev Determine if two strings are equal using the length + hash method
@@ -1396,21 +1395,15 @@ pragma solidity >=0.5.16 <0.9.0;
 // import "contracts/KasbeerStorage.sol";
 
 //@title The Plug
-//@author Jack Kasbeer (@jcksber, @satoshigoat)
+//@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
 contract Plug is KasbeerMade721 {
 
-	// event AlchemistBorn(address indexed owner, uint256 indexed tokenId);
-
 	using Counters for Counters.Counter;
-
-	//@dev Important number - cannot be changed
-	uint constant MAX_NUM_PLUGS = 88;
-
-	//@dev Keep track of the birthday (mint/last transfer) for each token ID
+	uint constant MAX_NUM_PLUGS = 888;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
 	//@dev Create Plug
-	constructor() KasbeerMade721("the Plug v10", "") {
+	constructor() KasbeerMade721("the Plug v12", "") {
 		// Add LOGIK's dev address
 		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
 		addToSquad(logik);
@@ -1423,34 +1416,13 @@ contract Plug is KasbeerMade721 {
 	// ownership, this function returns the appropriate IPFS hash
 	function _tokenHash(uint256 tokenId) internal virtual view override returns (string memory)
 	{
-		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
-
-		// TEST LOGIC 
-		// uint minsPassed = countMinutesPassed(tokenId);
-
-		// // Order is "reversed" for cleaner code
-		// if (minsPassed >= 45) {
-		// 	return HASH_7;
-		// } else if (minsPassed >= 30) {
-		// 	return HASH_6;
-		// } else if (minsPassed >= 25) {
-		// 	return HASH_5;
-		// } else if (minsPassed >= 20) {
-		// 	return HASH_4;
-		// } else if (minsPassed >= 15) {
-		// 	return HASH_3;
-		// } else if (minsPassed >= 10) {
-		// 	return HASH_2;
-		// } else if (minsPassed >= 5) {
-		// 	return HASH_1;
-		// } else {
-		// 	return HASH_0; 
-		// }
-		
-		// Calculate days gone by for this particular token with 'tokenId'
+		if (!_exists(tokenId)) {
+			return "";
+		}
+		// Calculate days gone by for this particular token 
 		uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
-		// // The logic here is "reversed" for cleaner code
-		if (daysPassed >= 1440) {
+
+		if (daysPassed >= 557) {
 		 return HASH_7;
 		} else if (daysPassed >= 360) {
 			return HASH_6;
@@ -1473,7 +1445,7 @@ contract Plug is KasbeerMade721 {
 	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {	
-    	// If the "4 years" have passed, don't change birthday
+    	// If the "1.5 years" have passed, don't change birthday
     	if (_exists(tokenId) && !isAlchemist(tokenId)) {
     		_setBirthday(tokenId);
     	}
@@ -1488,7 +1460,7 @@ contract Plug is KasbeerMade721 {
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 		_setBirthday(newId); //setup this token & its "birthday"
-		//emit ERC721Minted(newId);
+		emit ERC721Minted(newId);
 
 		return newId;
 	}
@@ -1508,8 +1480,9 @@ contract Plug is KasbeerMade721 {
 	//@dev Determine if a token has reached alchemist status
 	function isAlchemist(uint256 tokenId) public view returns (bool)
 	{
-		//return countMinutesPassed(tokenId) >= 45;//testing
-		return countDaysPassed(tokenId) >= 1440;
+		require(_exists(tokenId), 
+			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
+		return countDaysPassed(tokenId) >= 557;
 	}
 
 	//@dev List the owners for a certain level (determined by _assetHash)
@@ -1550,58 +1523,27 @@ contract Plug is KasbeerMade721 {
 		_birthdays[tokenId] = block.timestamp;
 	}
 
-	// Number of minutes that have passed since transfer/mint
-	function countMinutesPassed(uint256 tokenId) public view returns (uint16) 
+	//@dev Retuns number of minutes that have passed since transfer/mint
+	function countMinutesPassed(uint256 tokenId) public view returns (uint256) 
 	{
 	    require(_exists(tokenId), 
 	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
-		return uint16((block.timestamp - _birthdays[tokenId]) / 1 minutes);
+		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
 	}
 
-	// Number of hours that have passed since transfer/mint
-	function countHoursPassed(uint256 tokenId) public view returns (uint16) 
+	//@dev Returns number of hours that have passed since transfer/mint
+	function countHoursPassed(uint256 tokenId) public view returns (uint256) 
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (hours) query for nonexistent token");
-		return uint16((block.timestamp - _birthdays[tokenId]) / 1 hours);
+		return uint256((block.timestamp - _birthdays[tokenId]) / 1 hours);
 	}
 
-	// Number of days that have passed since transfer/mint
-	function countDaysPassed(uint256 tokenId) public view returns (uint16) 
+	//@dev Returns number of days that have passed since transfer/mint
+	function countDaysPassed(uint256 tokenId) public view returns (uint256) 
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): time (days) query for nonexistent token");
-		return uint16((block.timestamp - _birthdays[tokenId]) / 1 days);
+		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
 	}
 }
-
-/*
-// @dev Based on the number of days that have passed since the last transfer of
-// ownership, this function returns the appropriate IPFS hash
-function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
-{
-	require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
-
-	// PRODUCTION LOGIC ///////////////////////////////////////////////////////
-	// Calculate days gone by for this particular token with 'tokenId'
-	// uint daysPassed = (block.timestamp - _lastTransferTimes[tokenId]) / 1 days;
-	// // The logic here is "reversed" for cleaner code
-	if (daysPassed >= 1440) {
-	 return HASH_7;
-	} else if (daysPassed >= 360) {
-		return HASH_6;
-	} else if (daysPassed >= 300) {
-		return HASH_5;
-	} else if (daysPassed >= 240) {
-		return HASH_4;
-	} else if (daysPassed >= 180) {
-		return HASH_3;
-	} else if (daysPassed >= 120) {
-		return HASH_2;
-	} else if (daysPassed >= 60) {
-		return HASH_1;
-	} else { //if 60 days haven't passed, the initial asset/Plug is returned
-		return HASH_0; 
-	}
-}
-*/

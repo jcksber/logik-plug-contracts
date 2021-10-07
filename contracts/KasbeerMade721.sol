@@ -64,7 +64,9 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		// uint numAssets = _hashIds.current();
 		uint8 i;
 		for (i = 0; i < NUM_ASSETS; i++) {
-			if (_stringsEqual(_assetHash, assetHashes[i])) {
+			if (_stringsEqual(_assetHash, normHashes[i]) || 
+				_stringsEqual(_assetHash, chiHashes[i]) ||
+				_stringsEqual(_assetHash, stlHashes[i])) {
 				return true;
 			}
 		}
@@ -73,22 +75,37 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	}
 
 	//@dev Allows us to update the IPFS hash values (one at a time)
-	function updateHash(uint8 _hash_num, string memory _str) public isSquad 
+	// group refers to normal (0), chicago (1), or st louis (2)
+	function updateHash(uint8 group, uint8 _hash_num, string memory _str) public isSquad 
 	{
 		require(0 <= _hash_num && _hash_num < NUM_ASSETS, 
 			"KasbeerMade721: _hash_num out of bounds");
+		require(0 <= group && group <= 2, "KasbeerMade721: group must be 0, 1, or 2");
 
-		assetHashes[_hash_num] = _str;
-		emit HashUpdated(_str);
+		if (group == 0) {
+			normHashes[_hash_num] = _str;
+		} else if (group == 1) {
+			chiHashes[_hash_num] = _str;
+		} else {
+			stlHashes[_hash_num] = _str;
+		}
+		emit HashUpdated(group, _str);
 	}
 
-	//@dev Get the hash stored at assetHashes[idx]
-	function getHashByIndex(uint256 idx) public view returns (string memory)
+	//@dev Get the hash stored at idx for group
+	function getHashByIndex(uint8 group, uint256 idx) public view returns (string memory)
 	{
 		require(0 <= idx && idx < NUM_ASSETS, 
 			"KasbeerMade721: index out of bounds");
-		
-		return assetHashes[idx];
+		require(0 <= group && group <= 2, "KasbeerMade721: group must be 0, 1, or 2");
+
+		if (group == 0) {
+			return normHashes[idx];
+		} else if (group == 1) {
+			return chiHashes[idx];
+		} else {
+			return stlHashes[idx];
+		}
 	}
 
 

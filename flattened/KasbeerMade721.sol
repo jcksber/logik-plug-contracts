@@ -1138,12 +1138,8 @@ contract KasbeerStorage {
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;
 	Counters.Counter internal _tokenIds;
-	// Counters.Counter internal _hashIds;
 	//@dev Ownership
 	mapping (address => bool) internal _squad;
-
-	//NOTE: maybe replace this with a struct that has a number of assets,
-	// and a mapping from ipfsHash -> position
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
 	//@dev Production hashes
@@ -1246,19 +1242,17 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 			"KasbeerMade721: _hash_num out of bounds");
 
 		assetHashes[_hash_num] = _str;
-		//emit HashUpdated(_str);
+		emit HashUpdated(_str);
 	}
 
-	// @dev Add an asset hash
-	// function _addAssetHash(string memory _assetHash) internal returns (uint)
-	// {
-	// 	_hashIds.increment();
-
-	// 	uint256 newId = _hashIds.current();
-	// 	assetHashes[newId] = _assetHash;
-
-	// 	return newId;
-	// }
+	//@dev Get the hash stored at assetHashes[idx]
+	function getHashByIndex(uint256 idx) public view returns (string memory)
+	{
+		require(0 <= idx && idx < NUM_ASSETS, 
+			"KasbeerMade721: index out of bounds");
+		
+		return assetHashes[idx];
+	}
 
 
 	/*** MINT & BURN ***/
@@ -1271,7 +1265,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 
-		//emit ERC721Minted(newId);
+		emit ERC721Minted(newId);
 
 		return newId;
 	}
@@ -1279,16 +1273,14 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	//@dev Custom burn function - nothing special
 	function burn721(uint256 tokenId) public virtual isSquad
 	{
-		require(_isApprovedOrOwner(_msgSender(), tokenId), 
-			"KasbeerMade721 (Burnable): caller is not approved to burn");
-
 		_burn(tokenId);
-		//emit ERC721Burned(tokenId);
+		emit ERC721Burned(tokenId);
 	}
 
 
 	/*** OWNERSHIP ***/
 
+	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
 	{
 		require(isInSquad(msg.sender), "KasbeerMade721: Caller not part of squad.");
@@ -1307,7 +1299,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(!isInSquad(a), "KasbeerMade721: Address already in squad.");
 
 		_squad[a] = true;
-		//emit SquadMemberAdded(a);
+		emit SquadMemberAdded(a);
 	}
 
 	//@dev Remove someone from the squad
@@ -1316,12 +1308,13 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(isInSquad(a), "KasbeerMade721: Address already not in squad.");
 
 		_squad[a] = false;
-		//emit SquadMemberRemoved(a);
+		emit SquadMemberRemoved(a);
 	}
 
 
 	/*** TRANSFER FUNCTIONS ***/
 
+	//@dev This is here as a reminder to override for custom transfer functionality
 	function _beforeTokenTransfer(
 		address from, 
 		address to, 
@@ -1331,16 +1324,22 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	/*** HELPER FUNCTIONS ***/
 
+	//@dev This function doesn't work, not exactly sure why
 	function kill() public onlyOwner
 	{
 		selfdestruct(payable(owner()));
 	}
 
-	function getHashByIndex(uint256 idx) public view returns (string memory)
+	//@dev Returns the most recently minted token id 
+	function getCurrentTokenId() public view returns (uint256)
 	{
-		require(0 <= idx && idx < NUM_ASSETS, 
-			"KasbeerMade721: idx out of bounds");
-		return assetHashes[idx];
+		return _tokenIds.current();
+	}
+
+	//@dev Determine if a token exists 
+	function tokenExists(uint256 tokenId) public view returns (bool)
+	{
+		return _exists(tokenId);
 	}
 
 	//@dev Determine if two strings are equal using the length + hash method

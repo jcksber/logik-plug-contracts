@@ -23,9 +23,11 @@
  *				   5. 8 months (240 days): 66% juice
  *				   6. 10 months (300 days): 87% juice 
  *				   7. 12 months (360 days): 100% juice
- *				   8. 48 months (1440 days): Permanent 100% (alchemist)
+ *				   8. 18 months (557 days): Permanent 100% (alchemist)
  *  - If a Plug is a Alchemist (final state), it means that it will never lose juice again,
  *    even if it is transferred.
+ *
+ *  St. Louis ID's: 264, 352, 440, 528, 616, 704, 792, 880
  */
 
 pragma solidity >=0.5.16 <0.9.0;
@@ -35,21 +37,16 @@ import "./KasbeerMade721.sol";
 import "./KasbeerStorage.sol";
 
 //@title The Plug
-//@author Jack Kasbeer (@jcksber, @satoshigoat)
+//@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
 contract Plug is KasbeerMade721 {
 
-	// event AlchemistBorn(address indexed owner, uint256 indexed tokenId);
+	uint constant MAX_NUM_PLUGS = 888;
 
 	using Counters for Counters.Counter;
-
-	//@dev Important number - cannot be changed
-	uint constant MAX_NUM_PLUGS = 88;
-
-	//@dev Keep track of the birthday (mint/last transfer) for each token ID
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
 	//@dev Create Plug
-	constructor() KasbeerMade721("the Plug v11", "") {
+	constructor() KasbeerMade721("The Plug", "") {
 		// Add LOGIK's dev address
 		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
 		addToSquad(logik);
@@ -62,57 +59,86 @@ contract Plug is KasbeerMade721 {
 	// ownership, this function returns the appropriate IPFS hash
 	function _tokenHash(uint256 tokenId) internal virtual view override returns (string memory)
 	{
-		require(_exists(tokenId), "Plug (ERC721Metadata): URI query for nonexistent token");
-
-		// TEST LOGIC 
-		uint minsPassed = countMinutesPassed(tokenId);
-
-		// Order is "reversed" for cleaner code
-		if (minsPassed >= 45) {
-			return HASH_7;
-		} else if (minsPassed >= 30) {
-			return HASH_6;
-		} else if (minsPassed >= 25) {
-			return HASH_5;
-		} else if (minsPassed >= 20) {
-			return HASH_4;
-		} else if (minsPassed >= 15) {
-			return HASH_3;
-		} else if (minsPassed >= 10) {
-			return HASH_2;
-		} else if (minsPassed >= 5) {
-			return HASH_1;
-		} else {
-			return HASH_0; 
+		if (!_exists(tokenId)) {
+			return "";//not a require statement to avoid errors being thrown
 		}
-		
-		// Calculate days gone by for this particular token with 'tokenId'
-		//uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
-		// // The logic here is "reversed" for cleaner code
-		// if (daysPassed >= 1440) {
-		//  return HASH_7;
-		// } else if (daysPassed >= 360) {
-		// 	return HASH_6;
-		// } else if (daysPassed >= 300) {
-		// 	return HASH_5;
-		// } else if (daysPassed >= 240) {
-		// 	return HASH_4;
-		// } else if (daysPassed >= 180) {
-		// 	return HASH_3;
-		// } else if (daysPassed >= 120) {
-		// 	return HASH_2;
-		// } else if (daysPassed >= 60) {
-		// 	return HASH_1;
-		// } else { //if 60 days haven't passed, the initial asset/Plug is returned
-		// 	return HASH_0; 
-		// }
+
+		// Calculate days gone by for this particular token 
+		uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
+
+		// Based on the number of days that have gone by, return the appropriate state of the Plug
+		if (daysPassed >= 557) {
+			if (tokenId <= 176) {
+				return CHASH_7;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_7;
+			} else {
+				return NHASH_7;
+			}
+		} else if (daysPassed >= 360) {
+			if (tokenId <= 176) {
+				return CHASH_6;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_6;
+			} else {
+				return NHASH_6;
+			}
+		} else if (daysPassed >= 300) {
+			if (tokenId <= 176) {
+				return CHASH_5;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_5;
+			} else {
+				return NHASH_5;
+			}
+		} else if (daysPassed >= 240) {
+			if (tokenId <= 176) {
+				return CHASH_4;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_4;
+			} else {
+				return NHASH_4;
+			}
+		} else if (daysPassed >= 180) {
+			if (tokenId <= 176) {
+				return CHASH_3;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_3;
+			} else {
+				return NHASH_3;
+			}
+		} else if (daysPassed >= 120) {
+			if (tokenId <= 176) {
+				return CHASH_2;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_2;
+			} else {
+				return NHASH_2;
+			}
+		} else if (daysPassed >= 60) {
+			if (tokenId <= 176) {
+				return CHASH_1;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_1;
+			} else {
+				return NHASH_1;
+			}
+		} else { //if 60 days haven't passed, the initial asset/Plug is returned
+			if (tokenId <= 176) {
+				return CHASH_0;
+			} else if (tokenId % 88 == 0) {
+				return LHASH_0;
+			} else {
+				return NHASH_0;
+			}
+		}
 	}
 
 	//@dev Any Plug transfer this will be called beforehand (updating the transfer time)
 	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
-    {	
-    	// If the "4 years" have passed, don't change birthday
+    {
+    	// If the "1.5 years" have passed, don't change birthday
     	if (_exists(tokenId) && !isAlchemist(tokenId)) {
     		_setBirthday(tokenId);
     	}
@@ -120,8 +146,10 @@ contract Plug is KasbeerMade721 {
 
 
     //@dev Mint a single Plug
-	function mint721(address recipient) public virtual override onlyOwner returns (uint256)
+	function mint721(address recipient) public virtual override returns (uint256)
 	{
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
+
 		_tokenIds.increment();
 
 		uint256 newId = _tokenIds.current();
@@ -149,8 +177,7 @@ contract Plug is KasbeerMade721 {
 	{
 		require(_exists(tokenId), 
 			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
-		return countMinutesPassed(tokenId) >= 45;//testing
-		//return countDaysPassed(tokenId) >= 1440;
+		return countDaysPassed(tokenId) >= 557;
 	}
 
 	//@dev List the owners for a certain level (determined by _assetHash)
