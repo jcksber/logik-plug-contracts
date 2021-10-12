@@ -111,7 +111,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	/*** MINT & BURN ***/
 
 	//@dev Custom mint function - nothing special 
-	function mint721(address recipient) public virtual onlyOwner returns (uint256)
+	function mint721(address recipient) public virtual payable onlyOwner returns (uint256)
 	{
 		_tokenIds.increment();
 
@@ -173,6 +173,13 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		address to, 
 		uint256 tokenId
 	) internal virtual override {}
+
+	function withdraw(uint256 amount) public onlyOwner
+	{
+		require(amount <= address(this).balance,"KasbeerMade721: Insufficient funds to withdraw");
+
+		msg.sender.transfer(amount);
+	}
 	
 
 	/*** HELPER FUNCTIONS ***/

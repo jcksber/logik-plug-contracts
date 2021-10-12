@@ -41,6 +41,7 @@ import "./KasbeerStorage.sol";
 contract Plug is KasbeerMade721 {
 
 	uint constant MAX_NUM_PLUGS = 888;
+	uint constant plugPrice = 88800000000000000;
 
 	using Counters for Counters.Counter;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
@@ -145,9 +146,14 @@ contract Plug is KasbeerMade721 {
     	emit PlugTransferred(from, to);
     }
 
+    //@dev Allows owners to mint for free
+    function mint721(address _to) public isSquad virtual override returns (uint256)
+    {
+    	return _mintInternal(_to);
+    }
 
     //@dev Mint a single Plug
-	function mint721(address recipient) public virtual override returns (uint256)
+	function _mintInternal(address recipient) internal virtual override returns (uint256)
 	{
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
 
@@ -159,6 +165,23 @@ contract Plug is KasbeerMade721 {
 		emit ERC721Minted(newId);
 
 		return newId;
+	}
+
+	//@dev Allow people to pay for & mint a Plug
+	function purchase(address _to) public payable returns (uint256)
+	{
+		require(msg.value >= plugPrice, "Plug: must send minimum value to mint!");
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs have been minted");
+
+		//send change if too much was sent
+        if (msg.value > 0) {
+	    	uint256 diff = msg.value.sub(plugPrice);
+	    	if (diff > 0) {
+	    	  msg.sender.transfer(diff);
+	    	}
+        }
+
+		return _mintInternal(_to);
 	}
 
 
