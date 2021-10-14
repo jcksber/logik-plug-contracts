@@ -34,6 +34,7 @@ pragma solidity >=0.5.16 <0.9.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./KasbeerMade721.sol";
 import "./KasbeerStorage.sol";
+// import "./Purchasable.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
@@ -54,14 +55,14 @@ contract Plug is KasbeerMade721 {
 
 	//@dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
-	function _tokenHash(uint256 tokenId) internal virtual view override returns (string memory)
+	function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
 	{
 		if (!_exists(tokenId)) {
 			return "";//not a require statement to avoid errors being thrown
 		}
 
 		// Calculate days gone by for this particular token 
-		uint daysPassed = countDaysPassed(tokenId);
+		uint daysPassed = countMinutesPassed(tokenId);//NOTE: CHANGE FOR PRODUCTION!
 
 		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {
@@ -135,16 +136,15 @@ contract Plug is KasbeerMade721 {
 	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {
-    	super._beforeTokenTransfer(from, to, tokenId);
     	// If the "1.5 years" have passed, don't change birthday
-    	if (_exists(tokenId) && !isAlchemist(tokenId)) {
+    	if (_exists(tokenId) && countMinutesPassed(tokenId) < 557) {
     		_setBirthday(tokenId);
     	}
     	emit PlugTransferred(from, to);
     }
 
     //@dev Allows owners to mint for free
-    function mint721(address _to) public isSquad virtual override returns (uint256)
+    function mint721(address _to) public isSquad virtual returns (uint256)
     {
     	return _mintInternal(_to);
     }
@@ -152,8 +152,8 @@ contract Plug is KasbeerMade721 {
     //@dev Allow people to pay for & mint a Plug
 	function purchase(address _to) public payable returns (uint256)
 	{
-		require(msg.value >= PLUG_WEI_PRICE, "Plug: must send minimum value to mint!");
-		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs have been minted");
+		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs minted");
 
 		return _mintInternal(_to);
 	}
@@ -161,7 +161,7 @@ contract Plug is KasbeerMade721 {
     //@dev Mint a single Plug
 	function _mintInternal(address recipient) internal virtual returns (uint256)
 	{
-		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
 
 		_tokenIds.increment();
 
@@ -177,22 +177,18 @@ contract Plug is KasbeerMade721 {
 	/*** "THE PLUG" FUNCTIONS  ******************************************************************/
 
 	//@dev Determine if a token has reached alchemist status
-	function isAlchemist(uint256 tokenId) public view returns (bool)
-	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
-
-		return countDaysPassed(tokenId) >= 557;
-	}
+	// function isAlchemist(uint256 tokenId) public view returns (bool)
+	// {
+	// 	require(_exists(tokenId), "Plug: nonexistent token");
+	// 	return countMinutesPassed(tokenId) >= 557;//NOTE: CHANGE FOR PRODUCTION!
+	// }
 
 	//@dev Get the last transfer time for a tokenId
-	function getBirthday(uint256 tokenId) public view returns (uint)
-	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): URI query for nonexistent token");
-
-		return _birthdays[tokenId];
-	}
+	// function getBirthday(uint256 tokenId) public view returns (uint)
+	// {
+	// 	require(_exists(tokenId), "Plug: nonexistent token");
+	// 	return _birthdays[tokenId];
+	// }
 
 	//@dev Set the last transfer time for a tokenId
 	function _setBirthday(uint256 tokenId) private
@@ -204,7 +200,7 @@ contract Plug is KasbeerMade721 {
 	// We'll need this for airdrops and benefits
 	function listLevelOwners(string memory _assetHash) public view isSquad returns (address[] memory)
 	{
-		require(_hashExists(_assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
+		require(_hashExists(_assetHash), "Plug: nonexistent hash");
 
 		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
 		uint counter = 0;
@@ -212,15 +208,10 @@ contract Plug is KasbeerMade721 {
 		// Go thru list of created token id's (existing Plugs) so far
 		uint tokenId;
 		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
-
-			// Find the IPFS hash associated with this token ID
-			string memory hash = _tokenHash(tokenId);
-
 			// If this is equal to the hash we're looking for (_assetHash)
 			// then determine the owner of the token and add it to our list
-			if (_stringsEqual(hash, _assetHash)) {
-				address owner = ownerOf(tokenId);
-				levelOwners[counter] = owner;
+			if (_stringsEqual(_tokenHash(tokenId), _assetHash)) {
+				levelOwners[counter] = ownerOf(tokenId);
 				counter++;
 			}
 		}
@@ -231,18 +222,16 @@ contract Plug is KasbeerMade721 {
 	//@dev Retuns number of minutes that have passed since transfer/mint
 	function countMinutesPassed(uint256 tokenId) public view returns (uint256) 
 	{
-	    require(_exists(tokenId), 
-	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
+	    require(_exists(tokenId), "Plug: nonexistent token");
 
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
 	}
 
 	//@dev Returns number of days that have passed since transfer/mint
-	function countDaysPassed(uint256 tokenId) public view returns (uint256) 
-	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): time (days) query for nonexistent token");
+	// function countDaysPassed(uint256 tokenId) public view returns (uint256) 
+	// {
+	// 	require(_exists(tokenId), "Plug: nonexistent token");
 
-		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
-	}
+	// 	return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
+	// }
 }

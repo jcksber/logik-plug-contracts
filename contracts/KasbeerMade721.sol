@@ -9,12 +9,12 @@
 pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./KasbeerStorage.sol";
+import "./KasbeerAccessControl.sol";
 
 //@title Kasbeer Made Contract for an ERC721
 //@author Jack Kasbeer (git:@jcksber, tw:@satoshigoat)
-contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
+contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	using Counters for Counters.Counter;
 	
@@ -32,16 +32,15 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ************************************************/
 
 	//@dev Override 'tokenURI' to account for asset/hash cycling
-	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
-	{	
-		require(_exists(tokenId), 
-			"KasbeerMade721 (ERC721Metadata): URI query for nonexistent token");
+	// function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
+	// {	
+	// 	require(_exists(tokenId), "KasbeerMade721: nonexistent token");
 
-		string memory baseURI = _baseURI();
-		string memory hash = _tokenHash(tokenId);
+	// 	string memory baseURI = _baseURI();
+	// 	string memory hash = _tokenHash(tokenId);
 		
-		return string(abi.encodePacked(baseURI, hash));
-	}
+	// 	return string(abi.encodePacked(baseURI, hash));
+	// }
 
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() internal view virtual override returns (string memory)
@@ -51,13 +50,12 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	//@dev This function should return an ipfs hash that leads to a json file
 	// e.g. QmSJQmBV5crGcmq54WUB22SRw9SGsp1YSaxfenQEbZ5qTD
-	function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
-	{
-		require(_exists(tokenId), 
-			"KasbeerMade721 (ERC721Metadata): URI query for nonexistent token");
+	// function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
+	// {
+	// 	require(_exists(tokenId), "KasbeerMade721: nonexistent token");
 
-		return "";
-	}
+	// 	return "";
+	// }
 
 	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
 	function _hashExists(string memory _assetHash) internal view returns (bool) 
@@ -76,20 +74,19 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	//@dev Allows us to update the IPFS hash values (one at a time)
 	// group refers to normal (0), chicago (1), or st louis (2)
-	function updateHash(uint8 group, uint8 _hash_num, string memory _str) public isSquad 
+	function updateHash(uint8 _group, uint8 _hash_num, string memory _str) public isSquad 
 	{
-		require(0 <= _hash_num && _hash_num < NUM_ASSETS, 
-			"KasbeerMade721: _hash_num out of bounds");
-		require(0 <= group && group <= 2, "KasbeerMade721: group must be 0, 1, or 2");
+		require(0 <= _hash_num && _hash_num < NUM_ASSETS, "KasbeerMade721: _hash_num OOB");
+		require(0 <= _group && _group <= 2, "KasbeerMade721: _group OOB");
 
-		if (group == 0) {
+		if (_group == 0) {
 			normHashes[_hash_num] = _str;
-		} else if (group == 1) {
+		} else if (_group == 1) {
 			chiHashes[_hash_num] = _str;
 		} else {
 			stlHashes[_hash_num] = _str;
 		}
-		emit HashUpdated(group, _str);
+		emit HashUpdated(_group, _str);
 	}
 
 	//@dev Get the hash stored at idx for group
@@ -112,17 +109,17 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	/*** MINT & BURN ****************************************************************************/
 
 	//@dev Custom mint function - nothing special 
-	function mint721(address recipient) public virtual onlyOwner returns (uint256)
-	{
-		_tokenIds.increment();
+	// function mint721(address recipient) public virtual isSquad returns (uint256)
+	// {
+	// 	_tokenIds.increment();
 
-		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
+	// 	uint256 newId = _tokenIds.current();
+	// 	_safeMint(recipient, newId);
 
-		emit ERC721Minted(newId);
+	// 	emit ERC721Minted(newId);
 
-		return newId;
-	}
+	// 	return newId;
+	// }
 
 	//@dev Custom burn function - nothing special
 	function burn721(uint256 tokenId) public virtual isSquad
@@ -135,11 +132,11 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	/*** TRANSFER FUNCTIONS *********************************************************************/
 
 	//@dev This is here as a reminder to override for custom transfer functionality
-	function _beforeTokenTransfer(
-		address from, 
-		address to, 
-		uint256 tokenId
-	) internal virtual override {}
+	// function _beforeTokenTransfer(
+	// 	address from, 
+	// 	address to, 
+	// 	uint256 tokenId
+	// ) internal virtual override {}
 
 	//@dev Allows us to withdraw funds collected
 	function withdraw(address payable wallet, uint256 amount) public onlyOwner
@@ -147,81 +144,6 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		require(amount <= address(this).balance,"KasbeerMade721: Insufficient funds to withdraw");
 
 		wallet.transfer(amount);
-	}
-
-
-	/*** OWNERSHIP ******************************************************************************/
-
-	//@dev Custom "approved" modifier because I don't like that language
-	modifier isSquad()
-	{
-		require(isInSquad(msg.sender), "KasbeerMade721: Caller not part of squad.");
-		_;
-	}
-
-	//@dev Determine if address 'a' is an approved owner
-	function isInSquad(address a) public view returns (bool) 
-	{
-		return _squad[a];
-	}
-
-	//@dev Add someone to the squad
-	function addToSquad(address a) public onlyOwner
-	{
-		require(!isInSquad(a), "KasbeerMade721: Address already in squad.");
-
-		_squad[a] = true;
-		emit SquadMemberAdded(a);
-	}
-
-	//@dev Remove someone from the squad
-	function removeFromSquad(address a) public onlyOwner
-	{
-		require(isInSquad(a), "KasbeerMade721: Address already not in squad.");
-
-		_squad[a] = false;
-		emit SquadMemberRemoved(a);
-	}
-
-
-	/*** WHITELIST ******************************************************************************/
-	
-	//@dev Turn the whitelist on
-	function activateWhiteList() public isSquad 
-	{ 
-		whitelistActive = 1;
-		emit WhitelistActivated(true);
-	}
-
-	//@dev Turn the whitelist off
-	function deactivateWhitelist() public isSquad 
-	{ 
-		whitelistActive = 0;
-		emit WhitelistActivated(false);
-	}
-
-	//@dev Determine if an address is in the whitelist
-	function isInWhitelist(address a) public view returns (bool)
-	{
-		return _whitelist[a];
-	}
-
-	//@dev Add address to whitelist
-	function addToWhitelist(address a) public isSquad
-	{
-		require(!isInWhitelist(a), "KasbeerMade721: Address already in whitelist.");
-
-		_whitelist[a] = true;
-		emit WhitelistMemberAdded(a);
-	}
-
-	//@dev Remove address from whitelist
-	function removeFromWhitelist(address a) public isSquad 
-	{
-		require(isInWhitelist(a), "KasbeerMade721: Address not in whitelist.");
-
-		_whitelist[a] = false;
-		emit WhitelistMemberRemoved(a);
 	}
 
 
@@ -234,16 +156,16 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	}
 
 	//@dev Returns the most recently minted token id 
-	function getCurrentTokenId() public view returns (uint256)
-	{
-		return _tokenIds.current();
-	}
+	// function getCurrentTokenId() public view returns (uint256)
+	// {
+	// 	return _tokenIds.current();
+	// }
 
 	//@dev Determine if a token exists 
-	function tokenExists(uint256 tokenId) public view returns (bool)
-	{
-		return _exists(tokenId);
-	}
+	// function tokenExists(uint256 tokenId) public view returns (bool)
+	// {
+	// 	return _exists(tokenId);
+	// }
 
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
