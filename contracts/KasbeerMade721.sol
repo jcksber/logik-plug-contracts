@@ -31,17 +31,6 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ************************************************/
 
-	//@dev Override 'tokenURI' to account for asset/hash cycling
-	// function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
-	// {	
-	// 	require(_exists(tokenId), "KasbeerMade721: nonexistent token");
-
-	// 	string memory baseURI = _baseURI();
-	// 	string memory hash = _tokenHash(tokenId);
-		
-	// 	return string(abi.encodePacked(baseURI, hash));
-	// }
-
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() internal view virtual override returns (string memory)
 	{
@@ -65,27 +54,26 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Allows us to update the IPFS hash values (one at a time)
 	// group refers to normal (0), chicago (1), or st louis (2)
-	function updateHash(uint8 _group, uint8 _hash_num, string memory _str) public isSquad 
+	function updateHash(uint8 group, uint8 hash_num, string memory str) public isSquad 
 	{
-		require(0 <= _hash_num && _hash_num < NUM_ASSETS, "KasbeerMade721: _hash_num OOB");
-		require(0 <= _group && _group <= 2, "KasbeerMade721: _group OOB");
+		require(0 <= hash_num && hash_num < NUM_ASSETS, "KasbeerMade721: _hash_num OOB");
+		require(0 <= group && group <= 2, "KasbeerMade721: _group OOB");
 
-		if (_group == 0) {
-			normHashes[_hash_num] = _str;
-		} else if (_group == 1) {
-			chiHashes[_hash_num] = _str;
+		if (group == 0) {
+			normHashes[hash_num] = str;
+		} else if (group == 1) {
+			chiHashes[hash_num] = str;
 		} else {
-			stlHashes[_hash_num] = _str;
+			stlHashes[hash_num] = str;
 		}
-		emit HashUpdated(_group, _str);
+		emit HashUpdated(group, str);
 	}
 
 	//@dev Get the hash stored at idx for group
 	function getHashByIndex(uint8 group, uint256 idx) public view returns (string memory)
 	{
-		require(0 <= idx && idx < NUM_ASSETS, 
-			"KasbeerMade721: index out of bounds");
-		require(0 <= group && group <= 2, "KasbeerMade721: group must be 0, 1, or 2");
+		require(0 <= idx && idx < NUM_ASSETS, "KasbeerMade721: index OOB");
+		require(0 <= group && group <= 2, "KasbeerMade721: group OOB");
 
 		if (group == 0) {
 			return normHashes[idx];
@@ -120,7 +108,6 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	function withdraw(address payable wallet, uint256 amount) public onlyOwner
 	{
 		require(amount <= address(this).balance,"KasbeerMade721: Insufficient funds to withdraw");
-
 		wallet.transfer(amount);
 	}
 

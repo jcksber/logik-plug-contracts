@@ -5,7 +5,7 @@
  * Author: Jack Kasbeer
  * Created: August 3, 2021
  *
- * Price: ~0.5 ETH
+ * Price: 0.0888 ETH
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -33,7 +33,6 @@ pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./KasbeerMade721.sol";
-import "./KasbeerStorage.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
@@ -51,6 +50,17 @@ contract Plug is KasbeerMade721 {
 
 
 	/*** CORE 721 FUNCTIONS *********************************************************************/
+
+	//@dev Override 'tokenURI' to account for asset/hash cycling
+	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
+	{	
+		require(_exists(tokenId), "Plug: nonexistent token");
+
+		string memory baseURI = _baseURI();
+		string memory hash = _tokenHash(tokenId);
+		
+		return string(abi.encodePacked(baseURI, hash));
+	}
 
 	//@dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
@@ -136,7 +146,7 @@ contract Plug is KasbeerMade721 {
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {
     	// If the "1.5 years" have passed, don't change birthday
-    	if (_exists(tokenId) && countMinutesPassed(tokenId) < 557) {
+    	if (_exists(tokenId) && countMinutesPassed(tokenId) < 557) {//NOTE: change for prod!
     		_setBirthday(tokenId);
     	}
     	emit PlugTransferred(from, to);
@@ -153,11 +163,11 @@ contract Plug is KasbeerMade721 {
 	{
 		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs minted");
-
+		
 		return _mintInternal(_to);
 	}
 
-    //@dev Mint a single Plug
+	//@dev Mint a single Plug
 	function _mintInternal(address recipient) internal virtual returns (uint256)
 	{
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
@@ -208,15 +218,13 @@ contract Plug is KasbeerMade721 {
 	function countMinutesPassed(uint256 tokenId) public view returns (uint256) 
 	{
 	    require(_exists(tokenId), "Plug: nonexistent token");
-
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
 	}
 
 	//@dev Returns number of days that have passed since transfer/mint
-	// function countDaysPassed(uint256 tokenId) public view returns (uint256) 
-	// {
-	// 	require(_exists(tokenId), "Plug: nonexistent token");
-
-	// 	return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
-	// }
+	function countDaysPassed(uint256 tokenId) public view returns (uint256) 
+	{
+		require(_exists(tokenId), "Plug: nonexistent token");
+		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
+	}
 }

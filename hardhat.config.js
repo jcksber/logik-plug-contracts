@@ -12,21 +12,30 @@ const { STAGING_ALCHEMY_API_URL,
 module.exports = {
    solidity: {
       compilers: [
-      {
+         {
+            version: '0.8.7',
+            settings: {
+               optimizer: {
+                  enabled: true,
+                  runs: 1000,
+               },
+            },
+         },
+         {
             version: '0.8.1',
-            settings: {}
+            settings: {},
          },
          {
             version: '0.8.0',
-            settings: {}
+            settings: {},
          },
          {
             version: '0.7.3',
-            settings: {}
+            settings: {},
          },
          {
             version: '0.6.2',
-            settings: {}
+            settings: {},
          }
       ]
    },
