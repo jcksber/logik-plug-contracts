@@ -39,12 +39,6 @@ import "./KasbeerStorage.sol";
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
 contract Plug is KasbeerMade721 {
 
-	uint constant MAX_NUM_PLUGS = 888;
-	uint constant PLUG_WEI_PRICE = 88800000000000000;
-
-	//@dev Emitted when token is transferred
-	event PlugTransferred(address indexed from, address indexed to);
-
 	using Counters for Counters.Counter;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
@@ -141,6 +135,7 @@ contract Plug is KasbeerMade721 {
 	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {
+    	super._beforeTokenTransfer(from, to, tokenId);
     	// If the "1.5 years" have passed, don't change birthday
     	if (_exists(tokenId) && !isAlchemist(tokenId)) {
     		_setBirthday(tokenId);
@@ -160,25 +155,17 @@ contract Plug is KasbeerMade721 {
 		require(msg.value >= PLUG_WEI_PRICE, "Plug: must send minimum value to mint!");
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs have been minted");
 
-		//send change if too much was sent
-        if (msg.value > 0) {
-	    	uint256 diff = msg.value.sub(PLUG_WEI_PRICE);
-	    	if (diff > 0) {
-	    	  msg.sender.transfer(diff);
-	    	}
-        }
-
 		return _mintInternal(_to);
 	}
 
     //@dev Mint a single Plug
-	function _mintInternal(address recipient) internal virtual override returns (uint256)
+	function _mintInternal(address recipient) internal virtual returns (uint256)
 	{
-		require(getCurrentTokenId() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
 
 		_tokenIds.increment();
 
-		uint256 newId = getCurrentTokenId();
+		uint256 newId = _tokenIds.current();
 		_safeMint(recipient, newId);
 		_setBirthday(newId); //setup this token & its "birthday"
 		emit ERC721Minted(newId);
@@ -224,8 +211,7 @@ contract Plug is KasbeerMade721 {
 
 		// Go thru list of created token id's (existing Plugs) so far
 		uint tokenId;
-		uint lastTokenId = _tokenIds.current();
-		for (tokenId = 1; tokenId <= lastTokenId; tokenId++) {
+		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
 
 			// Find the IPFS hash associated with this token ID
 			string memory hash = _tokenHash(tokenId);
@@ -249,15 +235,6 @@ contract Plug is KasbeerMade721 {
 	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
 
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
-	}
-
-	//@dev Returns number of hours that have passed since transfer/mint
-	function countHoursPassed(uint256 tokenId) public view returns (uint256) 
-	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): time (hours) query for nonexistent token");
-
-		return uint256((block.timestamp - _birthdays[tokenId]) / 1 hours);
 	}
 
 	//@dev Returns number of days that have passed since transfer/mint

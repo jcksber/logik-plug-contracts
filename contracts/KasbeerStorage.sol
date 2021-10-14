@@ -10,7 +10,7 @@ pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-//@title The Plug storage contract
+//@title A storage contract for relevant data
 //@author Jack Kasbeer (@jcksber, @satoshigoat)
 contract KasbeerStorage {
 
@@ -30,6 +30,8 @@ contract KasbeerStorage {
 	event ERC721Burned(uint256 indexed tokenId);
 	//@dev Emitted when an ipfs hash is updated
 	event HashUpdated(uint8 indexed group, string indexed newHash);
+	//@dev Emitted when token is transferred
+	event PlugTransferred(address indexed from, address indexed to);
 
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;
@@ -43,6 +45,8 @@ contract KasbeerStorage {
 
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
+	uint constant MAX_NUM_PLUGS = 888;
+	uint constant PLUG_WEI_PRICE = 88800000000000000;
 
 	//@dev Flag for whitelist being active (1) or not (0)
 	uint8 whitelistActive;
