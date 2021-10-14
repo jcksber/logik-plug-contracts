@@ -14,6 +14,12 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 //@author Jack Kasbeer (@jcksber, @satoshigoat)
 contract KasbeerStorage {
 
+	//@dev Emitted when someone is added to `_whitelist`
+	event WhitelistMemberAdded(address indexed member);
+	//@dev Emitted when someone is removed from `_whitelist`
+	event WhitelistMemberRemoved(address indexed member);
+	//@dev Emitted when whitelist is activated/deactivated
+	event WhitelistActivated(bool indexed flag);
 	//@dev Emitted when someone is added to `_squad`
 	event SquadMemberAdded(address indexed member);
 	//@dev Emitted when someone is removed from `_squad`
@@ -24,16 +30,23 @@ contract KasbeerStorage {
 	event ERC721Burned(uint256 indexed tokenId);
 	//@dev Emitted when an ipfs hash is updated
 	event HashUpdated(uint8 indexed group, string indexed newHash);
-	//@dev Emitted when token is transferred
-	event PlugTransferred(address indexed from, address indexed to);
 
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;
 	Counters.Counter internal _tokenIds;
+
 	//@dev Ownership
 	mapping (address => bool) internal _squad;
+
+	//@dev Whitelist
+	mapping (address => bool) internal _whitelist;
+
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
+
+	//@dev Flag for whitelist being active (1) or not (0)
+	uint8 whitelistActive;
+
 	//@dev Production hashes
 	//Nomad (non-chicago, non-st louis)
 	string internal NHASH_0 = "QmWCRLCpoZFMGsDGUbBPRR83vSbttvfX76bKH7z8iJ44sA"; //1% Plug

@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./KasbeerStorage.sol";
 
 //@title Kasbeer Made Contract for an ERC721
-//@author Jack Kasbeer (@jcksber, @satoshigoat)
+//@author Jack Kasbeer (git:@jcksber, tw:@satoshigoat)
 contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 
 	using Counters for Counters.Counter;
@@ -25,10 +25,11 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		// Add my personal dev address
 		address me = 0xEAb4Aea5cD7376C04923236c504e7e91362566D1;
 		addToSquad(me);
+		whitelistActive = 0;//whitelist starts off as 'false'
 	}
 
 
-	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ***/
+	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ************************************************/
 
 	//@dev Override 'tokenURI' to account for asset/hash cycling
 	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
@@ -45,7 +46,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() internal view virtual override returns (string memory)
 	{
-		return "https://ipfs.io/ipfs/";
+		return "ipfs://";//NOTE: per OpenSea recommendations
 	}
 
 	//@dev This function should return an ipfs hash that leads to a json file
@@ -58,7 +59,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 		return "";
 	}
 
-	//@dev Determine if '_assetHash' is one of the IPFS hashes in assetHashes
+	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
 	function _hashExists(string memory _assetHash) internal view returns (bool) 
 	{
 		uint8 i;
@@ -108,7 +109,7 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	}
 
 
-	/*** MINT & BURN ***/
+	/*** MINT & BURN ****************************************************************************/
 
 	//@dev Custom mint function - nothing special 
 	function mint721(address recipient) public virtual payable onlyOwner returns (uint256)
@@ -131,7 +132,25 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	}
 
 
-	/*** OWNERSHIP ***/
+	/*** TRANSFER FUNCTIONS *********************************************************************/
+
+	//@dev This is here as a reminder to override for custom transfer functionality
+	function _beforeTokenTransfer(
+		address from, 
+		address to, 
+		uint256 tokenId
+	) internal virtual override {}
+
+	//@dev Allows us to withdraw funds collected
+	function withdraw(uint256 amount) public onlyOwner
+	{
+		require(amount <= address(this).balance,"KasbeerMade721: Insufficient funds to withdraw");
+
+		msg.sender.transfer(amount);
+	}
+
+
+	/*** OWNERSHIP ******************************************************************************/
 
 	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
@@ -165,24 +184,48 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 	}
 
 
-	/*** TRANSFER FUNCTIONS ***/
-
-	//@dev This is here as a reminder to override for custom transfer functionality
-	function _beforeTokenTransfer(
-		address from, 
-		address to, 
-		uint256 tokenId
-	) internal virtual override {}
-
-	function withdraw(uint256 amount) public onlyOwner
-	{
-		require(amount <= address(this).balance,"KasbeerMade721: Insufficient funds to withdraw");
-
-		msg.sender.transfer(amount);
-	}
+	/*** WHITELIST ******************************************************************************/
 	
+	//@dev Turn the whitelist on
+	function activateWhiteList() public isSquad 
+	{ 
+		whitelistActive = 1;
+		emit WhitelistActivated(true);
+	}
 
-	/*** HELPER FUNCTIONS ***/
+	//@dev Turn the whitelist off
+	function deactivateWhitelist() public isSquad 
+	{ 
+		whitelistActive = 0;
+		emit WhitelistActivated(false);
+	}
+
+	//@dev Determine if an address is in the whitelist
+	function isInWhitelist(address a) public view returns (bool)
+	{
+		return _whitelist[a];
+	}
+
+	//@dev Add address to whitelist
+	function addToWhitelist(address a) public isSquad
+	{
+		require(!isInWhitelist(a), "KasbeerMade721: Address already in whitelist.");
+
+		_whitelist[a] = true;
+		emit WhitelistMemberAdded(a);
+	}
+
+	//@dev Remove address from whitelist
+	function removeFromWhitelist(address a) public isSquad 
+	{
+		require(isInWhitelist(a), "KasbeerMade721: Address not in whitelist.");
+
+		_whitelist[a] = false;
+		emit WhitelistMemberRemoved(a);
+	}
+
+
+	/*** HELPER FUNCTIONS ***********************************************************************/
 
 	//@dev This function doesn't work, not exactly sure why
 	function kill() public onlyOwner

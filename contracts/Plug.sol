@@ -27,7 +27,6 @@
  *  - If a Plug is a Alchemist (final state), it means that it will never lose juice again,
  *    even if it is transferred.
  *
- *  St. Louis ID's: 264, 352, 440, 528, 616, 704, 792, 880
  */
 
 pragma solidity >=0.5.16 <0.9.0;
@@ -41,20 +40,23 @@ import "./KasbeerStorage.sol";
 contract Plug is KasbeerMade721 {
 
 	uint constant MAX_NUM_PLUGS = 888;
-	uint constant plugPrice = 88800000000000000;
+	uint constant PLUG_WEI_PRICE = 88800000000000000;
+
+	//@dev Emitted when token is transferred
+	event PlugTransferred(address indexed from, address indexed to);
 
 	using Counters for Counters.Counter;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
 	//@dev Create Plug
-	constructor() KasbeerMade721("The Plug", "") {
+	constructor() KasbeerMade721("The Minute Plug", "") {
 		// Add LOGIK's dev address
 		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
 		addToSquad(logik);
 	}
 
 
-	/*** CORE FUNCTIONS ***/
+	/*** CORE 721 FUNCTIONS *********************************************************************/
 
 	//@dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
@@ -152,30 +154,15 @@ contract Plug is KasbeerMade721 {
     	return _mintInternal(_to);
     }
 
-    //@dev Mint a single Plug
-	function _mintInternal(address recipient) internal virtual override returns (uint256)
-	{
-		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
-
-		_tokenIds.increment();
-
-		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
-		_setBirthday(newId); //setup this token & its "birthday"
-		emit ERC721Minted(newId);
-
-		return newId;
-	}
-
-	//@dev Allow people to pay for & mint a Plug
+    //@dev Allow people to pay for & mint a Plug
 	function purchase(address _to) public payable returns (uint256)
 	{
-		require(msg.value >= plugPrice, "Plug: must send minimum value to mint!");
+		require(msg.value >= PLUG_WEI_PRICE, "Plug: must send minimum value to mint!");
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs have been minted");
 
 		//send change if too much was sent
         if (msg.value > 0) {
-	    	uint256 diff = msg.value.sub(plugPrice);
+	    	uint256 diff = msg.value.sub(PLUG_WEI_PRICE);
 	    	if (diff > 0) {
 	    	  msg.sender.transfer(diff);
 	    	}
@@ -184,9 +171,32 @@ contract Plug is KasbeerMade721 {
 		return _mintInternal(_to);
 	}
 
+    //@dev Mint a single Plug
+	function _mintInternal(address recipient) internal virtual override returns (uint256)
+	{
+		require(getCurrentTokenId() < MAX_NUM_PLUGS, "Plug: all plugs have been minted");
 
-	/*** "THE PLUG" FUNCTIONS 
-		 & PUBLIC FACING FUNCTIONS FOR CHANGES **/
+		_tokenIds.increment();
+
+		uint256 newId = getCurrentTokenId();
+		_safeMint(recipient, newId);
+		_setBirthday(newId); //setup this token & its "birthday"
+		emit ERC721Minted(newId);
+
+		return newId;
+	}
+
+
+	/*** "THE PLUG" FUNCTIONS  ******************************************************************/
+
+	//@dev Determine if a token has reached alchemist status
+	function isAlchemist(uint256 tokenId) public view returns (bool)
+	{
+		require(_exists(tokenId), 
+			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
+
+		return countDaysPassed(tokenId) >= 557;
+	}
 
 	//@dev Get the last transfer time for a tokenId
 	function getBirthday(uint256 tokenId) public view returns (uint)
@@ -197,13 +207,10 @@ contract Plug is KasbeerMade721 {
 		return _birthdays[tokenId];
 	}
 
-	//@dev Determine if a token has reached alchemist status
-	function isAlchemist(uint256 tokenId) public view returns (bool)
+	//@dev Set the last transfer time for a tokenId
+	function _setBirthday(uint256 tokenId) private
 	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
-
-		return countDaysPassed(tokenId) >= 557;
+		_birthdays[tokenId] = block.timestamp;
 	}
 
 	//@dev List the owners for a certain level (determined by _assetHash)
@@ -223,7 +230,7 @@ contract Plug is KasbeerMade721 {
 			// Find the IPFS hash associated with this token ID
 			string memory hash = _tokenHash(tokenId);
 
-			// If this is equal to the hash we're looking for (assetHash)
+			// If this is equal to the hash we're looking for (_assetHash)
 			// then determine the owner of the token and add it to our list
 			if (_stringsEqual(hash, _assetHash)) {
 				address owner = ownerOf(tokenId);
@@ -233,15 +240,6 @@ contract Plug is KasbeerMade721 {
 		}
 
 		return levelOwners;
-	}
-
-
-	/*** HELPER FUNCTIONS ***/
-
-	//@dev Set the last transfer time for a tokenId
-	function _setBirthday(uint256 tokenId) private
-	{
-		_birthdays[tokenId] = block.timestamp;
 	}
 
 	//@dev Retuns number of minutes that have passed since transfer/mint
