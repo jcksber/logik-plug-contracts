@@ -34,7 +34,6 @@ pragma solidity >=0.5.16 <0.9.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./KasbeerMade721.sol";
 import "./KasbeerStorage.sol";
-// import "./Purchasable.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
@@ -175,20 +174,6 @@ contract Plug is KasbeerMade721 {
 
 
 	/*** "THE PLUG" FUNCTIONS  ******************************************************************/
-
-	//@dev Determine if a token has reached alchemist status
-	// function isAlchemist(uint256 tokenId) public view returns (bool)
-	// {
-	// 	require(_exists(tokenId), "Plug: nonexistent token");
-	// 	return countMinutesPassed(tokenId) >= 557;//NOTE: CHANGE FOR PRODUCTION!
-	// }
-
-	//@dev Get the last transfer time for a tokenId
-	// function getBirthday(uint256 tokenId) public view returns (uint)
-	// {
-	// 	require(_exists(tokenId), "Plug: nonexistent token");
-	// 	return _birthdays[tokenId];
-	// }
 
 	//@dev Set the last transfer time for a tokenId
 	function _setBirthday(uint256 tokenId) private

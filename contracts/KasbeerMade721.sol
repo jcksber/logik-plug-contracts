@@ -48,15 +48,6 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		return "ipfs://";//NOTE: per OpenSea recommendations
 	}
 
-	//@dev This function should return an ipfs hash that leads to a json file
-	// e.g. QmSJQmBV5crGcmq54WUB22SRw9SGsp1YSaxfenQEbZ5qTD
-	// function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
-	// {
-	// 	require(_exists(tokenId), "KasbeerMade721: nonexistent token");
-
-	// 	return "";
-	// }
-
 	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
 	function _hashExists(string memory _assetHash) internal view returns (bool) 
 	{
@@ -108,19 +99,6 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	/*** MINT & BURN ****************************************************************************/
 
-	//@dev Custom mint function - nothing special 
-	// function mint721(address recipient) public virtual isSquad returns (uint256)
-	// {
-	// 	_tokenIds.increment();
-
-	// 	uint256 newId = _tokenIds.current();
-	// 	_safeMint(recipient, newId);
-
-	// 	emit ERC721Minted(newId);
-
-	// 	return newId;
-	// }
-
 	//@dev Custom burn function - nothing special
 	function burn721(uint256 tokenId) public virtual isSquad
 	{
@@ -154,18 +132,6 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	{
 		selfdestruct(payable(owner()));
 	}
-
-	//@dev Returns the most recently minted token id 
-	// function getCurrentTokenId() public view returns (uint256)
-	// {
-	// 	return _tokenIds.current();
-	// }
-
-	//@dev Determine if a token exists 
-	// function tokenExists(uint256 tokenId) public view returns (bool)
-	// {
-	// 	return _exists(tokenId);
-	// }
 
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
