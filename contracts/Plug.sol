@@ -165,16 +165,6 @@ contract Plug is Kasbeer721 {
 		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs minted");
 
-		// if (whitelistActive == 1) {
-		// 	if (_whitelist[_to]) {
-		// 		return _mintInternal(_to);
-		// 	} else {
-		// 		//return their funds if they weren't whitelisted
-		// 		_to.transfer(msg.value);
-		// 		return 0;
-		// 	}
-		// }
-
 		return _mintInternal(_to);
 	}
 

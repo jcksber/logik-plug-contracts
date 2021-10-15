@@ -25,7 +25,6 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		// Add my personal dev address
 		address me = 0xEAb4Aea5cD7376C04923236c504e7e91362566D1;
 		addToSquad(me);
-		//whitelistActive = 0;//whitelist starts off as 'false'
 	}
 
 

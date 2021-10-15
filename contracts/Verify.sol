@@ -13,7 +13,7 @@ contract Verify {
 	uint8 constant PRESALE_MAX = 200;
 	address[] whitelist = new address[](PRESALE_MAX);//fill this with addresses later
 
-	constructor (address[] memory _whitelistAddresses) public {
+	constructor (address[] memory _whitelistAddresses) {
 		whitelist = _whitelistAddresses;
 	}
 
@@ -29,6 +29,7 @@ contract Verify {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
