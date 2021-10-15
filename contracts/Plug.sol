@@ -32,24 +32,24 @@
 pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./KasbeerMade721.sol";
+import "./Kasbeer721.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
-contract Plug is KasbeerMade721 {
+contract Plug is Kasbeer721 {
 
 	using Counters for Counters.Counter;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
 	//@dev Create Plug
-	constructor() KasbeerMade721("The Minute Plug", "") {
+	constructor() Kasbeer721("the minute Plug", "") {
 		// Add LOGIK's dev address
 		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
 		addToSquad(logik);
 	}
 
 
-	/*** CORE 721 FUNCTIONS *********************************************************************/
+	/*** CORE FUNCTIONS *************************************************************************/
 
 	//@dev Override 'tokenURI' to account for asset/hash cycling
 	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
@@ -145,6 +145,7 @@ contract Plug is KasbeerMade721 {
 	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
     {
+    	super._beforeTokenTransfer(from, to, tokenId);
     	// If the "1.5 years" have passed, don't change birthday
     	if (_exists(tokenId) && countMinutesPassed(tokenId) < 557) {//NOTE: change for prod!
     		_setBirthday(tokenId);
@@ -159,23 +160,47 @@ contract Plug is KasbeerMade721 {
     }
 
     //@dev Allow people to pay for & mint a Plug
-	function purchase(address _to) public payable returns (uint256)
+	function purchase(address payable _to) public payable returns (uint256)
 	{
 		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs minted");
-		
+
+		// if (whitelistActive == 1) {
+		// 	if (_whitelist[_to]) {
+		// 		return _mintInternal(_to);
+		// 	} else {
+		// 		//return their funds if they weren't whitelisted
+		// 		_to.transfer(msg.value);
+		// 		return 0;
+		// 	}
+		// }
+
 		return _mintInternal(_to);
 	}
 
+	//@dev Purchase & mint multiple Plugs
+    function purchaseMultiple(address payable _to, uint8 _num) public payable returns (bool)
+    {
+    	require(msg.value >= _num * PLUG_WEI_PRICE, "Plug: not enough ether");
+    	require(_tokenIds.current() + _num < MAX_NUM_PLUGS, "Plug: not enough remaining");
+
+    	uint8 i;
+    	for (i = 0; i < _num; i++) {
+    		_mintInternal(_to);
+    	}
+
+    	return true;
+    }
+
 	//@dev Mint a single Plug
-	function _mintInternal(address recipient) internal virtual returns (uint256)
+	function _mintInternal(address _to) internal virtual returns (uint256)
 	{
 		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
 
 		_tokenIds.increment();
 
 		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
+		_safeMint(_to, newId);
 		_setBirthday(newId); //setup this token & its "birthday"
 		emit ERC721Minted(newId);
 

@@ -14,7 +14,7 @@ import "./KasbeerAccessControl.sol";
 
 //@title Kasbeer Made Contract for an ERC721
 //@author Jack Kasbeer (git:@jcksber, tw:@satoshigoat)
-contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
+contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	using Counters for Counters.Counter;
 	
@@ -25,7 +25,7 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		// Add my personal dev address
 		address me = 0xEAb4Aea5cD7376C04923236c504e7e91362566D1;
 		addToSquad(me);
-		whitelistActive = 0;//whitelist starts off as 'false'
+		//whitelistActive = 0;//whitelist starts off as 'false'
 	}
 
 
@@ -56,8 +56,8 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	// group refers to normal (0), chicago (1), or st louis (2)
 	function updateHash(uint8 group, uint8 hash_num, string memory str) public isSquad 
 	{
-		require(0 <= hash_num && hash_num < NUM_ASSETS, "KasbeerMade721: _hash_num OOB");
-		require(0 <= group && group <= 2, "KasbeerMade721: _group OOB");
+		require(0 <= hash_num && hash_num < NUM_ASSETS, "Kasbeer721: _hash_num OOB");
+		require(0 <= group && group <= 2, "Kasbeer721: _group OOB");
 
 		if (group == 0) {
 			normHashes[hash_num] = str;
@@ -72,8 +72,8 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	//@dev Get the hash stored at idx for group
 	function getHashByIndex(uint8 group, uint256 idx) public view returns (string memory)
 	{
-		require(0 <= idx && idx < NUM_ASSETS, "KasbeerMade721: index OOB");
-		require(0 <= group && group <= 2, "KasbeerMade721: group OOB");
+		require(0 <= idx && idx < NUM_ASSETS, "Kasbeer721: index OOB");
+		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
 
 		if (group == 0) {
 			return normHashes[idx];
@@ -88,8 +88,10 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	/*** MINT & BURN ****************************************************************************/
 
 	//@dev Custom burn function - nothing special
-	function burn721(uint256 tokenId) public virtual isSquad
+	function burn721(uint256 tokenId) public virtual
 	{
+		require(isInSquad(msg.sender) || msg.sender == ownerOf(tokenId), 
+			"Kasbeer721: not owner or in squad.");
 		_burn(tokenId);
 		emit ERC721Burned(tokenId);
 	}
@@ -98,26 +100,40 @@ contract KasbeerMade721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	/*** TRANSFER FUNCTIONS *********************************************************************/
 
 	//@dev This is here as a reminder to override for custom transfer functionality
-	// function _beforeTokenTransfer(
-	// 	address from, 
-	// 	address to, 
-	// 	uint256 tokenId
-	// ) internal virtual override {}
+	function _beforeTokenTransfer(
+		address from, 
+		address to, 
+		uint256 tokenId
+	) internal virtual override { 
+		super._beforeTokenTransfer(from, to, tokenId); 
+	}
 
 	//@dev Allows us to withdraw funds collected
 	function withdraw(address payable wallet, uint256 amount) public onlyOwner
 	{
-		require(amount <= address(this).balance,"KasbeerMade721: Insufficient funds to withdraw");
+		require(amount <= address(this).balance,"Kasbeer721: Insufficient funds to withdraw");
 		wallet.transfer(amount);
 	}
 
 
 	/*** HELPER FUNCTIONS ***********************************************************************/
 
+	//@dev Returns the current token id
+	function getCurrentId() public view returns (uint256)
+	{
+		return _tokenIds.current();
+	}
+
 	//@dev This function doesn't work, not exactly sure why
 	function kill() public onlyOwner
 	{
 		selfdestruct(payable(owner()));
+	}
+
+	//@dev
+	function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool)
+	{
+		return super.supportsInterface(interfaceId);
 	}
 
 	//@dev Determine if two strings are equal using the length + hash method

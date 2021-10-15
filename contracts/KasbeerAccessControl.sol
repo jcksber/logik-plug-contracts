@@ -21,9 +21,9 @@ contract KasbeerAccessControl is Ownable {
 	//@dev Emitted when someone is removed from `_squad`
 	event SquadMemberRemoved(address indexed member);
 	//@dev Emitted when someone is added to `_whitelist`
-	event WhitelistMemberAdded(address indexed member);
+	//event WhitelistMemberAdded(address indexed member);
 	//@dev Emitted when someone is removed from `_whitelist`
-	event WhitelistMemberRemoved(address indexed member);
+	//event WhitelistMemberRemoved(address indexed member);
 	//@dev Emitted when whitelist is activated/deactivated
 	event WhitelistActivated(bool indexed flag);
 
@@ -33,7 +33,7 @@ contract KasbeerAccessControl is Ownable {
 	mapping (address => bool) internal _whitelist;
 
 	//@dev Flag for whitelist being active (1) or not (0)
-	uint8 whitelistActive;
+	//uint8 whitelistActive;
 
 
 	/*** SQUAD FUNCTIONS ************************************************************************/
@@ -41,7 +41,7 @@ contract KasbeerAccessControl is Ownable {
 	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
 	{
-		require(isInSquad(msg.sender), "KasbeerMade721: Caller not part of squad.");
+		require(isInSquad(msg.sender), "KasbeerAccessControl: Caller not part of squad.");
 		_;
 	}
 
@@ -54,8 +54,7 @@ contract KasbeerAccessControl is Ownable {
 	//@dev Add someone to the squad
 	function addToSquad(address a) public onlyOwner
 	{
-		require(!isInSquad(a), "KasbeerMade721: Address already in squad.");
-
+		require(!isInSquad(a), "KasbeerAccessControl: Address already in squad.");
 		_squad[a] = true;
 		emit SquadMemberAdded(a);
 	}
@@ -63,8 +62,7 @@ contract KasbeerAccessControl is Ownable {
 	//@dev Remove someone from the squad
 	function removeFromSquad(address a) public onlyOwner
 	{
-		require(isInSquad(a), "KasbeerMade721: Address already not in squad.");
-
+		require(isInSquad(a), "KasbeerAccessControl: Address already not in squad.");
 		_squad[a] = false;
 		emit SquadMemberRemoved(a);
 	}
@@ -72,41 +70,39 @@ contract KasbeerAccessControl is Ownable {
 
 	/*** WHITELIST FUNCTIONS ********************************************************************/
 
-	//@dev Turn the whitelist on
-	function activateWhiteList() public isSquad 
-	{ 
-		whitelistActive = 1;
-		emit WhitelistActivated(true);
-	}
+	// //@dev Turn the whitelist on
+	// function activateWhiteList() public isSquad 
+	// { 
+	// 	whitelistActive = 1;
+	// 	emit WhitelistActivated(true);
+	// }
 
-	//@dev Turn the whitelist off
-	function deactivateWhitelist() public isSquad 
-	{ 
-		whitelistActive = 0;
-		emit WhitelistActivated(false);
-	}
+	// //@dev Turn the whitelist off
+	// function deactivateWhitelist() public isSquad 
+	// { 
+	// 	whitelistActive = 0;
+	// 	emit WhitelistActivated(false);
+	// }
 
-	//@dev Determine if an address is in the whitelist
-	function isInWhitelist(address a) public view returns (bool)
-	{
-		return _whitelist[a];
-	}
+	// //@dev Determine if an address is in the whitelist
+	// function isInWhitelist(address a) public view returns (bool)
+	// {
+	// 	return _whitelist[a];
+	// }
 
-	//@dev Add address to whitelist
-	function addToWhitelist(address a) public isSquad
-	{
-		require(!isInWhitelist(a), "KasbeerMade721: Address already in whitelist.");
+	// //@dev Add address to whitelist
+	// function addToWhitelist(address a) public isSquad
+	// {
+	// 	require(!isInWhitelist(a), "KasbeerAccessControl: Address already in whitelist.");
+	// 	_whitelist[a] = true;
+	// 	emit WhitelistMemberAdded(a);
+	// }
 
-		_whitelist[a] = true;
-		emit WhitelistMemberAdded(a);
-	}
-
-	//@dev Remove address from whitelist
-	function removeFromWhitelist(address a) public isSquad 
-	{
-		require(isInWhitelist(a), "KasbeerMade721: Address not in whitelist.");
-
-		_whitelist[a] = false;
-		emit WhitelistMemberRemoved(a);
-	}
+	// //@dev Remove address from whitelist
+	// function removeFromWhitelist(address a) public isSquad 
+	// {
+	// 	require(isInWhitelist(a), "KasbeerAccessControl: Address not in whitelist.");
+	// 	_whitelist[a] = false;
+	// 	emit WhitelistMemberRemoved(a);
+	// }
 }
