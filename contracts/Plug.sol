@@ -33,10 +33,11 @@ pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./Kasbeer721.sol";
+import "./WhitelistControl.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
-contract Plug is Kasbeer721 {
+contract Plug is Kasbeer721, WhitelistControl {
 
 	using Counters for Counters.Counter;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
@@ -176,6 +177,28 @@ contract Plug is Kasbeer721 {
 
     	uint8 i;
     	for (i = 0; i < _num; i++) {
+    		_mintInternal(_to);
+    	}
+
+    	return true;
+    }
+
+    //@dev A whitelist controlled version of `purchaseMultiple`
+    function whitelistPurchaseMultiple(
+    	address payable _to, 
+    	uint8 _numToMint, 
+    	uint256 _secretNum,
+    	string memory _secretWord,
+    	bytes memory sig) 
+    	onlyValidAccess(_secretNum, _secretWord, sig)
+    	public payable
+    	returns (bool)
+    {
+    	require(msg.value >= _numToMint * PLUG_WEI_PRICE, "Plug: not enough ether");
+    	require(_tokenIds.current() + _numToMint < MAX_NUM_PLUGS, "Plug: not enough remaining");
+
+    	uint8 i;
+    	for (i = 0; i < _numToMint; i++) {
     		_mintInternal(_to);
     	}
 

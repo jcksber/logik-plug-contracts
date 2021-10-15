@@ -8,19 +8,25 @@
 
 pragma solidity >=0.5.16 <0.9.0;
 
-contract Verify {
+contract WhitelistControl {
 
 	uint8 constant PRESALE_MAX = 200;
 	address[] whitelist = new address[](PRESALE_MAX);//fill this with addresses later
 
-	constructor (address[] memory _whitelistAddresses) {
-		whitelist = _whitelistAddresses;
+	// constructor (address[] memory _whitelistAddresses) {
+	// 	whitelist = _whitelistAddresses;
+	// }
+
+	modifier onlyValidAccess(uint256 _num, string memory _word, bytes memory sig)
+	{
+		require(isValidAccessData(_num, _word, sig));
+		_;
 	}
 
 	//@dev Prove that one of our whitelist address owners signed a message that included our
 	// private key (string & int)
-	function isValidData(uint256 _number, string memory _word, bytes memory sig) public view 
-		returns (bool)
+	function isValidAccessData(uint256 _number, string memory _word, bytes memory sig) public view
+		returns (bool)//NOTE: maybe change these params we'll see
 	{
 		bytes32 message = keccak256(abi.encodePacked(_number, _word));
 		uint8 i;
@@ -65,4 +71,9 @@ contract Verify {
 
 		return (v,r,s);
 	}
+
+	// Builds a prefixed hash to mimic the behavior of eth_sign.
+    function prefixed(bytes32 hash) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
+    }
 }

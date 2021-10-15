@@ -123,11 +123,12 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		return _tokenIds.current();
 	}
 
-	//@dev This function doesn't work, not exactly sure why
-	function kill() public onlyOwner
-	{
-		selfdestruct(payable(owner()));
-	}
+	// Destroy contract and reclaim leftover funds.
+    function kill() public {
+        require(msg.sender == owner());
+        selfdestruct(payable(msg.sender));
+    }
+
 
 	//@dev
 	function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool)
