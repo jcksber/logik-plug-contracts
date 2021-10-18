@@ -11,7 +11,7 @@ pragma solidity >=0.5.16 <0.9.0;
 contract WhitelistControl {
 
 	uint8 constant PRESALE_MAX = 200;
-	address[] whitelist = new address[](PRESALE_MAX);//fill this with addresses later
+	address[3] whitelist = [0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b, 0x6b8C6E15818C74895c31A1C91390b3d42B336799, 0x07A3a9Ce02F745ae2c66bC02847FC600e71BB74B];
 
 	modifier onlyValidAccess(uint256 _num, string memory _word, bytes memory sig)
 	{

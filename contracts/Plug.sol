@@ -189,7 +189,7 @@ contract Plug is Kasbeer721, WhitelistControl {
     	uint8 _numToMint, 
     	uint256 _secretNum,
     	string memory _secretWord,
-    	bytes memory sig) 
+    	bytes memory sig)
     	onlyValidAccess(_secretNum, _secretWord, sig)
     	public payable
     	returns (bool)
