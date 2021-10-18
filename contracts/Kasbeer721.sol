@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /*
- * KasbeerMade721.sol
+ * Kasbeer721.sol
  *
  * Author: Jack Kasbeer
  * Created: August 21, 2021
@@ -23,8 +23,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		ERC721(_temp_name, _temp_symbol)
 	{
 		// Add my personal dev address
-		address me = 0xEAb4Aea5cD7376C04923236c504e7e91362566D1;
-		addToSquad(me);
+		addToSquad(0xEAb4Aea5cD7376C04923236c504e7e91362566D1);
 	}
 
 
@@ -56,7 +55,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	function updateHash(uint8 group, uint8 hash_num, string memory str) public isSquad 
 	{
 		require(0 <= hash_num && hash_num < NUM_ASSETS, "Kasbeer721: _hash_num OOB");
-		require(0 <= group && group <= 2, "Kasbeer721: _group OOB");
+		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
 
 		if (group == 0) {
 			normHashes[hash_num] = str;
@@ -123,14 +122,12 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		return _tokenIds.current();
 	}
 
-	// Destroy contract and reclaim leftover funds.
+	//@dev Destroy contract and reclaim leftover funds
     function kill() public {
         require(msg.sender == owner());
         selfdestruct(payable(msg.sender));
     }
 
-
-	//@dev
 	function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool)
 	{
 		return super.supportsInterface(interfaceId);

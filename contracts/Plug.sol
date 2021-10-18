@@ -45,8 +45,7 @@ contract Plug is Kasbeer721, WhitelistControl {
 	//@dev Create Plug
 	constructor() Kasbeer721("the minute Plug", "") {
 		// Add LOGIK's dev address
-		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
-		addToSquad(logik);
+		addToSquad(0x6b8C6E15818C74895c31A1C91390b3d42B336799);
 	}
 
 
@@ -174,6 +173,7 @@ contract Plug is Kasbeer721, WhitelistControl {
     {
     	require(msg.value >= _num * PLUG_WEI_PRICE, "Plug: not enough ether");
     	require(_tokenIds.current() + _num < MAX_NUM_PLUGS, "Plug: not enough remaining");
+    	require(_num <= 8, "Plug: cannot mint more than 8 at once");
 
     	uint8 i;
     	for (i = 0; i < _num; i++) {
@@ -196,6 +196,7 @@ contract Plug is Kasbeer721, WhitelistControl {
     {
     	require(msg.value >= _numToMint * PLUG_WEI_PRICE, "Plug: not enough ether");
     	require(_tokenIds.current() + _numToMint < MAX_NUM_PLUGS, "Plug: not enough remaining");
+    	require(_numToMint <= 8, "Plug: cannot mint more than 8 at once");
 
     	uint8 i;
     	for (i = 0; i < _numToMint; i++) {

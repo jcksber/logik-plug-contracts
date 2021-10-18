@@ -13,10 +13,6 @@ contract WhitelistControl {
 	uint8 constant PRESALE_MAX = 200;
 	address[] whitelist = new address[](PRESALE_MAX);//fill this with addresses later
 
-	// constructor (address[] memory _whitelistAddresses) {
-	// 	whitelist = _whitelistAddresses;
-	// }
-
 	modifier onlyValidAccess(uint256 _num, string memory _word, bytes memory sig)
 	{
 		require(isValidAccessData(_num, _word, sig));
