@@ -33,11 +33,10 @@ pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./Kasbeer721.sol";
-import "./WhitelistControl.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
-contract Plug is Kasbeer721, WhitelistControl {
+contract Plug is Kasbeer721 {
 
 	using Counters for Counters.Counter;
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
@@ -46,6 +45,19 @@ contract Plug is Kasbeer721, WhitelistControl {
 	constructor() Kasbeer721("the minute Plug", "") {
 		// Add LOGIK's dev address
 		addToSquad(0x6b8C6E15818C74895c31A1C91390b3d42B336799);
+		whitelistActive = 1;
+	}
+
+	modifier batchLimit(uint8 _numToMint)
+	{
+		require(_numToMint <= 8, "Plug: cannot mint more than 8 at once");
+		_;
+	}
+
+	modifier plugsAvailable()
+	{
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
+		_;
 	}
 
 
@@ -160,20 +172,21 @@ contract Plug is Kasbeer721, WhitelistControl {
     }
 
     //@dev Allow people to pay for & mint a Plug
-	function purchase(address payable _to) public payable returns (uint256)
+	function purchase(address payable _to) plugsAvailable public payable returns (uint256)
 	{
 		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
-		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all Plugs minted");
 
 		return _mintInternal(_to);
 	}
 
 	//@dev Purchase & mint multiple Plugs
-    function purchaseMultiple(address payable _to, uint8 _num) public payable returns (bool)
+    function purchaseMultiple(address payable _to, uint8 _num) 
+    	batchLimit(_num) 
+    	public payable 
+    	returns (bool)
     {
     	require(msg.value >= _num * PLUG_WEI_PRICE, "Plug: not enough ether");
     	require(_tokenIds.current() + _num < MAX_NUM_PLUGS, "Plug: not enough remaining");
-    	require(_num <= 8, "Plug: cannot mint more than 8 at once");
 
     	uint8 i;
     	for (i = 0; i < _num; i++) {
@@ -186,17 +199,14 @@ contract Plug is Kasbeer721, WhitelistControl {
     //@dev A whitelist controlled version of `purchaseMultiple`
     function whitelistPurchaseMultiple(
     	address payable _to, 
-    	uint8 _numToMint, 
-    	uint256 _secretNum,
-    	string memory _secretWord,
-    	bytes memory sig)
-    	onlyValidAccess(_secretNum, _secretWord, sig)
+    	uint8 _numToMint)
+    	onlyValidAccess(_to)
+    	batchLimit(_numToMint)
     	public payable
     	returns (bool)
     {
     	require(msg.value >= _numToMint * PLUG_WEI_PRICE, "Plug: not enough ether");
     	require(_tokenIds.current() + _numToMint < MAX_NUM_PLUGS, "Plug: not enough remaining");
-    	require(_numToMint <= 8, "Plug: cannot mint more than 8 at once");
 
     	uint8 i;
     	for (i = 0; i < _numToMint; i++) {
@@ -207,10 +217,8 @@ contract Plug is Kasbeer721, WhitelistControl {
     }
 
 	//@dev Mint a single Plug
-	function _mintInternal(address _to) internal virtual returns (uint256)
+	function _mintInternal(address _to) plugsAvailable internal virtual returns (uint256)
 	{
-		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
-
 		_tokenIds.increment();
 
 		uint256 newId = _tokenIds.current();
