@@ -11,65 +11,61 @@ pragma solidity >=0.5.16 <0.9.0;
 contract WhitelistControl {
 
 	uint8 constant PRESALE_MAX = 200;
-	address[3] whitelist = [0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b, 0x6b8C6E15818C74895c31A1C91390b3d42B336799, 0x07A3a9Ce02F745ae2c66bC02847FC600e71BB74B];
+	mapping (address => bool) internal _whitelist;
 
-	modifier onlyValidAccess(uint256 _num, string memory _word, bytes memory sig)
+	/*
+	mapping hardcode for whitelist here
+	*/
+
+	modifier onlyValidAccess(address _addy)
 	{
-		require(isValidAccessData(_num, _word, sig));
+		require(isValidAccessData(_addy));
 		_;
 	}
 
 	//@dev Prove that one of our whitelist address owners signed a message that included our
 	// private key (string & int)
-	function isValidAccessData(uint256 _number, string memory _word, bytes memory sig) public view
-		returns (bool)//NOTE: maybe change these params we'll see
+	function isValidAccessData(address _addy) public view returns (bool)
+	//NOTE: maybe change these params we'll see
 	{
-		bytes32 message = keccak256(abi.encodePacked(_number, _word));
-		uint8 i;
-		for (i = 0; i < PRESALE_MAX; i++) {
-			if (recoverSigner(message, sig) == whitelist[i]) {
-				return true;
-			}
-		}
-
-		return false;
+		return _whitelist[_addy];
 	}
 
 	//@dev Recover the address that signed this message
-	function recoverSigner(bytes32 message, bytes memory sig) public pure returns (address)
-	{
-		uint8 v;
-		bytes32 r;
-		bytes32 s;
+	// function recoverSigner(bytes32 message, bytes memory sig) public pure returns (address)
+	// {
+	// 	uint8 v;
+	// 	bytes32 r;
+	// 	bytes32 s;
 
-		(v, r, s) = splitSignature(sig);
+	// 	(v, r, s) = splitSignature(sig);
 
-		return ecrecover(message, v, r, s);
-	}
+	// 	return ecrecover(message, v, r, s);
+	// }
 
-	//@dev Obtain v, r, and s for a given signature
-	function splitSignature(bytes memory sig) public pure returns (uint8, bytes32, bytes32)
-	{
-		require(sig.length == 65);
+	// //@dev Obtain v, r, and s for a given signature
+	// function splitSignature(bytes memory sig) public pure returns (uint8, bytes32, bytes32)
+	// {
+	// 	require(sig.length == 65);
 
-		bytes32 r;
-		bytes32 s;
-		uint8 v;
+	// 	bytes32 r;
+	// 	bytes32 s;
+	// 	uint8 v;
 
-		assembly {
-			//first 32 bytes, after the length prefix
-			r := mload(add(sig,32))
-			//second 32 bytes
-			s := mload(add(sig,64))
-			//final byte (first byte of the next 32 bytes)
-			v := byte(0, mload(add(sig,96)))
-		}
+	// 	assembly {
+	// 		//first 32 bytes, after the length prefix
+	// 		r := mload(add(sig,32))
+	// 		//second 32 bytes
+	// 		s := mload(add(sig,64))
+	// 		//final byte (first byte of the next 32 bytes)
+	// 		v := byte(0, mload(add(sig,96)))
+	// 	}
 
-		return (v,r,s);
-	}
+	// 	return (v,r,s);
+	// }
 
-	// Builds a prefixed hash to mimic the behavior of eth_sign.
-    function prefixed(bytes32 hash) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
-    }
+	// // Builds a prefixed hash to mimic the behavior of eth_sign.
+ //    function prefixed(bytes32 hash) internal pure returns (bytes32) {
+ //        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
+ //    }
 }
