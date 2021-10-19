@@ -75,6 +75,13 @@ contract Plug is Kasbeer721 {
 		return string(abi.encodePacked(baseURI, hash));
 	}
 
+	//@dev Controls the contract-level metadata to include things like royalties
+	function contractURI()
+		public pure returns(string memory)
+	{
+		return "https://ipfs.io/ipfs/";
+	}
+
 	//@dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
 	function _tokenHash(uint256 tokenId) 
