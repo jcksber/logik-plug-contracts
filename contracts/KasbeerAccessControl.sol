@@ -21,29 +21,10 @@ contract KasbeerAccessControl is Ownable {
 	//@dev Emitted when someone is removed from `_squad`
 	event SquadMemberRemoved(address indexed member);
 
-	//@dev Emitted when address has been added to `_whitelist`
-	event WhitelistAddressAdded(address indexed addy);
-
-	//@dev Emitted when whitelist activated
-	event WhitelistActivated();
-
-	//@dev Emitteed when whitelist deactivated
-	event WhitelistDeactivated();
-
-	//@dev Ownership
+	//@dev Ownership - list of squad members (owners)
 	mapping (address => bool) internal _squad;
 
-	//@dev Whitelist
-	// uint8 constant PRESALE_MAX = 200; //nahhhh
-	mapping (address => bool) internal _whitelist;
-	//@dev Whitelist flag
-	uint8 whitelistActive;
-
-	/*
-	mapping hardcode for whitelist here
-	*/
-
-
+	
 	/*** SQUAD FUNCTIONS ************************************************************************/
 
 	//@dev Custom "approved" modifier because I don't like that language
@@ -53,86 +34,137 @@ contract KasbeerAccessControl is Ownable {
 		_;
 	}
 
-	//@dev Determine if address 'a' is an approved owner
-	function isInSquad(address a) public view returns (bool) 
+	//@dev Determine if address `a` is an approved owner
+	function isInSquad(address a) 
+		public view 
+		returns (bool) 
 	{
 		return _squad[a];
 	}
 
-	//@dev Add someone to the squad
-	function addToSquad(address a) public onlyOwner
+	//@dev Add `a` to the squad
+	function addToSquad(address _a)
+		onlyOwner 
+		public
 	{
-		require(!isInSquad(a), "KasbeerAccessControl: Address already in squad.");
-		_squad[a] = true;
-		emit SquadMemberAdded(a);
+		require(!isInSquad(_a), "KasbeerAccessControl: Address already in squad.");
+		_squad[_a] = true;
+		emit SquadMemberAdded(_a);
 	}
 
-	//@dev Remove someone from the squad
-	function removeFromSquad(address a) public onlyOwner
+	//@dev Remove `a` from the squad
+	function removeFromSquad(address a_)
+		onlyOwner
+		public
 	{
-		require(isInSquad(a), "KasbeerAccessControl: Address already not in squad.");
-		_squad[a] = false;
-		emit SquadMemberRemoved(a);
+		require(isInSquad(a_), "KasbeerAccessControl: Address already not in squad.");
+		_squad[a_] = false;
+		emit SquadMemberRemoved(a_);
 	}
 
 
-	/*** WHITELIST ******************************************************************************/
+	/*** WHITELIST *****************************************************************************
+	 * 
+	 * This implementation of a whitelist/pre-sale-list using a mapping from addresses to
+	 * booleans for the whitelisted members to be available on-chain, and a flag (uint8) 
+	 * to indicate whether or not the whitelist is currrently active/inactive.
+	 *
+	 * Functions are provided both for (1) adding a single address to the whitelist, and (2) 
+	 * for adding a list of addresses to the whitelist.  The second method 
+	 * (`bulkAddToWhitelist`) is the preferred one as it will save on gas dramatically.
+	 *
+	 * Therefore, this allows for easy control in a cost-efficient way to have a dynamic whitelist
+	 * in addition to the ability to enable and disable it.
+	 */
+
+	 //@dev Emitted when address has been added to `_whitelist`
+	event WhitelistAddressAdded(address indexed addy);
+
+	//@dev Emitted when whitelist activated
+	event WhitelistActivated();
+
+	//@dev Emitteed when whitelist deactivated
+	event WhitelistDeactivated();
+
+	//@dev Whitelist mapping for client addresses
+	mapping (address => bool) internal _whitelist;
+
+	//@dev Whitelist flag for active/inactive states
+	uint8 whitelistActive;
 
 	//@dev Determine if someone is in the whitelsit
-	modifier onlyValidAccess(address _addy)
+	modifier onlyWhitelist(address a)
 	{
-		require(isWhitelistAddress(_addy));
+		require(isInWhitelist(a));
 		_;
 	}
 
-	//@dev Prove that one of our whitelist address owners has been approved
-	function isWhitelistAddress(address _addy) public view returns (bool)
+	//@dev Prevent non-whitelist minting functions from being used 
+	// if `whitelistActive` == 1
+	modifier whitelistDisabled()
 	{
-		return _whitelist[_addy];
+		require(whitelistActive == 0, "KasbeerAccessControl: whitelist still active");
+		_;
 	}
 
-	//@dev Add a single address to whitelist
-	function addAddressToWhitelist(address _addy) public isSquad returns (bool) 
+	//@dev Require that the whitelist is currently enabled
+	modifier whitelistEnabled() 
 	{
-		require(_whitelist[_addy] == false, "KasbeerAccessControl: already whitelisted"); 
-		//here we care if address already whitelisted to save on gas fees
-		_whitelist[_addy] = true;
-		emit WhitelistAddressAdded(_addy);
-
-		return true;
-	}
-
-	//@dev Add a list of addresses to the whitelist
-	function addAddressesToWhitelist(address[] memory _addys) public isSquad returns (bool)
-	{
-		uint8 i;
-		for (i = 0; i < _addys.length; i++) {
-			_whitelist[_addys[i]] = true; //don't care if address already whitelisted
-			emit WhitelistAddressAdded(_addys[i]);
-		}
-
-		return true;
+		require(whitelistActive == 1, "KasbeerAccessControl: whitelist not active");
+		_;
 	}
 
 	//@dev Turn the whitelist on
-	function activateWhitelist() public isSquad returns (bool)
+	function activateWhitelist()
+		isSquad
+		whitelistDisabled
+		public
 	{
-		require(whitelistActive == 0, "KasbeerAccessControl: whitelist already active");
-
 		whitelistActive = 1;
 		emit WhitelistActivated();
-
-		return true;
 	}
 
 	//@dev Turn the whitelist off
-	function deactivateWhitelist() public isSquad returns (bool)
+	function deactivateWhitelist()
+		isSquad
+		whitelistEnabled
+		public
 	{
-		require(whitelistActive == 1, "KasbeerAccessControl: whitelist already inactive");
-
 		whitelistActive = 0;
 		emit WhitelistDeactivated();
+	}
 
-		return true;
+	//@dev Prove that one of our whitelist address owners has been approved
+	function isInWhitelist(address a) 
+		public view 
+		returns (bool)
+	{
+		return _whitelist[a];
+	}
+
+	//@dev Add a single address to whitelist
+	function addToWhitelist(address _a) 
+		isSquad
+		public
+	{
+		require(_whitelist[_a] == false, "KasbeerAccessControl: already whitelisted"); 
+		//here we care if address already whitelisted to save on gas fees
+		_whitelist[_a] = true;
+		emit WhitelistAddressAdded(_a);
+	}
+
+	//@dev Add a list of addresses to the whitelist
+	function bulkAddToWhitelist(address[] memory _addys) 
+		isSquad
+		public
+	{
+		require(_addys.length > 1, "KasbeerAccessControl: use `addToWhitelist` instead");
+		uint8 i;
+		for (i = 0; i < _addys.length; i++) {
+			if (!_whitelist[_addys[i]]) {
+				_whitelist[_addys[i]] = true;
+				emit WhitelistAddressAdded(_addys[i]);
+			}//don't emit event for address if already in whitelist
+		}
 	}
 }

@@ -14,15 +14,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 //@author Jack Kasbeer (@jcksber, @satoshigoat)
 contract KasbeerStorage {
 
-	//@dev Emitted when a token is minted
-	event ERC721Minted(uint256 indexed tokenId);
-	//@dev Emitted when a token is burned
-	event ERC721Burned(uint256 indexed tokenId);
-	//@dev Emitted when an ipfs hash is updated
-	event HashUpdated(uint8 indexed group, string indexed newHash);
-	//@dev Emitted when token is transferred
-	event PlugTransferred(address indexed from, address indexed to);
-
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;
 	Counters.Counter internal _tokenIds;
@@ -30,7 +21,7 @@ contract KasbeerStorage {
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
 	uint constant MAX_NUM_PLUGS = 888;
-	uint constant PLUG_WEI_PRICE = 88800000000000000;
+	uint constant PLUG_WEI_PRICE = 88800000000000000;//0.0888 ETH
 
 	//@dev Production hashes
 	//Nomad (non-chicago, non-st louis)
