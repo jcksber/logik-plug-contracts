@@ -15,15 +15,7 @@
  *    artists.  This means after a year, the final asset (and most valuable) will now be in the 
  *    owner's wallet (naturally each time, the previous asset is replaced).
  *  - If the NFT changes owners, the initial/day 0 asset is now what will be seen by the owner,
- *    and they'll have to wait a full year to achieve "final asset status" (gold)
- *  - Asset cycle: 1. 0 months (< 60 days): 1% juice
- *				   2. 2 months (60 days): 17% juice
- *				   3. 4 months (120 days): 33% juice
- *				   4. 6 months (180 days): 50% juice
- *				   5. 8 months (240 days): 66% juice
- *				   6. 10 months (300 days): 87% juice 
- *				   7. 12 months (360 days): 100% juice
- *				   8. 18 months (557 days): Permanent 100% (alchemist)
+ *    and they'll have to wait a full cycle "final asset status" (gold)
  *  - If a Plug is a Alchemist (final state), it means that it will never lose juice again,
  *    even if it is transferred.
  *
@@ -64,7 +56,7 @@ contract Plug is Kasbeer721 {
 	//@dev Can't mint if MAX_NUM_PLUGS have already been minted
 	modifier plugsAvailable()
 	{
-		require(_tokenIds.current() <= MAX_NUM_PLUGS, "Plug: all plugs minted");
+		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
 		_;
 	}
 

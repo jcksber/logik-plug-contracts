@@ -35,6 +35,21 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		addToSquad(0xEAb4Aea5cD7376C04923236c504e7e91362566D1);
 	}
 
+	//@dev Hash index needs to be in range 
+	modifier hashIndexInRange(uint8 idx)
+	{
+		require(0 <= idx && idx < NUM_ASSETS, "Kasbeer721: index OOB");
+		_;
+	}
+
+	//@dev Group number needs to be in range
+	// 0:nomad, 1:chicago, 2:st.louis
+	modifier groupInRange(uint8 group)
+	{
+		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
+		_;
+	}
+
 
 	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ************************************************/
 
@@ -64,10 +79,8 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	//@dev Allows us to update the IPFS hash values (one at a time)
 	// group refers to normal (0), chicago (1), or st louis (2)
 	function updateHash(uint8 group, uint8 hashNum, string memory str)
-		isSquad public
+		isSquad groupInRange(group) hashIndexInRange(hashNum) public
 	{
-		require(0 <= hashNum && hashNum < NUM_ASSETS, "Kasbeer721: hashNum OOB");
-		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
 
 		if (group == 0) {
 			normHashes[hashNum] = str;
@@ -81,11 +94,9 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Get the hash stored at `idx` for `group` 
 	// 0:nomad, 1:chicago, 2:st.louis
-	function getHashByIndex(uint8 group, uint256 idx)
-		public view returns (string memory)
+	function getHashByIndex(uint8 group, uint8 idx)
+		groupInRange(group) hashIndexInRange(idx) public view returns (string memory)
 	{
-		require(0 <= idx && idx < NUM_ASSETS, "Kasbeer721: index OOB");
-		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
 
 		if (group == 0) {
 			return normHashes[idx];
