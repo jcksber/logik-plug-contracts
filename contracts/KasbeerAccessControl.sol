@@ -36,16 +36,14 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Determine if address `a` is an approved owner
 	function isInSquad(address a) 
-		public view 
-		returns (bool) 
+		public view returns (bool) 
 	{
 		return _squad[a];
 	}
 
 	//@dev Add `a` to the squad
 	function addToSquad(address _a)
-		onlyOwner 
-		public
+		onlyOwner public
 	{
 		require(!isInSquad(_a), "KasbeerAccessControl: Address already in squad.");
 		_squad[_a] = true;
@@ -54,8 +52,7 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Remove `a` from the squad
 	function removeFromSquad(address a_)
-		onlyOwner
-		public
+		onlyOwner public
 	{
 		require(isInSquad(a_), "KasbeerAccessControl: Address already not in squad.");
 		_squad[a_] = false;
@@ -116,9 +113,7 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Turn the whitelist on
 	function activateWhitelist()
-		isSquad
-		whitelistDisabled
-		public
+		isSquad whitelistDisabled public
 	{
 		whitelistActive = 1;
 		emit WhitelistActivated();
@@ -126,9 +121,7 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Turn the whitelist off
 	function deactivateWhitelist()
-		isSquad
-		whitelistEnabled
-		public
+		isSquad whitelistEnabled public
 	{
 		whitelistActive = 0;
 		emit WhitelistDeactivated();
@@ -136,16 +129,14 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Prove that one of our whitelist address owners has been approved
 	function isInWhitelist(address a) 
-		public view 
-		returns (bool)
+		public view returns (bool)
 	{
 		return _whitelist[a];
 	}
 
 	//@dev Add a single address to whitelist
 	function addToWhitelist(address _a) 
-		isSquad
-		public
+		isSquad public
 	{
 		require(_whitelist[_a] == false, "KasbeerAccessControl: already whitelisted"); 
 		//here we care if address already whitelisted to save on gas fees
@@ -155,8 +146,7 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Add a list of addresses to the whitelist
 	function bulkAddToWhitelist(address[] memory _addys) 
-		isSquad
-		public
+		isSquad public
 	{
 		require(_addys.length > 1, "KasbeerAccessControl: use `addToWhitelist` instead");
 		uint8 i;

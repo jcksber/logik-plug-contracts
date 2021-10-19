@@ -40,16 +40,14 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() 
-		internal view virtual override 
-		returns (string memory)
+		internal view virtual override returns (string memory)
 	{
 		return "https://ipfs.io/ipfs/";//NOTE: per OpenSea recommendations
 	}
 
 	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
 	function _hashExists(string memory _assetHash) 
-		internal view 
-		returns (bool) 
+		internal view returns (bool) 
 	{
 		uint8 i;
 		for (i = 0; i < NUM_ASSETS; i++) {
@@ -66,8 +64,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	//@dev Allows us to update the IPFS hash values (one at a time)
 	// group refers to normal (0), chicago (1), or st louis (2)
 	function updateHash(uint8 group, uint8 hashNum, string memory str)
-		isSquad 
-		public
+		isSquad public
 	{
 		require(0 <= hashNum && hashNum < NUM_ASSETS, "Kasbeer721: hashNum OOB");
 		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
@@ -85,8 +82,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	//@dev Get the hash stored at `idx` for `group` 
 	// 0:nomad, 1:chicago, 2:st.louis
 	function getHashByIndex(uint8 group, uint256 idx)
-		public view 
-		returns (string memory)
+		public view returns (string memory)
 	{
 		require(0 <= idx && idx < NUM_ASSETS, "Kasbeer721: index OOB");
 		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
@@ -105,9 +101,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Allows owners to mint for free
     function mint721(address _to) 
-    	isSquad 
-    	public virtual 
-    	returns (uint256)
+    	isSquad public virtual returns (uint256)
     {
     	_tokenIds.increment();
 
@@ -130,8 +124,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Returns the current token id (number minted so far)
 	function getCurrentId() 
-		public view 
-		returns (uint256)
+		public view returns (uint256)
 	{
 		return _tokenIds.current();
 	}
@@ -148,8 +141,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Allows us to withdraw funds collected
 	function withdraw(address payable wallet, uint256 amount)
-		onlyOwner
-		public
+		onlyOwner public
 	{
 		require(amount <= address(this).balance,"Kasbeer721: Insufficient funds to withdraw");
 		wallet.transfer(amount);
@@ -160,8 +152,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Destroy contract and reclaim leftover funds
     function kill() 
-    	onlyOwner
-    	public 
+    	onlyOwner public 
     {
         selfdestruct(payable(msg.sender));
     }
@@ -175,8 +166,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) 
-		internal pure 
-		returns (bool)
+		internal pure returns (bool)
 	{
 		bytes memory A = bytes(a);
 		bytes memory B = bytes(b);

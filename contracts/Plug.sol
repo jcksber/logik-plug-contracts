@@ -73,8 +73,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev Override 'tokenURI' to account for asset/hash cycling
 	function tokenURI(uint256 tokenId) 
-		public view virtual override 
-		returns (string memory) 
+		public view virtual override returns (string memory) 
 	{	
 		require(_exists(tokenId), "Plug: nonexistent token");
 
@@ -180,19 +179,14 @@ contract Plug is Kasbeer721 {
 
     //@dev Allows owners to mint for free
     function mint721(address _to) 
-    	isSquad 
-    	public virtual override 
-    	returns (uint256)
+    	isSquad public virtual override returns (uint256)
     {
     	return _mintInternal(_to);
     }
 
     //@dev Allow people to pay for & mint a Plug
 	function purchase(address payable _to) 
-		plugsAvailable 
-		whitelistDisabled
-		public payable 
-		returns (uint256)
+		plugsAvailable whitelistDisabled public payable returns (uint256)
 	{
 		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
 		return _mintInternal(_to);
@@ -200,10 +194,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev Purchase & mint multiple Plugs
     function purchaseMultiple(address payable _to, uint8 _num) 
-    	whitelistDisabled
-    	batchLimit(_num) 
-    	public payable 
-    	returns (bool)
+    	whitelistDisabled batchLimit(_num) public payable returns (bool)
     {
     	require(msg.value >= _num * PLUG_WEI_PRICE, "Plug: not enough ether");
     	require(_tokenIds.current() + _num <= MAX_NUM_PLUGS, "Plug: not enough remaining");
@@ -218,11 +209,7 @@ contract Plug is Kasbeer721 {
 
     //@dev A whitelist controlled version of `purchaseMultiple`
     function whitelistPurchaseMultiple(address payable _to, uint8 _numToMint)
-    	whitelistEnabled
-    	onlyWhitelist(_to)
-    	batchLimit(_numToMint)
-    	public payable
-    	returns (bool)
+    	whitelistEnabled onlyWhitelist(_to) batchLimit(_numToMint) public payable returns (bool)
     {
     	require(msg.value >= _numToMint * PLUG_WEI_PRICE, "Plug: not enough ether");
     	require(_tokenIds.current() + _numToMint <= MAX_NUM_PLUGS, "Plug: not enough remaining");
@@ -237,9 +224,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev Mint a single Plug
 	function _mintInternal(address _to) 
-		plugsAvailable 
-		internal virtual 
-		returns (uint256)
+		plugsAvailable internal virtual returns (uint256)
 	{
 		_tokenIds.increment();
 		uint256 newId = _tokenIds.current();
@@ -264,9 +249,7 @@ contract Plug is Kasbeer721 {
 	//@dev List the owners for a certain level (determined by _assetHash)
 	// We'll need this for airdrops and benefits
 	function listLevelOwners(string memory _assetHash) 
-		isSquad
-		public view 
-		returns (address[] memory)
+		isSquad public view returns (address[] memory)
 	{
 		require(_hashExists(_assetHash), "Plug: nonexistent hash");
 
@@ -289,8 +272,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev Retuns number of minutes that have passed since transfer/mint
 	function countMinutesPassed(uint256 tokenId) 
-		public view 
-		returns (uint256) 
+		public view returns (uint256) 
 	{
 	    require(_exists(tokenId), "Plug: nonexistent token");
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
@@ -298,8 +280,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev Returns number of days that have passed since transfer/mint
 	function countDaysPassed(uint256 tokenId) 
-		public view 
-		returns (uint256) 
+		public view returns (uint256) 
 	{
 		require(_exists(tokenId), "Plug: nonexistent token");
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
