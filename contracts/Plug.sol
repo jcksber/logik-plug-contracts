@@ -24,6 +24,7 @@
 pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./Kasbeer721.sol";
 
 //@title The Plug
@@ -31,6 +32,7 @@ import "./Kasbeer721.sol";
 contract Plug is Kasbeer721 {
 
 	using Counters for Counters.Counter;
+	using SafeMath for uint256;
 
 	//@dev Emitted when token is transferred
 	event PlugTransferred(address indexed from, address indexed to);
@@ -38,48 +40,48 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	//@dev Create Plug
 	constructor() Kasbeer721("the minute Plug", "") {
 		// Add LOGIK's dev address
 		addToSquad(0x6b8C6E15818C74895c31A1C91390b3d42B336799);
-		// Initialize whitelist to active state
-		whitelistActive = 1;
+		whitelistActive = true;
+		contractUri = "ipfs://QmW94EMoXifmMPiEkHEbFyDYiVxX8K4Trq3R4pYemSx4EK";
 	}
 
-	//@dev When batch minting the Plug, 8 is the max you can request in a single txn
+	// -----------
+	// RESTRICTORS
+	// -----------
+
 	modifier batchLimit(uint8 _numToMint)
 	{
-		require(_numToMint <= 8, "Plug: cannot mint more than 8 at once");
+		require(1 <= _numToMint && _numToMint <= 8, "Plug: mint between 1 and 8");
 		_;
 	}
 
-	//@dev Can't mint if MAX_NUM_PLUGS have already been minted
-	modifier plugsAvailable()
+	modifier plugsAvailable(uint256 _numToMint)
 	{
-		require(_tokenIds.current() < MAX_NUM_PLUGS, "Plug: all plugs minted");
+		require(_tokenIds.current() + _numToMint <= MAX_NUM_TOKENS, 
+			"Plug: not enough Plugs remaining to mint");
 		_;
 	}
 
+	modifier tokenExists(uint256 tokenId)
+	{
+		require(_exists(tokenId), "Plug: nonexistent token");
+		_;
+	}
 
-	/*** CORE FUNCTIONS *************************************************************************/
+	// ----------
+	// PLUG MAGIC
+	// ----------
 
 	//@dev Override 'tokenURI' to account for asset/hash cycling
 	function tokenURI(uint256 tokenId) 
-		public view virtual override returns (string memory) 
+		tokenExists(tokenId) public view virtual override returns (string memory) 
 	{	
-		require(_exists(tokenId), "Plug: nonexistent token");
-
 		string memory baseURI = _baseURI();
 		string memory hash = _tokenHash(tokenId);
 		
 		return string(abi.encodePacked(baseURI, hash));
-	}
-
-	//@dev Controls the contract-level metadata to include things like royalties
-	function contractURI()
-		public pure returns(string memory)
-	{
-		return "https://ipfs.io/ipfs/";
 	}
 
 	//@dev Based on the number of days that have passed since the last transfer of
@@ -98,67 +100,67 @@ contract Plug is Kasbeer721 {
 		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {
 			if (tokenId <= 176) {
-				return CHASH_7;
+				return chiHashes[7];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_7;
+				return stlHashes[7];
 			} else {
-				return NHASH_7;
+				return normHashes[7];
 			}
 		} else if (daysPassed >= 360) {
 			if (tokenId <= 176) {
-				return CHASH_6;
+				return chiHashes[6];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_6;
+				return stlHashes[6];
 			} else {
-				return NHASH_6;
+				return normHashes[6];
 			}
 		} else if (daysPassed >= 300) {
 			if (tokenId <= 176) {
-				return CHASH_5;
+				return chiHashes[5];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_5;
+				return stlHashes[5];
 			} else {
-				return NHASH_5;
+				return normHashes[5];
 			}
 		} else if (daysPassed >= 240) {
 			if (tokenId <= 176) {
-				return CHASH_4;
+				return chiHashes[4];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_4;
+				return stlHashes[4];
 			} else {
-				return NHASH_4;
+				return normHashes[4];
 			}
 		} else if (daysPassed >= 180) {
 			if (tokenId <= 176) {
-				return CHASH_3;
+				return chiHashes[3];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_3;
+				return stlHashes[3];
 			} else {
-				return NHASH_3;
+				return normHashes[3];
 			}
 		} else if (daysPassed >= 120) {
 			if (tokenId <= 176) {
-				return CHASH_2;
+				return chiHashes[2];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_2;
+				return stlHashes[2];
 			} else {
-				return NHASH_2;
+				return normHashes[2];
 			}
 		} else if (daysPassed >= 60) {
 			if (tokenId <= 176) {
-				return CHASH_1;
+				return chiHashes[1];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_1;
+				return stlHashes[1];
 			} else {
-				return NHASH_1;
+				return normHashes[1];
 			}
 		} else { //if 60 days haven't passed, the initial asset/Plug is returned
 			if (tokenId <= 176) {
-				return CHASH_0;
+				return chiHashes[0];
 			} else if (tokenId % 88 == 0) {
-				return LHASH_0;
+				return stlHashes[0];
 			} else {
-				return NHASH_0;
+				return normHashes[0];
 			}
 		}
 	}
@@ -168,7 +170,6 @@ contract Plug is Kasbeer721 {
 	function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
 		internal virtual override
     {
-    	// super._beforeTokenTransfer(from, to, tokenId); //NOTE: check this line!
     	// If the "1.5 years" have passed, don't change birthday
     	if (_exists(tokenId) && countMinutesPassed(tokenId) < 557) {//NOTE: change for prod!
     		_setBirthday(tokenId);
@@ -176,69 +177,7 @@ contract Plug is Kasbeer721 {
     	emit PlugTransferred(from, to);
     }
 
-    //@dev Allows owners to mint for free
-    function mint721(address _to) 
-    	isSquad public virtual override returns (uint256)
-    {
-    	return _mintInternal(_to);
-    }
-
-    //@dev Allow people to pay for & mint a Plug
-	function purchase(address payable _to) 
-		plugsAvailable whitelistDisabled public payable returns (uint256)
-	{
-		require(msg.value >= PLUG_WEI_PRICE, "Plug: not enough ether");
-		return _mintInternal(_to);
-	}
-
-	//@dev Purchase & mint multiple Plugs
-    function purchaseMultiple(address payable _to, uint8 _num) 
-    	whitelistDisabled batchLimit(_num) public payable returns (bool)
-    {
-    	require(msg.value >= _num * PLUG_WEI_PRICE, "Plug: not enough ether");
-    	require(_tokenIds.current() + _num <= MAX_NUM_PLUGS, "Plug: not enough remaining");
-    						//NOTE: this should be '<=' right?? not '<'...!!
-    	uint8 i;
-    	for (i = 0; i < _num; i++) {
-    		_mintInternal(_to);
-    	}
-
-    	return true;
-    }
-
-    //@dev A whitelist controlled version of `purchaseMultiple`
-    function whitelistPurchaseMultiple(address payable _to, uint8 _numToMint)
-    	whitelistEnabled onlyWhitelist(_to) batchLimit(_numToMint) public payable returns (bool)
-    {
-    	require(msg.value >= _numToMint * PLUG_WEI_PRICE, "Plug: not enough ether");
-    	require(_tokenIds.current() + _numToMint <= MAX_NUM_PLUGS, "Plug: not enough remaining");
-
-    	uint8 i;
-    	for (i = 0; i < _numToMint; i++) {
-    		_mintInternal(_to);
-    	}
-
-    	return true;
-    }
-
-	//@dev Mint a single Plug
-	function _mintInternal(address _to) 
-		plugsAvailable internal virtual returns (uint256)
-	{
-		_tokenIds.increment();
-		uint256 newId = _tokenIds.current();
-
-		_safeMint(_to, newId);
-		_setBirthday(newId); //setup this token & its "birthday"
-		emit ERC721Minted(newId);
-
-		return newId;
-	}
-
-
-	/*** "THE PLUG" FUNCTIONS  ******************************************************************/
-
-	//@dev Set the last transfer time for a tokenId
+    //@dev Set the last transfer time for a tokenId
 	function _setBirthday(uint256 tokenId) 
 		private
 	{
@@ -247,41 +186,108 @@ contract Plug is Kasbeer721 {
 
 	//@dev List the owners for a certain level (determined by _assetHash)
 	// We'll need this for airdrops and benefits
-	function listLevelOwners(string memory _assetHash) 
+	function listPlugOwners(string memory _assetHash) 
 		isSquad public view returns (address[] memory)
 	{
 		require(_hashExists(_assetHash), "Plug: nonexistent hash");
 
 		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
-		uint counter = 0;
 
-		// Go thru list of created token id's (existing Plugs) so far
-		uint tokenId;
+		uint16 tokenId, counter;
 		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
-			// If this is equal to the hash we're looking for (_assetHash)
-			// then determine the owner of the token and add it to our list
 			if (_stringsEqual(_tokenHash(tokenId), _assetHash)) {
 				levelOwners[counter] = ownerOf(tokenId);
 				counter++;
 			}
 		}
-
 		return levelOwners;
 	}
 
+    // --------------------
+    // MINTING & PURCHASING
+    // --------------------
+
+    //@dev Allows owners to mint for free
+    function mint(address _to) 
+    	isSquad public virtual override returns (uint256)
+    {
+    	return _mintInternal(_to);
+    }
+
+	//@dev Purchase & mint multiple Plugs
+    function purchase(
+    	address payable _to, 
+    	uint256 _numToMint
+    ) whitelistDisabled batchLimit(_numToMint) plugsAvailable(_numToMint)
+      public payable 
+      returns (bool)
+    {
+    	require(msg.value >= _numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
+    	//send change if too much was sent
+        if (msg.value > 0) {
+	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * _numToMint);
+    		if (diff > 0) {
+    	    	_to.transfer(diff);
+    		}
+      	}
+    	uint8 i;//mint `_num` Plugs to address `_to`
+    	for (i = 0; i < _numToMint; i++) {
+    		_mintInternal(_to);
+    	}
+    	return true;
+    }
+
+    //@dev A whitelist controlled version of `purchaseMultiple`
+    function whitelistPurchase(
+    	address payable _to, 
+    	uint256 _numToMint
+    ) whitelistEnabled onlyWhitelist(_to) batchLimit(_numToMint) plugsAvailable(_numToMint)
+      public payable 
+      returns (bool)
+    {
+    	require(msg.value >= _numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
+    	//send change if too much was sent
+        if (msg.value > 0) {
+	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * _numToMint);
+    		if (diff > 0) {
+    	    	_to.transfer(diff);
+    		}
+      	}
+    	uint8 i;//mint `_num` Plugs to address `_to`
+    	for (i = 0; i < _numToMint; i++) {
+    		_mintInternal(_to);
+    	}
+    	return true;
+    }
+
+	//@dev Mints a single Plug & sets up the initial birthday 
+	function _mintInternal(address _to) 
+		plugsAvailable(1) internal virtual returns (uint256)
+	{
+		_tokenIds.increment();
+		uint256 newId = _tokenIds.current();
+		_safeMint(_to, newId);
+		_setBirthday(newId);
+		emit ERC721Minted(newId);
+
+		return newId;
+	}
+	
+	// ----
+	// TIME
+	// ----
+
 	//@dev Retuns number of minutes that have passed since transfer/mint
 	function countMinutesPassed(uint256 tokenId) 
-		public view returns (uint256) 
+		tokenExists(tokenId) public view returns (uint256) 
 	{
-	    require(_exists(tokenId), "Plug: nonexistent token");
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
 	}
 
 	//@dev Returns number of days that have passed since transfer/mint
 	function countDaysPassed(uint256 tokenId) 
-		public view returns (uint256) 
+		tokenExists(tokenId) public view returns (uint256) 
 	{
-		require(_exists(tokenId), "Plug: nonexistent token");
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
 	}
 }

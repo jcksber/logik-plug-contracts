@@ -14,18 +14,11 @@ pragma solidity >=0.5.16 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract KasbeerAccessControl is Ownable {
-
-	//@dev Emitted when someone is added to `_squad`
-	event SquadMemberAdded(address indexed member);
-
-	//@dev Emitted when someone is removed from `_squad`
-	event SquadMemberRemoved(address indexed member);
+	
+	/*** SQUAD **********************************************************************************/
 
 	//@dev Ownership - list of squad members (owners)
 	mapping (address => bool) internal _squad;
-
-	
-	/*** SQUAD FUNCTIONS ************************************************************************/
 
 	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
@@ -47,7 +40,6 @@ contract KasbeerAccessControl is Ownable {
 	{
 		require(!isInSquad(_a), "KasbeerAccessControl: Address already in squad.");
 		_squad[_a] = true;
-		emit SquadMemberAdded(_a);
 	}
 
 	//@dev Remove `a` from the squad
@@ -56,7 +48,6 @@ contract KasbeerAccessControl is Ownable {
 	{
 		require(isInSquad(a_), "KasbeerAccessControl: Address already not in squad.");
 		_squad[a_] = false;
-		emit SquadMemberRemoved(a_);
 	}
 
 
@@ -74,20 +65,11 @@ contract KasbeerAccessControl is Ownable {
 	 * in addition to the ability to enable and disable it.
 	 */
 
-	 //@dev Emitted when address has been added to `_whitelist`
-	event WhitelistAddressAdded(address indexed addy);
-
-	//@dev Emitted when whitelist activated
-	event WhitelistActivated();
-
-	//@dev Emitteed when whitelist deactivated
-	event WhitelistDeactivated();
-
 	//@dev Whitelist mapping for client addresses
 	mapping (address => bool) internal _whitelist;
 
 	//@dev Whitelist flag for active/inactive states
-	uint8 whitelistActive;
+	bool whitelistActive;
 
 	//@dev Determine if someone is in the whitelsit
 	modifier onlyWhitelist(address a)
@@ -100,14 +82,14 @@ contract KasbeerAccessControl is Ownable {
 	// if `whitelistActive` == 1
 	modifier whitelistDisabled()
 	{
-		require(whitelistActive == 0, "KasbeerAccessControl: whitelist still active");
+		require(whitelistActive == false, "KasbeerAccessControl: whitelist still active");
 		_;
 	}
 
 	//@dev Require that the whitelist is currently enabled
 	modifier whitelistEnabled() 
 	{
-		require(whitelistActive == 1, "KasbeerAccessControl: whitelist not active");
+		require(whitelistActive == true, "KasbeerAccessControl: whitelist not active");
 		_;
 	}
 
@@ -115,16 +97,14 @@ contract KasbeerAccessControl is Ownable {
 	function activateWhitelist()
 		isSquad whitelistDisabled public
 	{
-		whitelistActive = 1;
-		emit WhitelistActivated();
+		whitelistActive = true;
 	}
 
 	//@dev Turn the whitelist off
 	function deactivateWhitelist()
 		isSquad whitelistEnabled public
 	{
-		whitelistActive = 0;
-		emit WhitelistDeactivated();
+		whitelistActive = false;
 	}
 
 	//@dev Prove that one of our whitelist address owners has been approved
@@ -138,10 +118,17 @@ contract KasbeerAccessControl is Ownable {
 	function addToWhitelist(address _a) 
 		isSquad public
 	{
-		require(_whitelist[_a] == false, "KasbeerAccessControl: already whitelisted"); 
+		require(!isInWhitelist(_a), "KasbeerAccessControl: already whitelisted"); 
 		//here we care if address already whitelisted to save on gas fees
 		_whitelist[_a] = true;
-		emit WhitelistAddressAdded(_a);
+	}
+
+	//@dev Remove a single address from the whitelist
+	function removeFromWhitelist(address a_)
+		isSquad public
+	{
+		require(isInWhitelist(a_), "KasbeerAccessControl: not in whitelist");
+		_whitelist[a_] = false;
 	}
 
 	//@dev Add a list of addresses to the whitelist
@@ -153,8 +140,7 @@ contract KasbeerAccessControl is Ownable {
 		for (i = 0; i < _addys.length; i++) {
 			if (!_whitelist[_addys[i]]) {
 				_whitelist[_addys[i]] = true;
-				emit WhitelistAddressAdded(_addys[i]);
-			}//don't emit event for address if already in whitelist
+			}
 		}
 	}
 }

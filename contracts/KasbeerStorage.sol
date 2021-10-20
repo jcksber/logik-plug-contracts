@@ -18,53 +18,47 @@ contract KasbeerStorage {
 	using Counters for Counters.Counter;
 	Counters.Counter internal _tokenIds;
 
+	uint256 constant public royaltyFeeBps = 1500; // 15%
+    bytes4 internal constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
+    bytes4 internal constant _INTERFACE_ID_ERC721 = 0x80ac58cd;
+    bytes4 internal constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
+    bytes4 internal constant _INTERFACE_ID_ERC721_ENUMERABLE = 0x780e9d63;
+    bytes4 internal constant _INTERFACE_ID_EIP2981 = 0x2a55205a;
+
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
-	uint constant MAX_NUM_PLUGS = 888;
-	uint constant PLUG_WEI_PRICE = 88800000000000000;//0.0888 ETH
+	uint constant MAX_NUM_TOKENS = 888;
+	uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
 
-	//@dev Production hashes
-	//Nomad (non-chicago, non-st louis)
-	string internal NHASH_0 = "QmWCRLCpoZFMGsDGUbBPRR83vSbttvfX76bKH7z8iJ44sA"; //1% Plug
-	string internal NHASH_1 = "QmbNtFBSV8fyATBU4iSK6vNzrp69ssX7CSyn4VKKsYuEBs";
-	string internal NHASH_2 = "QmRuTjtQLKiy2nQDUH3zEmsuhPPfJV5JNB9nCrknqPPw1P";
-	string internal NHASH_3 = "QmPMzwE5QnRzvLwGrqxBiS26ZrgBCYiYWyMxz4xVBctZRC";
-	string internal NHASH_4 = "QmVDnUtPMEiU8fXJJWJTV7v5ng5LbPQ1ztSCpKq5SwaWyt";
-	string internal NHASH_5 = "QmVRapzJe2zHHHEmFsweD4HUtKMdU3cPFJM7M6rYe9pygS";
-	string internal NHASH_6 = "QmcGtch2D8SWeTZTW8J8VnnGmDK1rPuhW4yhwgxbtCgaNv"; //100% Plug
-	string internal NHASH_7 = "QmW2UpMiGDP21wxakmCAWLktEgZjUUVH1pPdPfY1uq1iDL"; //alchemist Plug
-	//Chicago
-	string internal CHASH_0 = "QmVUwXw8uA8DsGDMPQrnD3egLTPasDAxCmqLiHQnnm1bkm"; //1% Plug
-	string internal CHASH_1 = "QmWBzr8ojvf7vDoYai4KZyhXdBMMM81Cfwh6uUGhmiNdHZ";
-	string internal CHASH_2 = "Qmam6xkDbXLnCZtryPCvkVX5auGmJZ16oJj81w17dmwWCL";
-	string internal CHASH_3 = "QmPenaV4Z3PewX5BGga7qJ7tp58oXyrLKUsQD4ikCiKXVU";
-	string internal CHASH_4 = "QmQG49j1kGWWBNKqSk2U2VCqq5au7rAnao1D6Q5cD9HiAP";
-	string internal CHASH_5 = "QmQh6zBpQknZkrh3jYaGnESoNXBTY2ezEuWXT8iLcAUTfP";
-	string internal CHASH_6 = "QmWYxnsrZMKdYa5w4ZejmfSLAAh47Qb416Uyu2kgzkFaT5"; //100% Plug
-	string internal CHASH_7 = "QmTWF64DUNWH6uTVCkaL9GhVjNCXi6derawD2gcKry5N3o"; //alchemist Plug
-	//St. Louis
-	string internal LHASH_0 = "QmRwZQJPRzrFwzFVSeHB4mxwcyEbSf2oaCwdbLFwvguAVZ"; //1% Plug
-	string internal LHASH_1 = "QmTr4WF8Q9JrbfRdsVDM5UpyJAC9XkVcsiCGZkPQK88KXW";
-	string internal LHASH_2 = "QmXRde86henhSE24oMGVzXG2D1E4pMHqSeAoL6cje51pUQ";
-	string internal LHASH_3 = "QmWDwZvJZJ3PqwrhHykcppu5Bmbz5jY4Muy4fFtzyFLMFs";
-	string internal LHASH_4 = "QmdbevLc9tVnVveZTMn7Qe3TrD442pdn4BZgZ2rmdHm8tL";
-	string internal LHASH_5 = "QmRZXYUBkYZMEpusrFBYxzo6pRJTNR7sD9P6mHf3HAbd73";
-	string internal LHASH_6 = "QmWgRkgSwUetgCLFeTMmf8U4gpMvQ3Hv7RnUWKnD5Zvjt7"; //100% Plug
-	string internal LHASH_7 = "QmPicKf7WfsPn1AWjAHeyDu9fMunn3qEW8Gk7GFyBXkPnR"; //alchemist Plug
+	//@dev Properties
+	string internal contractUri;
 
-	//@dev Our list of IPFS hashes for each of the "normal" 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] normHashes = [NHASH_0, NHASH_1, 
-									  NHASH_2, NHASH_3, 
-									  NHASH_4, NHASH_5, 
-									  NHASH_6, NHASH_7];
-	//@dev Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] chiHashes = [CHASH_0, CHASH_1,
-								     CHASH_2, CHASH_3,
-								     CHASH_4, CHASH_5,
-								     CHASH_6, CHASH_7];
-	//@dev Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] stlHashes = [LHASH_0, LHASH_1,
-								     LHASH_2, LHASH_3,
-								     LHASH_4, LHASH_5,
-								     LHASH_6, LHASH_7];
+	//@dev Initial production hashes
+	//Our list of IPFS hashes for each of the "Nomad" 8 Plugs (varying juice levels)
+	string [NUM_ASSETS] normHashes = ["QmWCRLCpoZFMGsDGUbBPRR83vSbttvfX76bKH7z8iJ44sA",
+									  "QmbNtFBSV8fyATBU4iSK6vNzrp69ssX7CSyn4VKKsYuEBs",
+									  "QmRuTjtQLKiy2nQDUH3zEmsuhPPfJV5JNB9nCrknqPPw1P",
+									  "QmPMzwE5QnRzvLwGrqxBiS26ZrgBCYiYWyMxz4xVBctZRC",
+									  "QmVDnUtPMEiU8fXJJWJTV7v5ng5LbPQ1ztSCpKq5SwaWyt",
+									  "QmVRapzJe2zHHHEmFsweD4HUtKMdU3cPFJM7M6rYe9pygS",
+									  "QmcGtch2D8SWeTZTW8J8VnnGmDK1rPuhW4yhwgxbtCgaNv",
+									  "QmW2UpMiGDP21wxakmCAWLktEgZjUUVH1pPdPfY1uq1iDL"];
+	//Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
+	string [NUM_ASSETS] chiHashes = ["QmVUwXw8uA8DsGDMPQrnD3egLTPasDAxCmqLiHQnnm1bkm",
+									 "QmWBzr8ojvf7vDoYai4KZyhXdBMMM81Cfwh6uUGhmiNdHZ",
+									 "Qmam6xkDbXLnCZtryPCvkVX5auGmJZ16oJj81w17dmwWCL",
+									 "QmPenaV4Z3PewX5BGga7qJ7tp58oXyrLKUsQD4ikCiKXVU",
+									 "QmQG49j1kGWWBNKqSk2U2VCqq5au7rAnao1D6Q5cD9HiAP",
+									 "QmQh6zBpQknZkrh3jYaGnESoNXBTY2ezEuWXT8iLcAUTfP",
+									 "QmWYxnsrZMKdYa5w4ZejmfSLAAh47Qb416Uyu2kgzkFaT5",
+									 "QmTWF64DUNWH6uTVCkaL9GhVjNCXi6derawD2gcKry5N3o"];
+	//Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
+	string [NUM_ASSETS] stlHashes = ["QmRwZQJPRzrFwzFVSeHB4mxwcyEbSf2oaCwdbLFwvguAVZ",
+									 "QmTr4WF8Q9JrbfRdsVDM5UpyJAC9XkVcsiCGZkPQK88KXW",
+									 "QmXRde86henhSE24oMGVzXG2D1E4pMHqSeAoL6cje51pUQ",
+									 "QmWDwZvJZJ3PqwrhHykcppu5Bmbz5jY4Muy4fFtzyFLMFs",
+									 "QmdbevLc9tVnVveZTMn7Qe3TrD442pdn4BZgZ2rmdHm8tL",
+									 "QmRZXYUBkYZMEpusrFBYxzo6pRJTNR7sD9P6mHf3HAbd73",
+									 "QmWgRkgSwUetgCLFeTMmf8U4gpMvQ3Hv7RnUWKnD5Zvjt7",
+									 "QmPicKf7WfsPn1AWjAHeyDu9fMunn3qEW8Gk7GFyBXkPnR"];
 }

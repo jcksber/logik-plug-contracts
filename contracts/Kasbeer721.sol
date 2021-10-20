@@ -9,6 +9,7 @@
 pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./KasbeerStorage.sol";
 import "./KasbeerAccessControl.sol";
 
@@ -17,15 +18,13 @@ import "./KasbeerAccessControl.sol";
 contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	using Counters for Counters.Counter;
+	using SafeMath for uint256;
 
 	//@dev Emitted when a token is minted
 	event ERC721Minted(uint256 indexed tokenId);
 
 	//@dev Emitted when a token is burned
 	event ERC721Burned(uint256 indexed tokenId);
-
-	//@dev Emitted when an ipfs hash is updated
-	event HashUpdated(uint8 indexed group, uint8 indexed hashNum, string indexed newHash);
 	
 	//@dev You'll want to alter the name of the token if you inherit from this 
 	constructor(string memory _temp_name, string memory _temp_symbol) 
@@ -50,14 +49,33 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		_;
 	}
 
+	modifier onlyValidTokenId(uint256 tokenId)
+	{
+		require(1 <= tokenId <= MAX_NUM_PLUGS, "KasbeerMade721: tokenId OOB");
+	}
+
 
 	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ************************************************/
+
+	//@dev Controls the contract-level metadata to include things like royalties
+	function contractURI()
+		public view returns(string memory)
+	{
+		return contractUri;
+	}
+
+	//@dev Ability to change the contract URI
+	function updateContractUri(string memory _updatedContractUri) 
+		isSquad public
+	{
+        contractUri = _updatedContractUri;
+    }
 
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() 
 		internal view virtual override returns (string memory)
 	{
-		return "https://ipfs.io/ipfs/";//NOTE: per OpenSea recommendations
+		return "ipfs://";//NOTE: per OpenSea recommendations
 	}
 
 	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
@@ -81,7 +99,6 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	function updateHash(uint8 group, uint8 hashNum, string memory str)
 		isSquad groupInRange(group) hashIndexInRange(hashNum) public
 	{
-
 		if (group == 0) {
 			normHashes[hashNum] = str;
 		} else if (group == 1) {
@@ -89,7 +106,6 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		} else {
 			stlHashes[hashNum] = str;
 		}
-		emit HashUpdated(group, hashNum, str);
 	}
 
 	//@dev Get the hash stored at `idx` for `group` 
@@ -97,7 +113,6 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	function getHashByIndex(uint8 group, uint8 idx)
 		groupInRange(group) hashIndexInRange(idx) public view returns (string memory)
 	{
-
 		if (group == 0) {
 			return normHashes[idx];
 		} else if (group == 1) {
@@ -111,8 +126,8 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	/*** MINT & BURN ****************************************************************************/
 
 	//@dev Allows owners to mint for free
-    function mint721(address _to) 
-    	isSquad public virtual returns (uint256)
+    function mint(address _to) 
+    	isSquad public virtual override returns (uint256)
     {
     	_tokenIds.increment();
 
@@ -174,6 +189,23 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	{
 		return super.supportsInterface(interfaceId);
 	}
+
+	/* Rarible Royalties V2 */
+    function getRaribleV2Royalties(uint256 id) external view override onlyValidTokenId(id) returns (LibPart.Part[] memory) {
+        LibPart.Part[] memory royalties = new LibPart.Part[](1);
+        royalties[0] = LibPart.Part({
+            account: payable(payoutAddress),
+            value: uint96(royaltyFeeBps)
+        });
+
+        return royalties;
+    }
+
+    /* EIP-2981 */
+    function royaltyInfo(uint256 tokenId, uint256 salePrice) external view onlyValidTokenId(tokenId) returns (address receiver, uint256 amount) {
+        uint256 fivePercent = SafeMath.div(SafeMath.mul(salePrice, royaltyFeeBps), 10000);
+        return (payoutAddress, fivePercent);
+    }
 
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) 
