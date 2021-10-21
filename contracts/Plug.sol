@@ -6,7 +6,7 @@
  * Created: August 3, 2021
  *
  * Price: 0.0888 ETH
- * Dev Address: 0xA54d9EA557d7539d50A876319fE2c8abb39990DE
+ * Dev Address: 0x28C2DDF40fbF2Ca39Ef500838aC78445d4D59687
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -41,11 +41,12 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	constructor() Kasbeer721("the minute Plug v2", "") {
-		whitelistActive = false;
+	constructor() Kasbeer721("the minute Plug v3", "") {
+		whitelistActive = true;
 		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
 		addToSquad(payoutAddress);
+		addToWhitelist(payoutAddress);
 	}
 
 	// -----------

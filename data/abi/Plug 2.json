@@ -461,26 +461,7 @@
         "type": "string"
       }
     ],
-    "name": "listPlugOwnersForHash",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint8",
-        "name": "group",
-        "type": "uint8"
-      }
-    ],
-    "name": "listPlugOwnersForType",
+    "name": "listPlugOwners",
     "outputs": [
       {
         "internalType": "address[]",
