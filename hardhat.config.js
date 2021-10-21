@@ -4,11 +4,14 @@
 require('dotenv').config();
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
-require("@openzeppelin/hardhat-upgrades");
+require("@nomiclabs/hardhat-etherscan");
+require('hardhat-abi-exporter');
+
 const { STAGING_ALCHEMY_API_URL, 
         STAGING_PRIVATE_KEY,
         BOB_PRIVATE_KEY,
         ALICE_PRIVATE_KEY } = process.env;
+
 module.exports = {
    solidity: {
       compilers: [
@@ -51,4 +54,12 @@ module.exports = {
       // 	accounts: [`0x${PRODUCTION_PRIVATE_KEY}`]
       // }
    },
+   abiExporter: {
+      path: './data/abi',
+      clear: true,
+      flat: true
+   },
+   etherscan: {
+      apiKey: "N2A3Z2D8UQRE2QZUKCGDY1QK6SAUXVG7JV"
+   }
 }

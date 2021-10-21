@@ -6,6 +6,7 @@
  * Created: August 3, 2021
  *
  * Price: 0.0888 ETH
+ * Dev Address: 0xA54d9EA557d7539d50A876319fE2c8abb39990DE
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -41,18 +42,17 @@ contract Plug is Kasbeer721 {
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
 	constructor() Kasbeer721("the minute Plug", "") {
-		// Add LOGIK's dev address
-		addToSquad(0x6b8C6E15818C74895c31A1C91390b3d42B336799);
 		whitelistActive = true;
-		contractUri = "ipfs://QmW94EMoXifmMPiEkHEbFyDYiVxX8K4Trq3R4pYemSx4EK";
+		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
+		addToSquad(payoutAddress);
 	}
 
 	// -----------
 	// RESTRICTORS
 	// -----------
 
-	modifier batchLimit(uint8 _numToMint)
+	modifier batchLimit(uint256 _numToMint)
 	{
 		require(1 <= _numToMint && _numToMint <= 8, "Plug: mint between 1 and 8");
 		_;
@@ -187,14 +187,15 @@ contract Plug is Kasbeer721 {
 
 	//@dev List the owners for a certain level (determined by _assetHash)
 	// We'll need this for airdrops and benefits
-	function listPlugOwners(string memory _assetHash) 
+	function listPlugOwnersForHash(string memory _assetHash) 
 		isSquad public view returns (address[] memory)
 	{
 		require(_hashExists(_assetHash), "Plug: nonexistent hash");
 
-		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
+		address[] memory levelOwners = new address[](MAX_NUM_TOKENS);
 
-		uint16 tokenId, counter;
+		uint16 tokenId;
+		uint16 counter;
 		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
 			if (_stringsEqual(_tokenHash(tokenId), _assetHash)) {
 				levelOwners[counter] = ownerOf(tokenId);
@@ -202,6 +203,40 @@ contract Plug is Kasbeer721 {
 			}
 		}
 		return levelOwners;
+	}
+
+	//@dev List the owners of a category of the Plug (Nomad, Chicago, or St. Louis)
+	function listPlugOwnersForType(uint8 group)
+		isSquad groupInRange(group) public view returns (address[] memory)
+	{
+		address[] memory typeOwners = new address[](MAX_NUM_TOKENS);
+
+		uint16 tokenId;
+		uint16 counter;
+		if (group == 0) {
+			//nomad
+			for (tokenId = 176; tokenId <= MAX_NUM_TOKENS; tokenId++) {
+				if (tokenId % 88 != 0) {
+					typeOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
+			}
+		} else if (group == 1) {
+			//chicago
+			for (tokenId = 1; tokenId < 176; tokenId++) {
+				typeOwners[counter] = ownerOf(tokenId);
+				counter++;
+			}
+		} else {
+			//st. louis
+			for (tokenId = 176; tokenId <= MAX_NUM_TOKENS; tokenId++) {
+				if (tokenId % 88 == 0) {
+					typeOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
+			}
+		}
+		return typeOwners;
 	}
 
     // --------------------
@@ -219,7 +254,8 @@ contract Plug is Kasbeer721 {
     function purchase(
     	address payable _to, 
     	uint256 _numToMint
-    ) whitelistDisabled batchLimit(_numToMint) plugsAvailable(_numToMint) public payable 
+    ) whitelistDisabled batchLimit(_numToMint) plugsAvailable(_numToMint) 
+      public payable 
       returns (bool)
     {
     	require(msg.value >= _numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");

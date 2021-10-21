@@ -6,6 +6,7 @@
  * Created: October 20, 2021
  */
 
+pragma solidity >=0.5.16 <0.9.0;
 
 //@dev We need this libary for Rarible
 library LibPart {

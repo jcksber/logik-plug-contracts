@@ -50,12 +50,13 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	modifier onlyValidTokenId(uint256 tokenId)
 	{
-		require(1 <= tokenId <= MAX_NUM_PLUGS, "KasbeerMade721: tokenId OOB");
+		require(1 <= tokenId && tokenId <= MAX_NUM_TOKENS, "KasbeerMade721: tokenId OOB");
+		_;
 	}
 
-	// ----------------
-	// ERC721 OVERRIDES
-	// ----------------
+	// ------
+	// ERC721 
+	// ------
 
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() 
@@ -73,7 +74,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Allows owners to mint for free
     function mint(address _to) 
-    	isSquad public virtual override returns (uint256)
+    	isSquad public virtual returns (uint256)
     {
     	_tokenIds.increment();
 
@@ -86,7 +87,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Custom burn function - nothing special
 	function burn(uint256 tokenId) 
-		public virtual override
+		public virtual
 	{
 		require(isInSquad(msg.sender) || msg.sender == ownerOf(tokenId), 
 			"Kasbeer721: not owner or in squad.");
@@ -207,7 +208,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Rarible Royalties V2
     function getRaribleV2Royalties(uint256 id) 
-    	onlyValidTokenId(id) external view override returns (LibPart.Part[] memory) 
+    	onlyValidTokenId(id) external view returns (LibPart.Part[] memory) 
     {
         LibPart.Part[] memory royalties = new LibPart.Part[](1);
         royalties[0] = LibPart.Part({
