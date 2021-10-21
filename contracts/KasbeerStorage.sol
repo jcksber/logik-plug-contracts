@@ -24,6 +24,7 @@ contract KasbeerStorage {
     bytes4 internal constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
     bytes4 internal constant _INTERFACE_ID_ERC721_ENUMERABLE = 0x780e9d63;
     bytes4 internal constant _INTERFACE_ID_EIP2981 = 0x2a55205a;
+    bytes4 internal constant _INTERFACE_ID_ROYALTIES = 0xcad96cca;
 
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
@@ -32,6 +33,7 @@ contract KasbeerStorage {
 
 	//@dev Properties
 	string internal contractUri;
+	address public payoutAddress;
 
 	//@dev Initial production hashes
 	//Our list of IPFS hashes for each of the "Nomad" 8 Plugs (varying juice levels)

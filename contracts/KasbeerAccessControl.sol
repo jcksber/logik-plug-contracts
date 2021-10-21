@@ -15,7 +15,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract KasbeerAccessControl is Ownable {
 	
-	/*** SQUAD **********************************************************************************/
+	// -----
+	// SQUAD
+	// -----
 
 	//@dev Ownership - list of squad members (owners)
 	mapping (address => bool) internal _squad;
@@ -50,20 +52,9 @@ contract KasbeerAccessControl is Ownable {
 		_squad[a_] = false;
 	}
 
-
-	/*** WHITELIST *****************************************************************************
-	 * 
-	 * This implementation of a whitelist/pre-sale-list using a mapping from addresses to
-	 * booleans for the whitelisted members to be available on-chain, and a flag (uint8) 
-	 * to indicate whether or not the whitelist is currrently active/inactive.
-	 *
-	 * Functions are provided both for (1) adding a single address to the whitelist, and (2) 
-	 * for adding a list of addresses to the whitelist.  The second method 
-	 * (`bulkAddToWhitelist`) is the preferred one as it will save on gas dramatically.
-	 *
-	 * Therefore, this allows for easy control in a cost-efficient way to have a dynamic whitelist
-	 * in addition to the ability to enable and disable it.
-	 */
+	// ---------
+	// WHITELIST
+	// ---------
 
 	//@dev Whitelist mapping for client addresses
 	mapping (address => bool) internal _whitelist;

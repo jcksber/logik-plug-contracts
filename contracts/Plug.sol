@@ -45,6 +45,7 @@ contract Plug is Kasbeer721 {
 		addToSquad(0x6b8C6E15818C74895c31A1C91390b3d42B336799);
 		whitelistActive = true;
 		contractUri = "ipfs://QmW94EMoXifmMPiEkHEbFyDYiVxX8K4Trq3R4pYemSx4EK";
+		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
 	}
 
 	// -----------
@@ -218,8 +219,7 @@ contract Plug is Kasbeer721 {
     function purchase(
     	address payable _to, 
     	uint256 _numToMint
-    ) whitelistDisabled batchLimit(_numToMint) plugsAvailable(_numToMint)
-      public payable 
+    ) whitelistDisabled batchLimit(_numToMint) plugsAvailable(_numToMint) public payable 
       returns (bool)
     {
     	require(msg.value >= _numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");

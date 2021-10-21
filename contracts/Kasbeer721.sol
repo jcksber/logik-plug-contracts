@@ -12,6 +12,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./KasbeerStorage.sol";
 import "./KasbeerAccessControl.sol";
+import "./LibPart.sol";
+
 
 //@title Kasbeer Made Contract for an ERC721
 //@author Jack Kasbeer (git:@jcksber, tw:@satoshigoat)
@@ -20,13 +22,9 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	using Counters for Counters.Counter;
 	using SafeMath for uint256;
 
-	//@dev Emitted when a token is minted
 	event ERC721Minted(uint256 indexed tokenId);
-
-	//@dev Emitted when a token is burned
 	event ERC721Burned(uint256 indexed tokenId);
 	
-	//@dev You'll want to alter the name of the token if you inherit from this 
 	constructor(string memory _temp_name, string memory _temp_symbol) 
 		ERC721(_temp_name, _temp_symbol)
 	{
@@ -34,19 +32,20 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		addToSquad(0xEAb4Aea5cD7376C04923236c504e7e91362566D1);
 	}
 
-	//@dev Hash index needs to be in range 
+	// -----------
+	// RESTRICTORS
+	// -----------
+
 	modifier hashIndexInRange(uint8 idx)
 	{
 		require(0 <= idx && idx < NUM_ASSETS, "Kasbeer721: index OOB");
 		_;
 	}
-
-	//@dev Group number needs to be in range
-	// 0:nomad, 1:chicago, 2:st.louis
+	
 	modifier groupInRange(uint8 group)
 	{
 		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
-		_;
+		_;// 0:nomad, 1:chicago, 2:st.louis
 	}
 
 	modifier onlyValidTokenId(uint256 tokenId)
@@ -54,22 +53,9 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		require(1 <= tokenId <= MAX_NUM_PLUGS, "KasbeerMade721: tokenId OOB");
 	}
 
-
-	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ************************************************/
-
-	//@dev Controls the contract-level metadata to include things like royalties
-	function contractURI()
-		public view returns(string memory)
-	{
-		return contractUri;
-	}
-
-	//@dev Ability to change the contract URI
-	function updateContractUri(string memory _updatedContractUri) 
-		isSquad public
-	{
-        contractUri = _updatedContractUri;
-    }
+	// ----------------
+	// ERC721 OVERRIDES
+	// ----------------
 
 	//@dev All of the asset's will be pinned to IPFS
 	function _baseURI() 
@@ -78,52 +64,12 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		return "ipfs://";//NOTE: per OpenSea recommendations
 	}
 
-	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
-	function _hashExists(string memory _assetHash) 
-		internal view returns (bool) 
-	{
-		uint8 i;
-		for (i = 0; i < NUM_ASSETS; i++) {
-			if (_stringsEqual(_assetHash, normHashes[i]) || 
-				_stringsEqual(_assetHash, chiHashes[i]) ||
-				_stringsEqual(_assetHash, stlHashes[i])) {
-				return true;
-			}
-		}
-
-		return false;
+	//@dev This is here as a reminder to override for custom transfer functionality
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
+		internal virtual override 
+	{ 
+		super._beforeTokenTransfer(from, to, tokenId); 
 	}
-
-	//@dev Allows us to update the IPFS hash values (one at a time)
-	// group refers to normal (0), chicago (1), or st louis (2)
-	function updateHash(uint8 group, uint8 hashNum, string memory str)
-		isSquad groupInRange(group) hashIndexInRange(hashNum) public
-	{
-		if (group == 0) {
-			normHashes[hashNum] = str;
-		} else if (group == 1) {
-			chiHashes[hashNum] = str;
-		} else {
-			stlHashes[hashNum] = str;
-		}
-	}
-
-	//@dev Get the hash stored at `idx` for `group` 
-	// 0:nomad, 1:chicago, 2:st.louis
-	function getHashByIndex(uint8 group, uint8 idx)
-		groupInRange(group) hashIndexInRange(idx) public view returns (string memory)
-	{
-		if (group == 0) {
-			return normHashes[idx];
-		} else if (group == 1) {
-			return chiHashes[idx];
-		} else {
-			return stlHashes[idx];
-		}
-	}
-
-
-	/*** MINT & BURN ****************************************************************************/
 
 	//@dev Allows owners to mint for free
     function mint(address _to) 
@@ -139,8 +85,8 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
     }
 
 	//@dev Custom burn function - nothing special
-	function burn721(uint256 tokenId) 
-		public virtual
+	function burn(uint256 tokenId) 
+		public virtual override
 	{
 		require(isInSquad(msg.sender) || msg.sender == ownerOf(tokenId), 
 			"Kasbeer721: not owner or in squad.");
@@ -148,21 +94,78 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		emit ERC721Burned(tokenId);
 	}
 
+	function supportsInterface(bytes4 interfaceId) 
+		public view virtual override returns (bool)
+	{
+		return interfaceId == _INTERFACE_ID_ERC165
+        || interfaceId == _INTERFACE_ID_ROYALTIES
+        || interfaceId == _INTERFACE_ID_ERC721
+        || interfaceId == _INTERFACE_ID_ERC721_METADATA
+        || interfaceId == _INTERFACE_ID_ERC721_ENUMERABLE
+        || interfaceId == _INTERFACE_ID_EIP2981
+        || super.supportsInterface(interfaceId);
+	}
+
+    // ----------------------
+    // IPFS HASH MANIPULATION
+    // ----------------------
+
+    //@dev Get the hash stored at `idx` for `group` 
+	function getHashByIndex(
+		uint8 group, 
+		uint8 idx
+	) groupInRange(group) hashIndexInRange(idx) public view 
+	  returns (string memory)
+	{
+		if (group == 0) {
+			return normHashes[idx];
+		} else if (group == 1) {
+			return chiHashes[idx];
+		} else {
+			return stlHashes[idx];
+		}
+	}
+
+	//@dev Allows us to update the IPFS hash values (one at a time)
+	function updateHash(
+		uint8 group, 
+		uint8 hashNum, 
+		string memory str
+	) isSquad groupInRange(group) hashIndexInRange(hashNum) public
+	{
+		if (group == 0) {
+			normHashes[hashNum] = str;
+		} else if (group == 1) {
+			chiHashes[hashNum] = str;
+		} else {
+			stlHashes[hashNum] = str;
+		}
+	}
+
+	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
+	function _hashExists(string memory _assetHash) 
+		internal view returns (bool) 
+	{
+		uint8 i;
+		for (i = 0; i < NUM_ASSETS; i++) {
+			if (_stringsEqual(_assetHash, normHashes[i]) || 
+				_stringsEqual(_assetHash, chiHashes[i]) ||
+				_stringsEqual(_assetHash, stlHashes[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// ------
+	// USEFUL
+	// ------
+
 	//@dev Returns the current token id (number minted so far)
 	function getCurrentId() 
 		public view returns (uint256)
 	{
 		return _tokenIds.current();
-	}
-
-
-	/*** TRANSFER FUNCTIONS *********************************************************************/
-
-	//@dev This is here as a reminder to override for custom transfer functionality
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
-		internal virtual override 
-	{ 
-		super._beforeTokenTransfer(from, to, tokenId); 
 	}
 
 	//@dev Allows us to withdraw funds collected
@@ -173,9 +176,6 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		wallet.transfer(amount);
 	}
 
-
-	/*** HELPER FUNCTIONS ***********************************************************************/
-
 	//@dev Destroy contract and reclaim leftover funds
     function kill() 
     	onlyOwner public 
@@ -183,15 +183,32 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
         selfdestruct(payable(msg.sender));
     }
 
-	function supportsInterface(bytes4 interfaceId) 
-		public view virtual override 
-		returns (bool)
+    // ------------
+	// CONTRACT URI
+	// ------------
+
+	//@dev Controls the contract-level metadata to include things like royalties
+	function contractURI()
+		public view returns(string memory)
 	{
-		return super.supportsInterface(interfaceId);
+		return contractUri;
 	}
 
-	/* Rarible Royalties V2 */
-    function getRaribleV2Royalties(uint256 id) external view override onlyValidTokenId(id) returns (LibPart.Part[] memory) {
+	//@dev Ability to change the contract URI
+	function updateContractUri(string memory _updatedContractUri) 
+		isSquad public
+	{
+        contractUri = _updatedContractUri;
+    }
+	
+    // -----------------
+    // SECONDARY MARKETS
+	// -----------------
+
+	//@dev Rarible Royalties V2
+    function getRaribleV2Royalties(uint256 id) 
+    	onlyValidTokenId(id) external view override returns (LibPart.Part[] memory) 
+    {
         LibPart.Part[] memory royalties = new LibPart.Part[](1);
         royalties[0] = LibPart.Part({
             account: payable(payoutAddress),
@@ -201,11 +218,15 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
         return royalties;
     }
 
-    /* EIP-2981 */
+    //@dev EIP-2981
     function royaltyInfo(uint256 tokenId, uint256 salePrice) external view onlyValidTokenId(tokenId) returns (address receiver, uint256 amount) {
-        uint256 fivePercent = SafeMath.div(SafeMath.mul(salePrice, royaltyFeeBps), 10000);
-        return (payoutAddress, fivePercent);
+        uint256 ourCut = SafeMath.div(SafeMath.mul(salePrice, royaltyFeeBps), 10000);
+        return (payoutAddress, ourCut);
     }
+
+    // -------
+    // HELPERS
+    // -------
 
 	//@dev Determine if two strings are equal using the length + hash method
 	function _stringsEqual(string memory a, string memory b) 
