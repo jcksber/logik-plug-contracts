@@ -41,8 +41,8 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	constructor() Kasbeer721("the minute Plug", "") {
-		whitelistActive = true;
+	constructor() Kasbeer721("the minute Plug v2", "") {
+		whitelistActive = false;
 		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
 		addToSquad(payoutAddress);
@@ -215,7 +215,7 @@ contract Plug is Kasbeer721 {
 		uint16 counter;
 		if (group == 0) {
 			//nomad
-			for (tokenId = 176; tokenId <= MAX_NUM_TOKENS; tokenId++) {
+			for (tokenId = 177; tokenId <= MAX_NUM_TOKENS; tokenId++) {
 				if (tokenId % 88 != 0) {
 					typeOwners[counter] = ownerOf(tokenId);
 					counter++;
@@ -223,13 +223,13 @@ contract Plug is Kasbeer721 {
 			}
 		} else if (group == 1) {
 			//chicago
-			for (tokenId = 1; tokenId < 176; tokenId++) {
+			for (tokenId = 1; tokenId <= 176; tokenId++) {
 				typeOwners[counter] = ownerOf(tokenId);
 				counter++;
 			}
 		} else {
 			//st. louis
-			for (tokenId = 176; tokenId <= MAX_NUM_TOKENS; tokenId++) {
+			for (tokenId = 177; tokenId <= MAX_NUM_TOKENS; tokenId++) {
 				if (tokenId % 88 == 0) {
 					typeOwners[counter] = ownerOf(tokenId);
 					counter++;
