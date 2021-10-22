@@ -28,15 +28,10 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	constructor(string memory temp_name, string memory temp_symbol) 
 		ERC721(temp_name, temp_symbol)
 	{
-		// Add my personal address
-		addToSquad(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
+		// Add my personal address & sender
+		_squad[msg.sender] = true;
+		_squad[0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b] = true;
 		addToWhitelist(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
-		address[] memory firstWhitelist = new address[](INIT_WHITELIST_SIZE);
-		uint8 i;
-		for (i = 0; i < INIT_WHITELIST_SIZE; i++) {
-			firstWhitelist[i] = firstStorageWhitelist[i];
-		}
-		bulkAddToWhitelist(firstWhitelist);
 	}
 
 	// -----------

@@ -40,11 +40,11 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	constructor() Kasbeer721("the Plug test", "PLUGt") {
+	constructor() Kasbeer721("the Plug", "PLUG") {
 		whitelistActive = true;
 		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
-		addToSquad(payoutAddress);
+		_squad[payoutAddress] = true;
 		addToWhitelist(payoutAddress);
 	}
 

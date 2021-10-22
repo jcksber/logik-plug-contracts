@@ -30,7 +30,7 @@ interface IERC165 {
 
 // File @openzeppelin/contracts/token/ERC721/IERC721.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -174,7 +174,7 @@ interface IERC721 is IERC165 {
 
 // File @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -204,7 +204,7 @@ interface IERC721Receiver {
 
 // File @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -232,7 +232,7 @@ interface IERC721Metadata is IERC721 {
 
 // File @openzeppelin/contracts/utils/Address.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -452,7 +452,7 @@ library Address {
 
 // File @openzeppelin/contracts/utils/Context.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -479,7 +479,7 @@ abstract contract Context {
 
 // File @openzeppelin/contracts/utils/Strings.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -549,7 +549,7 @@ library Strings {
 
 // File @openzeppelin/contracts/utils/introspection/ERC165.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -579,7 +579,6 @@ abstract contract ERC165 is IERC165 {
 
 // File @openzeppelin/contracts/token/ERC721/ERC721.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 
@@ -992,7 +991,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 
 // File @openzeppelin/contracts/utils/math/SafeMath.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -1222,7 +1221,7 @@ library SafeMath {
 
 // File @openzeppelin/contracts/utils/Counters.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -1268,7 +1267,7 @@ library Counters {
 
 // File contracts/KasbeerStorage.sol
 
-// SPDX-License-Identifier: MIT
+
 /*
  * KasbeerStorage.sol
  *
@@ -1298,14 +1297,14 @@ contract KasbeerStorage {
 	uint constant NUM_ASSETS = 8;
 	uint constant MAX_NUM_TOKENS = 888;
 	uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
-	uint16 constant INIT_WHITELIST_SIZE = 150;
+	uint16 constant INIT_WHITELIST_SIZE = 64;
 
 	//@dev Properties
 	string internal contractUri;
 	address public payoutAddress;
 
 	//@dev Initial whitelist (phase 1)
-	//address [INIT_WHITELIST_SIZE] firstWhitelist = [];
+	address [INIT_WHITELIST_SIZE] firstStorageWhitelist = [0x5cC1E6229708533aC0F5e9E98931334341ff24C2, 0xB57381C7eD83BB9031a786d2C691cc6C7C2207a4, 0xDd8c1dB65964607C119535c98a6F6eD52b41588E, 0x48a153C995Ba9b0ebE8b89fa81A7be96D4507614, 0x54588Aad15b92D53fC8cFB3c6876C74B52D23491, 0xaD4dcAEDb07468000B0F55FF50BA126dBEaB8282, 0xf63649F5623B203a796Da0c88475e7a4E305fCfd, 0xC6115407937cF5c8E14eB8971A3f3984ED791Ea1, 0x65f23ec5C901b0c1321313ca36735D957035Fb59, 0x35D30bdE12B68eF6598D3f9ea7b61b9E0Bad8ACc, 0x75E7c0D05c6b43173A78494dAa78f777f03643Eb, 0xC16f1eDAbfAEa8981F2Ba8D61401f7a76B1fDa50, 0x396054f3012B76d2C940b233751FB18d25a80200, 0x5DE02c8924922b756a79a9E69a7B2E644f0c4a3a, 0x51A51e85473717EFd193F485A835ed766Fdf64Eb, 0xF4Ffd6FAa686152dec6024dd2f2EdcCa7Fc5E906, 0xd4200Fe3A594BB675559eb5843032Ac691Bca2e1, 0x7e824e1BA47eAE465fa9BC50b4b48E8E78eD8700, 0x3bFC2F16535b4193f2FDfd9B22E9E23CdA0f8CDc, 0x8c95f2Adb628DbD7566c770bb3932E7a9ba644Ba, 0x6102D808B1757c7010e55eC5e22a6a05F55606E1, 0x5a57107A58A0447066C376b211059352B617c3BA, 0x154abBEfAb098ee7B308f168CeBe4451a1F81578, 0x7A7DcF86dD71A44c9E194DdFADD3d7b592B5Eff8, 0x74b015eF6a8ef465EAb6Cac8F6d3B00AD4A5dC0A, 0x59E68B7FB81c7f50094be8D1bA3fa7F16BbB8447, 0x31Eb9BC52487bb091756B8BE223a71c6b14a324a, 0x0f4F82F5b58948e924e87Edc31cDF8E4E304bB27, 0x15B148740043D62B86D3b8Df519D2012e4C17798, 0x5D6e776a563220747ad4f157d9c8F76f78291E5d, 0x909A30F58D9E7abfD4F8cF8430e2c2F97783E769, 0xbBa4f79067362a69EF9Ed859e68b2D8b7b03f2E8, 0xC1700A594ED7A14AC527ffaA9b3eE3712c3295c3, 0x83870Cc61e00627d785167CB8b92cb5e4e23b967, 0xAfD2006c901167B156464B1699f7b685E94241ba, 0x2E25C3b15D3CD8059d009fc90537Bc78163f4dF5, 0xFb6B6aD32065Ac4309951A2e877bAA272EeA487e, 0x0453C6B22E841fAa8a05f56311c7615a605cE197, 0xCcF822a807a39aD9C5d2c01e4FF309e1b158D752, 0x23005448527E16d860d9f5DA49F3f1c5084C3C62, 0x4cb72456e82aeDd8b1ef0F08D03Cc6bFf96c6291, 0x5CF059DC37A6Ee5480d2eD91315e1546681621D5, 0xE8323AEF317e8A9E64ac337A8E4EcB3FD14E4156, 0x22E26230461878969062008Dba98301e2FB6b8A5, 0xd4384965889621867beB046255eA990EC82058d9, 0x0A3f54c019EbF918CfAA12b7C5ab84956ac43458, 0x049569adb8a1e8A9349E9F1111C7b7993A4612eB, 0xB00A0aF5eD3dcEC55E2222e25a151ae35408e0e6, 0xF7d366d7e634ED1D76A9187af177926c9a4f4bA5, 0x2655aE0C61ca9F902EC82Ca07c77FF3ca2ceb857, 0xDFcb00815C730D20901A38BA6fB38c2fFEbDc6C8, 0x0Dbede4a0aE4ff1c5103a715905D3663a1aEB673, 0x36b899a3610bE2a0b49Fe55F04072f98D148BAe4, 0xfE3107BBbA13AF26d6A38C19C5a24790d8c6eAbe, 0xc23262e4eeF4fdFAB698aF75405Dce14d65d6EB4, 0xd6B7Ea90a32a383E74D7a32e4F9C1b342D3A7384, 0x5A767161ad94E7e8b42C02668818A94673537645, 0x09b3b662a7dACaA9c8EE70F704390BB93De41aeD, 0x346D26dAFB6304D46d5Cb57DBB6085f7B55A5fB4, 0x957541a09258e3043E19B31bA30d722cB8490040, 0x23c230dFBB7E532FC46889F4c454ba813b2c4916, 0x9a9ac2c433c312F930E10E70fe3431E1ADeC3671, 0xf4872Eb5b0EDC03BE22e5d8c2b3d7bb0693B73C8, 0x8A5b2792fE5AD320e3dD54833A368555Efe45759];
 
 	//@dev Initial production hashes
 	//Our list of IPFS hashes for each of the "Nomad" 8 Plugs (varying juice levels)
@@ -1340,7 +1339,7 @@ contract KasbeerStorage {
 
 // File @openzeppelin/contracts/access/Ownable.sol@v4.3.2
 
-// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.0;
 
@@ -1413,7 +1412,7 @@ abstract contract Ownable is Context {
 
 // File contracts/KasbeerAccessControl.sol
 
-// SPDX-License-Identifier: MIT
+
 /*
  * KasbeerAccessControl.sol
  *
@@ -1552,7 +1551,7 @@ contract KasbeerAccessControl is Ownable {
 
 // File contracts/LibPart.sol
 
-// SPDX-License-Identifier: MIT
+
 /*
  * LibPart.sol
  *
@@ -1579,7 +1578,7 @@ library LibPart {
 
 // File contracts/Kasbeer721.sol
 
-// SPDX-License-Identifier: MIT
+
 /*
  * Kasbeer721.sol
  *
@@ -1609,7 +1608,12 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		// Add my personal address
 		addToSquad(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
 		addToWhitelist(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
-		//bulkAddToWhitelist(firstWhitelist);
+		address[] memory firstWhitelist = new address[](INIT_WHITELIST_SIZE);
+		uint8 i;
+		for (i = 0; i < INIT_WHITELIST_SIZE; i++) {
+			firstWhitelist[i] = firstStorageWhitelist[i];
+		}
+		bulkAddToWhitelist(firstWhitelist);
 	}
 
 	// -----------
@@ -1828,7 +1832,6 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 // File contracts/Plug.sol
 
-// SPDX-License-Identifier: MIT
 /*
  * Plug.sol
  *
@@ -1868,7 +1871,7 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	constructor() Kasbeer721("the Plug test", "PLUGt") {
+	constructor() Kasbeer721("the Plug", "PLUG") {
 		whitelistActive = true;
 		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
@@ -1924,7 +1927,7 @@ contract Plug is Kasbeer721 {
 		}
 
 		// Calculate days gone by for this particular token 
-		uint daysPassed = countDaysPassed(tokenId);//NOTE: CHANGE FOR PRODUCTION!
+		uint daysPassed = countDaysPassed(tokenId);
 
 		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {
