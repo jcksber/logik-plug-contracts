@@ -96,7 +96,7 @@ contract Plug is Kasbeer721 {
 		}
 
 		// Calculate days gone by for this particular token 
-		uint daysPassed = countDaysPassed(tokenId);//NOTE: CHANGE FOR PRODUCTION!
+		uint daysPassed = countDaysPassed(tokenId);
 
 		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {

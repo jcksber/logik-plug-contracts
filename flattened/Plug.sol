@@ -1,8 +1,10 @@
-// Dependency file: @openzeppelin/contracts/utils/introspection/IERC165.sol
+// Sources flattened with hardhat v2.6.6 https://hardhat.org
+
+// File @openzeppelin/contracts/utils/introspection/IERC165.sol@v4.3.2
 
 // SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Interface of the ERC165 standard, as defined in the
@@ -26,12 +28,11 @@ interface IERC165 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/token/ERC721/IERC721.sol
+// File @openzeppelin/contracts/token/ERC721/IERC721.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
-
-// import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+pragma solidity ^0.8.0;
 
 /**
  * @dev Required interface of an ERC721 compliant contract.
@@ -171,10 +172,11 @@ interface IERC721 is IERC165 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol
+// File @openzeppelin/contracts/token/ERC721/IERC721Receiver.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
+pragma solidity ^0.8.0;
 
 /**
  * @title ERC721 token receiver interface
@@ -200,12 +202,11 @@ interface IERC721Receiver {
 }
 
 
-// Dependency file: @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol
+// File @openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
-
-// import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+pragma solidity ^0.8.0;
 
 /**
  * @title ERC-721 Non-Fungible Token Standard, optional metadata extension
@@ -229,10 +230,11 @@ interface IERC721Metadata is IERC721 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/utils/Address.sol
+// File @openzeppelin/contracts/utils/Address.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Collection of functions related to the address type
@@ -448,10 +450,11 @@ library Address {
 }
 
 
-// Dependency file: @openzeppelin/contracts/utils/Context.sol
+// File @openzeppelin/contracts/utils/Context.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -474,10 +477,11 @@ abstract contract Context {
 }
 
 
-// Dependency file: @openzeppelin/contracts/utils/Strings.sol
+// File @openzeppelin/contracts/utils/Strings.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev String operations.
@@ -543,12 +547,11 @@ library Strings {
 }
 
 
-// Dependency file: @openzeppelin/contracts/utils/introspection/ERC165.sol
+// File @openzeppelin/contracts/utils/introspection/ERC165.sol@v4.3.2
 
+// SPDX-License-Identifier: MIT
 
-// pragma solidity ^0.8.0;
-
-// import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+pragma solidity ^0.8.0;
 
 /**
  * @dev Implementation of the {IERC165} interface.
@@ -574,18 +577,17 @@ abstract contract ERC165 is IERC165 {
 }
 
 
-// Dependency file: @openzeppelin/contracts/token/ERC721/ERC721.sol
+// File @openzeppelin/contracts/token/ERC721/ERC721.sol@v4.3.2
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
 
 
-// pragma solidity ^0.8.0;
 
-// import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-// import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-// import "@openzeppelin/contracts/utils/Address.sol";
-// import "@openzeppelin/contracts/utils/Context.sol";
-// import "@openzeppelin/contracts/utils/Strings.sol";
-// import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+
+
+
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
@@ -988,12 +990,359 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
 }
 
 
-// Dependency file: @openzeppelin/contracts/access/Ownable.sol
+// File @openzeppelin/contracts/utils/math/SafeMath.sol@v4.3.2
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+// CAUTION
+// This version of SafeMath should only be used with Solidity 0.8 or later,
+// because it relies on the compiler's built in overflow checks.
+
+/**
+ * @dev Wrappers over Solidity's arithmetic operations.
+ *
+ * NOTE: `SafeMath` is no longer needed starting with Solidity 0.8. The compiler
+ * now has built in overflow checking.
+ */
+library SafeMath {
+    /**
+     * @dev Returns the addition of two unsigned integers, with an overflow flag.
+     *
+     * _Available since v3.4._
+     */
+    function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+        unchecked {
+            uint256 c = a + b;
+            if (c < a) return (false, 0);
+            return (true, c);
+        }
+    }
+
+    /**
+     * @dev Returns the substraction of two unsigned integers, with an overflow flag.
+     *
+     * _Available since v3.4._
+     */
+    function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+        unchecked {
+            if (b > a) return (false, 0);
+            return (true, a - b);
+        }
+    }
+
+    /**
+     * @dev Returns the multiplication of two unsigned integers, with an overflow flag.
+     *
+     * _Available since v3.4._
+     */
+    function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+        unchecked {
+            // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+            // benefit is lost if 'b' is also tested.
+            // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+            if (a == 0) return (true, 0);
+            uint256 c = a * b;
+            if (c / a != b) return (false, 0);
+            return (true, c);
+        }
+    }
+
+    /**
+     * @dev Returns the division of two unsigned integers, with a division by zero flag.
+     *
+     * _Available since v3.4._
+     */
+    function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+        unchecked {
+            if (b == 0) return (false, 0);
+            return (true, a / b);
+        }
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers, with a division by zero flag.
+     *
+     * _Available since v3.4._
+     */
+    function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+        unchecked {
+            if (b == 0) return (false, 0);
+            return (true, a % b);
+        }
+    }
+
+    /**
+     * @dev Returns the addition of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `+` operator.
+     *
+     * Requirements:
+     *
+     * - Addition cannot overflow.
+     */
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a + b;
+    }
+
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a - b;
+    }
+
+    /**
+     * @dev Returns the multiplication of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `*` operator.
+     *
+     * Requirements:
+     *
+     * - Multiplication cannot overflow.
+     */
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a * b;
+    }
+
+    /**
+     * @dev Returns the integer division of two unsigned integers, reverting on
+     * division by zero. The result is rounded towards zero.
+     *
+     * Counterpart to Solidity's `/` operator.
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a / b;
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * reverting when dividing by zero.
+     *
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a % b;
+    }
+
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
+     * overflow (when the result is negative).
+     *
+     * CAUTION: This function is deprecated because it requires allocating memory for the error
+     * message unnecessarily. For custom revert reasons use {trySub}.
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        unchecked {
+            require(b <= a, errorMessage);
+            return a - b;
+        }
+    }
+
+    /**
+     * @dev Returns the integer division of two unsigned integers, reverting with custom message on
+     * division by zero. The result is rounded towards zero.
+     *
+     * Counterpart to Solidity's `/` operator. Note: this function uses a
+     * `revert` opcode (which leaves remaining gas untouched) while Solidity
+     * uses an invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        unchecked {
+            require(b > 0, errorMessage);
+            return a / b;
+        }
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * reverting with custom message when dividing by zero.
+     *
+     * CAUTION: This function is deprecated because it requires allocating memory for the error
+     * message unnecessarily. For custom revert reasons use {tryMod}.
+     *
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
+        unchecked {
+            require(b > 0, errorMessage);
+            return a % b;
+        }
+    }
+}
 
 
-// pragma solidity ^0.8.0;
+// File @openzeppelin/contracts/utils/Counters.sol@v4.3.2
 
-// import "@openzeppelin/contracts/utils/Context.sol";
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+/**
+ * @title Counters
+ * @author Matt Condon (@shrugs)
+ * @dev Provides counters that can only be incremented, decremented or reset. This can be used e.g. to track the number
+ * of elements in a mapping, issuing ERC721 ids, or counting request ids.
+ *
+ * Include with `using Counters for Counters.Counter;`
+ */
+library Counters {
+    struct Counter {
+        // This variable should never be directly accessed by users of the library: interactions must be restricted to
+        // the library's function. As of Solidity v0.5.2, this cannot be enforced, though there is a proposal to add
+        // this feature: see https://github.com/ethereum/solidity/issues/4637
+        uint256 _value; // default: 0
+    }
+
+    function current(Counter storage counter) internal view returns (uint256) {
+        return counter._value;
+    }
+
+    function increment(Counter storage counter) internal {
+        unchecked {
+            counter._value += 1;
+        }
+    }
+
+    function decrement(Counter storage counter) internal {
+        uint256 value = counter._value;
+        require(value > 0, "Counter: decrement overflow");
+        unchecked {
+            counter._value = value - 1;
+        }
+    }
+
+    function reset(Counter storage counter) internal {
+        counter._value = 0;
+    }
+}
+
+
+// File contracts/KasbeerStorage.sol
+
+// SPDX-License-Identifier: MIT
+/*
+ * KasbeerStorage.sol
+ *
+ * Author: Jack Kasbeer
+ * Created: August 21, 2021
+ */
+
+pragma solidity >=0.5.16 <0.9.0;
+
+//@title A storage contract for relevant data
+//@author Jack Kasbeer (@jcksber, @satoshigoat)
+contract KasbeerStorage {
+
+	//@dev These take care of token id incrementing
+	using Counters for Counters.Counter;
+	Counters.Counter internal _tokenIds;
+
+	uint256 constant public royaltyFeeBps = 1500; // 15%
+    bytes4 internal constant _INTERFACE_ID_ERC165 = 0x01ffc9a7;
+    bytes4 internal constant _INTERFACE_ID_ERC721 = 0x80ac58cd;
+    bytes4 internal constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
+    bytes4 internal constant _INTERFACE_ID_ERC721_ENUMERABLE = 0x780e9d63;
+    bytes4 internal constant _INTERFACE_ID_EIP2981 = 0x2a55205a;
+    bytes4 internal constant _INTERFACE_ID_ROYALTIES = 0xcad96cca;
+
+	//@dev Important numbers
+	uint constant NUM_ASSETS = 8;
+	uint constant MAX_NUM_TOKENS = 888;
+	uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
+	uint16 constant INIT_WHITELIST_SIZE = 150;
+
+	//@dev Properties
+	string internal contractUri;
+	address public payoutAddress;
+
+	//@dev Initial whitelist (phase 1)
+	//address [INIT_WHITELIST_SIZE] firstWhitelist = [];
+
+	//@dev Initial production hashes
+	//Our list of IPFS hashes for each of the "Nomad" 8 Plugs (varying juice levels)
+	string [NUM_ASSETS] normHashes = ["QmZzB15bPgTqyHzULMFK1jNdbbDGVGCX4PJNbyGGMqLCjL",
+									  "QmeXZGeywxRRDK5mSBHNVnUzGv7Kv2ATfLHydPfT5LpbZr",
+									  "QmYTf2HE8XycQD9uXshiVtXqNedS83WycJvS2SpWAPfx5b",
+									  "QmYXjEkeio2nbMqy3DA7z2LwYFDyq1itbzdujGSoCsFwpN",
+									  "QmWmvRqpT59QU9rDT28fiKgK6g8vUjRD2TSSeeBPr9aBNm",
+									  "QmWtMb73QgSgkL7mY8PQEt6tgufMovXWF8ecurp2RD7X6R",
+									  "Qmbd4uEwtPBfw1XASkgPijqhZDL2nZcRwPbueYaETuAfGt",
+									  "QmayAeQafrWUHV3xb8DnXTGLn97xnh7X2Z957Ss9AtfkAD"];
+	//Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
+	string [NUM_ASSETS] chiHashes = ["QmNsSUji2wX4E8xmv8vynmSUCACPdCh7NznVSGMQ3hwLC3",
+									 "QmYPq4zFLyREaZsPwZzXB3w94JVYdgFHGgRAuM6CK6PMes",
+									 "QmbrATHXTkiyNijkfQcEMGT7ujpunsoLNTaupMYW922jp3",
+									 "QmWaj5VHcBXgAQnct88tbthVmv1ecX7ft2aGGqMAt4N52p",
+									 "QmTyFgbJXX2vUCZSjraKubXfE4NVr4nVrKtg3GK4ysscDX",
+									 "QmQxQoAe47CUXtGY9NTA6dRgTJuDtM4HDqz9kW2UK1VHtU",
+									 "QmaXYexRBrbr6Uv89cGyWXWCbyaoQDhy3hHJuktSTWFXtJ",
+									 "QmeSQdMYLECcSfCSkMenPYuNL2v42YQEEA4HJiP36Zn7Z6"];
+	//Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
+	string [NUM_ASSETS] stlHashes = ["QmcB5AqhpNA8o5RT3VTeDsqNBn6VGEaXzeTKuomakTNueM",
+									 "QmcjP9d54RcmPXgGt6XxNavr7dtQDAhAnatKjJ5a1Bqbmc",
+									 "QmV3uFvGgGQdN4Ub81LWVnp3qjwMpKDvVwQmBzBNzAjWxB",
+									 "Qmc3fWuQTxAgsBYK2g4z5VrK47nvfCrWHFNa5zA8DDoUbs",
+									 "QmWRPStH4RRMrFzAJcTs2znP7hbVctbLHPUvEn9vXWSTfk",
+									 "QmVobnLvtSvgrWssFyWAPCUQFvKsonRMYMYRQPsPSaQHTK",
+									 "QmQvGuuRgKxqTcAA7xhGdZ5u2EzDKvWGYb1dMXz2ECwyZi",
+									 "QmdurJn1GYVz1DcNgqbMTqnCKKFxpjsFuhoS7bnfBp2YGk"];
+}
+
+
+// File @openzeppelin/contracts/access/Ownable.sol@v4.3.2
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -1062,288 +1411,408 @@ abstract contract Ownable is Context {
 }
 
 
-// Dependency file: @openzeppelin/contracts/utils/Counters.sol
+// File contracts/KasbeerAccessControl.sol
 
-
-// pragma solidity ^0.8.0;
-
-/**
- * @title Counters
- * @author Matt Condon (@shrugs)
- * @dev Provides counters that can only be incremented, decremented or reset. This can be used e.g. to track the number
- * of elements in a mapping, issuing ERC721 ids, or counting request ids.
- *
- * Include with `using Counters for Counters.Counter;`
- */
-library Counters {
-    struct Counter {
-        // This variable should never be directly accessed by users of the library: interactions must be restricted to
-        // the library's function. As of Solidity v0.5.2, this cannot be enforced, though there is a proposal to add
-        // this feature: see https://github.com/ethereum/solidity/issues/4637
-        uint256 _value; // default: 0
-    }
-
-    function current(Counter storage counter) internal view returns (uint256) {
-        return counter._value;
-    }
-
-    function increment(Counter storage counter) internal {
-        unchecked {
-            counter._value += 1;
-        }
-    }
-
-    function decrement(Counter storage counter) internal {
-        uint256 value = counter._value;
-        require(value > 0, "Counter: decrement overflow");
-        unchecked {
-            counter._value = value - 1;
-        }
-    }
-
-    function reset(Counter storage counter) internal {
-        counter._value = 0;
-    }
-}
-
-
-// Dependency file: contracts/KasbeerStorage.sol
-
+// SPDX-License-Identifier: MIT
 /*
- * KasbeerStorage.sol
+ * KasbeerAccessControl.sol
  *
  * Author: Jack Kasbeer
- * Created: August 21, 2021
- */
-
-// pragma solidity >=0.5.16 <0.9.0;
-
-// import "@openzeppelin/contracts/utils/Counters.sol";
-
-//@title The Plug storage contract
-//@author Jack Kasbeer (@jcksber, @satoshigoat)
-contract KasbeerStorage {
-
-	//@dev Emitted when someone is added to `_squad`
-	event SquadMemberAdded(address indexed member);
-	//@dev Emitted when someone is removed from `_squad`
-	event SquadMemberRemoved(address indexed member);
-	//@dev Emitted when a token is minted
-	event ERC721Minted(uint256 indexed tokenId);
-	//@dev Emitted when a token is burned
-	event ERC721Burned(uint256 indexed tokenId);
-	//@dev Emitted when an ipfs hash is updated
-	event HashUpdated(string indexed newHash);
-
-	//@dev These take care of token id incrementing
-	using Counters for Counters.Counter;
-	Counters.Counter internal _tokenIds;
-	//@dev Ownership
-	mapping (address => bool) internal _squad;
-	//@dev Important numbers
-	uint constant NUM_ASSETS = 8;
-	//@dev Production hashes
-	string internal HASH_0 = "QmSJQmBV5crGcmq54WUB22SRw9SGsp1YSaxfenQEbZ5qTD"; //1% Plug
-	string internal HASH_1 = "QmY7HTXyHk4UQUr8PUQC3rUQD9fFa8dVutyRBZSdorWhMv";
-	string internal HASH_2 = "QmSUTwTS3aALgZHyuvYV1ys3d5FHbeJ24MDTfA4WCkncop";
-	string internal HASH_3 = "QmcciA32wMXVJpGQCyAumXSa9QT7FKvh1tDBgYxELm7THu";
-	string internal HASH_4 = "QmSfr7uuVjm4ddzYkwR1bD1u8KRSueSfKYx7w3tGjstcgt";
-	string internal HASH_5 = "QmUm9aTEEBgQTSpE24Q1fCHeBzntAd9nguJLFDFkSjmNPv";
-	string internal HASH_6 = "QmUBsLHrMFLUjApCrnd8DUjk2noe52gN48JHUF1WTCuw6b"; //100% Plug
-	string internal HASH_7 = "QmPqezAYfYy1pjdi3MstdnT1F9NAmvcqtvrFpY7o6HGTRE"; //alchemist Plug
-	//@dev Our list of IPFS hashes for each of the 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] assetHashes = [HASH_0, HASH_1, 
-									   HASH_2, HASH_3, 
-									   HASH_4, HASH_5, 
-									   HASH_6, HASH_7];
-}
-
-
-
-// Dependency file: contracts/KasbeerMade721.sol
-
-/*
- * KasbeerMade721.sol
+ * Created: October 14, 2021
  *
- * Author: Jack Kasbeer
- * Created: August 21, 2021
+ * This is an extension of `Ownable` to allow a larger set of addresses to have
+ * certain control in the inheriting contracts.
  */
 
-// pragma solidity >=0.5.16 <0.9.0;
+pragma solidity >=0.5.16 <0.9.0;
 
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
-// import "contracts/KasbeerStorage.sol";
-
-//@title Kasbeer Made Contract for an ERC721
-//@author Jack Kasbeer (@jcksber, @satoshigoat)
-contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
-
-	using Counters for Counters.Counter;
+contract KasbeerAccessControl is Ownable {
 	
-	//@dev You'll want to alter the name of the token if you inherit from this 
-	constructor(string memory _temp_name, string memory _temp_symbol) 
-		ERC721(_temp_name, _temp_symbol)
-	{
-		// Add my personal dev address
-		address me = 0xEAb4Aea5cD7376C04923236c504e7e91362566D1;
-		addToSquad(me);
-	}
+	// -----
+	// SQUAD
+	// -----
 
-
-	/*** TOKEN URI FUNCTIONS (HASH MANIPULATION) ***/
-
-	//@dev Override 'tokenURI' to account for asset/hash cycling
-	function tokenURI(uint256 tokenId) public view virtual override returns (string memory) 
-	{	
-		require(_exists(tokenId), 
-			"KasbeerMade721 (ERC721Metadata): URI query for nonexistent token");
-
-		string memory baseURI = _baseURI();
-		string memory hash = _tokenHash(tokenId);
-		
-		return string(abi.encodePacked(baseURI, hash));
-	}
-
-	//@dev All of the asset's will be pinned to IPFS
-	function _baseURI() internal view virtual override returns (string memory)
-	{
-		return "https://ipfs.io/ipfs/";
-	}
-
-	//@dev This function should return an ipfs hash that leads to a json file
-	// e.g. QmSJQmBV5crGcmq54WUB22SRw9SGsp1YSaxfenQEbZ5qTD
-	function _tokenHash(uint256 tokenId) internal virtual view returns (string memory)
-	{
-		require(_exists(tokenId), 
-			"KasbeerMade721 (ERC721Metadata): URI query for nonexistent token");
-
-		return "";
-	}
-
-	//@dev Determine if '_assetHash' is one of the IPFS hashes in assetHashes
-	function _hashExists(string memory _assetHash) internal view returns (bool) 
-	{
-		// uint numAssets = _hashIds.current();
-		uint8 i;
-		for (i = 0; i < NUM_ASSETS; i++) {
-			if (_stringsEqual(_assetHash, assetHashes[i])) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	//@dev Allows us to update the IPFS hash values (one at a time)
-	function updateHash(uint8 _hash_num, string memory _str) public isSquad 
-	{
-		require(0 <= _hash_num && _hash_num < NUM_ASSETS, 
-			"KasbeerMade721: _hash_num out of bounds");
-
-		assetHashes[_hash_num] = _str;
-		emit HashUpdated(_str);
-	}
-
-	//@dev Get the hash stored at assetHashes[idx]
-	function getHashByIndex(uint256 idx) public view returns (string memory)
-	{
-		require(0 <= idx && idx < NUM_ASSETS, 
-			"KasbeerMade721: index out of bounds");
-		
-		return assetHashes[idx];
-	}
-
-
-	/*** MINT & BURN ***/
-
-	//@dev Custom mint function - nothing special 
-	function mint721(address recipient) public virtual onlyOwner returns (uint256)
-	{
-		_tokenIds.increment();
-
-		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
-
-		emit ERC721Minted(newId);
-
-		return newId;
-	}
-
-	//@dev Custom burn function - nothing special
-	function burn721(uint256 tokenId) public virtual isSquad
-	{
-		_burn(tokenId);
-		emit ERC721Burned(tokenId);
-	}
-
-
-	/*** OWNERSHIP ***/
+	//@dev Ownership - list of squad members (owners)
+	mapping (address => bool) internal _squad;
 
 	//@dev Custom "approved" modifier because I don't like that language
 	modifier isSquad()
 	{
-		require(isInSquad(msg.sender), "KasbeerMade721: Caller not part of squad.");
+		require(isInSquad(msg.sender), "KasbeerAccessControl: Caller not part of squad.");
 		_;
 	}
 
-	//@dev Determine if address 'a' is an approved owner
-	function isInSquad(address a) public view returns (bool) 
+	//@dev Determine if address `a` is an approved owner
+	function isInSquad(address a) 
+		public view returns (bool) 
 	{
 		return _squad[a];
 	}
 
-	//@dev Add someone to the squad
-	function addToSquad(address a) public onlyOwner
+	//@dev Add `a` to the squad
+	function addToSquad(address a)
+		onlyOwner public
 	{
-		require(!isInSquad(a), "KasbeerMade721: Address already in squad.");
-
+		require(!isInSquad(a), "KasbeerAccessControl: Address already in squad.");
 		_squad[a] = true;
-		emit SquadMemberAdded(a);
 	}
 
-	//@dev Remove someone from the squad
-	function removeFromSquad(address a) public onlyOwner
+	//@dev Remove `a` from the squad
+	function removeFromSquad(address a)
+		onlyOwner public
 	{
-		require(isInSquad(a), "KasbeerMade721: Address already not in squad.");
-
+		require(isInSquad(a), "KasbeerAccessControl: Address already not in squad.");
 		_squad[a] = false;
-		emit SquadMemberRemoved(a);
 	}
 
+	// ---------
+	// WHITELIST
+	// ---------
 
-	/*** TRANSFER FUNCTIONS ***/
+	//@dev Whitelist mapping for client addresses
+	mapping (address => bool) internal _whitelist;
+
+	//@dev Whitelist flag for active/inactive states
+	bool whitelistActive;
+
+	//@dev Determine if someone is in the whitelsit
+	modifier onlyWhitelist(address a)
+	{
+		require(isInWhitelist(a));
+		_;
+	}
+
+	//@dev Prevent non-whitelist minting functions from being used 
+	// if `whitelistActive` == 1
+	modifier whitelistDisabled()
+	{
+		require(whitelistActive == false, "KasbeerAccessControl: whitelist still active");
+		_;
+	}
+
+	//@dev Require that the whitelist is currently enabled
+	modifier whitelistEnabled() 
+	{
+		require(whitelistActive == true, "KasbeerAccessControl: whitelist not active");
+		_;
+	}
+
+	//@dev Turn the whitelist on
+	function activateWhitelist()
+		isSquad whitelistDisabled public
+	{
+		whitelistActive = true;
+	}
+
+	//@dev Turn the whitelist off
+	function deactivateWhitelist()
+		isSquad whitelistEnabled public
+	{
+		whitelistActive = false;
+	}
+
+	//@dev Prove that one of our whitelist address owners has been approved
+	function isInWhitelist(address a) 
+		public view returns (bool)
+	{
+		return _whitelist[a];
+	}
+
+	//@dev Add a single address to whitelist
+	function addToWhitelist(address a) 
+		isSquad public
+	{
+		require(!isInWhitelist(a), "KasbeerAccessControl: already whitelisted"); 
+		//here we care if address already whitelisted to save on gas fees
+		_whitelist[a] = true;
+	}
+
+	//@dev Remove a single address from the whitelist
+	function removeFromWhitelist(address a)
+		isSquad public
+	{
+		require(isInWhitelist(a), "KasbeerAccessControl: not in whitelist");
+		_whitelist[a] = false;
+	}
+
+	//@dev Add a list of addresses to the whitelist
+	function bulkAddToWhitelist(address[] memory addys) 
+		isSquad public
+	{
+		require(addys.length > 1, "KasbeerAccessControl: use `addToWhitelist` instead");
+		uint8 i;
+		for (i = 0; i < addys.length; i++) {
+			if (!_whitelist[addys[i]]) {
+				_whitelist[addys[i]] = true;
+			}
+		}
+	}
+}
+
+
+// File contracts/LibPart.sol
+
+// SPDX-License-Identifier: MIT
+/*
+ * LibPart.sol
+ *
+ * Author: Jack Kasbeer (token from 'dot')
+ * Created: October 20, 2021
+ */
+
+pragma solidity >=0.5.16 <0.9.0;
+
+//@dev We need this libary for Rarible
+library LibPart {
+    bytes32 public constant TYPE_HASH = keccak256("Part(address account,uint96 value)");
+
+    struct Part {
+        address payable account;
+        uint96 value;
+    }
+
+    function hash(Part memory part) internal pure returns (bytes32) {
+        return keccak256(abi.encode(TYPE_HASH, part.account, part.value));
+    }
+}
+
+
+// File contracts/Kasbeer721.sol
+
+// SPDX-License-Identifier: MIT
+/*
+ * Kasbeer721.sol
+ *
+ * Author: Jack Kasbeer
+ * Created: August 21, 2021
+ */
+
+pragma solidity >=0.5.16 <0.9.0;
+
+
+
+
+
+//@title Kasbeer Made Contract for an ERC721
+//@author Jack Kasbeer (git:@jcksber, tw:@satoshigoat)
+contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
+
+	using Counters for Counters.Counter;
+	using SafeMath for uint256;
+
+	event ERC721Minted(uint256 indexed tokenId);
+	event ERC721Burned(uint256 indexed tokenId);
+	
+	constructor(string memory temp_name, string memory temp_symbol) 
+		ERC721(temp_name, temp_symbol)
+	{
+		// Add my personal address
+		addToSquad(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
+		addToWhitelist(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
+		//bulkAddToWhitelist(firstWhitelist);
+	}
+
+	// -----------
+	// RESTRICTORS
+	// -----------
+
+	modifier hashIndexInRange(uint8 idx)
+	{
+		require(0 <= idx && idx < NUM_ASSETS, "Kasbeer721: index OOB");
+		_;
+	}
+	
+	modifier groupInRange(uint8 group)
+	{
+		require(0 <= group && group <= 2, "Kasbeer721: group OOB");
+		_;// 0:nomad, 1:chicago, 2:st.louis
+	}
+
+	modifier onlyValidTokenId(uint256 tokenId)
+	{
+		require(1 <= tokenId && tokenId <= MAX_NUM_TOKENS, "KasbeerMade721: tokenId OOB");
+		_;
+	}
+
+	// ------
+	// ERC721 
+	// ------
+
+	//@dev All of the asset's will be pinned to IPFS
+	function _baseURI() 
+		internal view virtual override returns (string memory)
+	{
+		return "ipfs://";//NOTE: per OpenSea recommendations
+	}
 
 	//@dev This is here as a reminder to override for custom transfer functionality
-	function _beforeTokenTransfer(
-		address from, 
-		address to, 
-		uint256 tokenId
-	) internal virtual override {}
-	
-
-	/*** HELPER FUNCTIONS ***/
-
-	//@dev This function doesn't work, not exactly sure why
-	function kill() public onlyOwner
-	{
-		selfdestruct(payable(owner()));
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
+		internal virtual override 
+	{ 
+		super._beforeTokenTransfer(from, to, tokenId); 
 	}
 
-	//@dev Returns the most recently minted token id 
-	function getCurrentTokenId() public view returns (uint256)
+	//@dev Allows owners to mint for free
+    function mint(address to) 
+    	isSquad public virtual returns (uint256)
+    {
+    	_tokenIds.increment();
+
+		uint256 newId = _tokenIds.current();
+		_safeMint(to, newId);
+		emit ERC721Minted(newId);
+
+		return newId;
+    }
+
+	//@dev Custom burn function - nothing special
+	function burn(uint256 tokenId) 
+		public virtual
+	{
+		require(isInSquad(msg.sender) || msg.sender == ownerOf(tokenId), 
+			"Kasbeer721: not owner or in squad.");
+		_burn(tokenId);
+		emit ERC721Burned(tokenId);
+	}
+
+	function supportsInterface(bytes4 interfaceId) 
+		public view virtual override returns (bool)
+	{
+		return interfaceId == _INTERFACE_ID_ERC165
+        || interfaceId == _INTERFACE_ID_ROYALTIES
+        || interfaceId == _INTERFACE_ID_ERC721
+        || interfaceId == _INTERFACE_ID_ERC721_METADATA
+        || interfaceId == _INTERFACE_ID_ERC721_ENUMERABLE
+        || interfaceId == _INTERFACE_ID_EIP2981
+        || super.supportsInterface(interfaceId);
+	}
+
+    // ----------------------
+    // IPFS HASH MANIPULATION
+    // ----------------------
+
+    //@dev Get the hash stored at `idx` for `group` 
+	function getHashByIndex(
+		uint8 group, 
+		uint8 idx
+	) groupInRange(group) hashIndexInRange(idx) public view 
+	  returns (string memory)
+	{
+		if (group == 0) {
+			return normHashes[idx];
+		} else if (group == 1) {
+			return chiHashes[idx];
+		} else {
+			return stlHashes[idx];
+		}
+	}
+
+	//@dev Allows us to update the IPFS hash values (one at a time)
+	function updateHash(
+		uint8 group, 
+		uint8 hashNum, 
+		string memory str
+	) isSquad groupInRange(group) hashIndexInRange(hashNum) public
+	{
+		if (group == 0) {
+			normHashes[hashNum] = str;
+		} else if (group == 1) {
+			chiHashes[hashNum] = str;
+		} else {
+			stlHashes[hashNum] = str;
+		}
+	}
+
+	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
+	function _hashExists(string memory assetHash) 
+		internal view returns (bool) 
+	{
+		uint8 i;
+		for (i = 0; i < NUM_ASSETS; i++) {
+			if (_stringsEqual(assetHash, normHashes[i]) || 
+				_stringsEqual(assetHash, chiHashes[i]) ||
+				_stringsEqual(assetHash, stlHashes[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// ------
+	// USEFUL
+	// ------
+
+	//@dev Returns the current token id (number minted so far)
+	function getCurrentId() 
+		public view returns (uint256)
 	{
 		return _tokenIds.current();
 	}
 
-	//@dev Determine if a token exists 
-	function tokenExists(uint256 tokenId) public view returns (bool)
+	//@dev Allows us to withdraw funds collected
+	function withdraw(address payable wallet, uint256 amount)
+		isSquad public
 	{
-		return _exists(tokenId);
+		require(amount <= address(this).balance,
+			"Kasbeer721: Insufficient funds to withdraw");
+		wallet.transfer(amount);
 	}
 
+	//@dev Destroy contract and reclaim leftover funds
+    function kill() 
+    	onlyOwner public 
+    {
+        selfdestruct(payable(msg.sender));
+    }
+
+    // ------------
+	// CONTRACT URI
+	// ------------
+
+	//@dev Controls the contract-level metadata to include things like royalties
+	function contractURI()
+		public view returns(string memory)
+	{
+		return contractUri;
+	}
+
+	//@dev Ability to change the contract URI
+	function updateContractUri(string memory updatedContractUri) 
+		isSquad public
+	{
+        contractUri = updatedContractUri;
+    }
+	
+    // -----------------
+    // SECONDARY MARKETS
+	// -----------------
+
+	//@dev Rarible Royalties V2
+    function getRaribleV2Royalties(uint256 id) 
+    	onlyValidTokenId(id) external view returns (LibPart.Part[] memory) 
+    {
+        LibPart.Part[] memory royalties = new LibPart.Part[](1);
+        royalties[0] = LibPart.Part({
+            account: payable(payoutAddress),
+            value: uint96(royaltyFeeBps)
+        });
+
+        return royalties;
+    }
+
+    //@dev EIP-2981
+    function royaltyInfo(uint256 tokenId, uint256 salePrice) external view onlyValidTokenId(tokenId) returns (address receiver, uint256 amount) {
+        uint256 ourCut = SafeMath.div(SafeMath.mul(salePrice, royaltyFeeBps), 10000);
+        return (payoutAddress, ourCut);
+    }
+
+    // -------
+    // HELPERS
+    // -------
+
 	//@dev Determine if two strings are equal using the length + hash method
-	function _stringsEqual(string memory a, string memory b) internal pure returns (bool)
+	function _stringsEqual(string memory a, string memory b) 
+		internal pure returns (bool)
 	{
 		bytes memory A = bytes(a);
 		bytes memory B = bytes(b);
@@ -1357,15 +1826,17 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
 }
 
 
-// Root file: contracts/Plug.sol
+// File contracts/Plug.sol
 
+// SPDX-License-Identifier: MIT
 /*
  * Plug.sol
  *
  * Author: Jack Kasbeer
  * Created: August 3, 2021
  *
- * Price: ~0.5 ETH
+ * Price: 0.0888 ETH
+ * Rinkeby: 0xf9d798514eb5eA645C90D8633FcC3DA17da8288e
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -1375,175 +1846,307 @@ contract KasbeerMade721 is ERC721, Ownable, KasbeerStorage {
  *    artists.  This means after a year, the final asset (and most valuable) will now be in the 
  *    owner's wallet (naturally each time, the previous asset is replaced).
  *  - If the NFT changes owners, the initial/day 0 asset is now what will be seen by the owner,
- *    and they'll have to wait a full year to achieve "final asset status" (gold)
- *  - Asset cycle: 1. 0 months (< 60 days): 1% juice
- *				   2. 2 months (60 days): 17% juice
- *				   3. 4 months (120 days): 33% juice
- *				   4. 6 months (180 days): 50% juice
- *				   5. 8 months (240 days): 66% juice
- *				   6. 10 months (300 days): 87% juice 
- *				   7. 12 months (360 days): 100% juice
- *				   8. 48 months (1440 days): Permanent 100% (alchemist)
+ *    and they'll have to wait a full cycle "final asset status" (gold)
  *  - If a Plug is a Alchemist (final state), it means that it will never lose juice again,
  *    even if it is transferred.
  */
 
 pragma solidity >=0.5.16 <0.9.0;
 
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "contracts/KasbeerMade721.sol";
-// import "contracts/KasbeerStorage.sol";
+
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
-contract Plug is KasbeerMade721 {
+contract Plug is Kasbeer721 {
 
 	using Counters for Counters.Counter;
-	uint constant MAX_NUM_PLUGS = 888;
+	using SafeMath for uint256;
+
+	//@dev Emitted when token is transferred
+	event PlugTransferred(address indexed from, address indexed to);
+
+	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	//@dev Create Plug
-	constructor() KasbeerMade721("the Plug v12", "") {
-		// Add LOGIK's dev address
-		address logik = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;
-		addToSquad(logik);
+	constructor() Kasbeer721("the Plug test", "PLUGt") {
+		whitelistActive = true;
+		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
+		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
+		addToSquad(payoutAddress);
+		addToWhitelist(payoutAddress);
 	}
 
+	// -----------
+	// RESTRICTORS
+	// -----------
 
-	/*** CORE FUNCTIONS ***/
+	modifier batchLimit(uint256 numToMint)
+	{
+		require(1 <= numToMint && numToMint <= 8, "Plug: mint between 1 and 8");
+		_;
+	}
+
+	modifier plugsAvailable(uint256 numToMint)
+	{
+		require(_tokenIds.current() + numToMint <= MAX_NUM_TOKENS, 
+			"Plug: not enough Plugs remaining to mint");
+		_;
+	}
+
+	modifier tokenExists(uint256 tokenId)
+	{
+		require(_exists(tokenId), "Plug: nonexistent token");
+		_;
+	}
+
+	// ----------
+	// PLUG MAGIC
+	// ----------
+
+	//@dev Override 'tokenURI' to account for asset/hash cycling
+	function tokenURI(uint256 tokenId) 
+		tokenExists(tokenId) public view virtual override returns (string memory) 
+	{	
+		string memory baseURI = _baseURI();
+		string memory hash = _tokenHash(tokenId);
+		
+		return string(abi.encodePacked(baseURI, hash));
+	}
 
 	//@dev Based on the number of days that have passed since the last transfer of
 	// ownership, this function returns the appropriate IPFS hash
-	function _tokenHash(uint256 tokenId) internal virtual view override returns (string memory)
+	function _tokenHash(uint256 tokenId) 
+		internal virtual view 
+		returns (string memory)
 	{
 		if (!_exists(tokenId)) {
-			return "";
+			return "";//not a require statement to avoid errors being thrown
 		}
-		// Calculate days gone by for this particular token 
-		uint daysPassed = (block.timestamp - _birthdays[tokenId]) / 1 days;
 
+		// Calculate days gone by for this particular token 
+		uint daysPassed = countDaysPassed(tokenId);//NOTE: CHANGE FOR PRODUCTION!
+
+		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {
-		 return HASH_7;
+			if (tokenId <= 176) {
+				return chiHashes[7];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[7];
+			} else {
+				return normHashes[7];
+			}
 		} else if (daysPassed >= 360) {
-			return HASH_6;
+			if (tokenId <= 176) {
+				return chiHashes[6];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[6];
+			} else {
+				return normHashes[6];
+			}
 		} else if (daysPassed >= 300) {
-			return HASH_5;
+			if (tokenId <= 176) {
+				return chiHashes[5];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[5];
+			} else {
+				return normHashes[5];
+			}
 		} else if (daysPassed >= 240) {
-			return HASH_4;
+			if (tokenId <= 176) {
+				return chiHashes[4];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[4];
+			} else {
+				return normHashes[4];
+			}
 		} else if (daysPassed >= 180) {
-			return HASH_3;
+			if (tokenId <= 176) {
+				return chiHashes[3];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[3];
+			} else {
+				return normHashes[3];
+			}
 		} else if (daysPassed >= 120) {
-			return HASH_2;
+			if (tokenId <= 176) {
+				return chiHashes[2];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[2];
+			} else {
+				return normHashes[2];
+			}
 		} else if (daysPassed >= 60) {
-			return HASH_1;
+			if (tokenId <= 176) {
+				return chiHashes[1];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[1];
+			} else {
+				return normHashes[1];
+			}
 		} else { //if 60 days haven't passed, the initial asset/Plug is returned
-			return HASH_0; 
+			if (tokenId <= 176) {
+				return chiHashes[0];
+			} else if (tokenId % 88 == 0) {
+				return stlHashes[0];
+			} else {
+				return normHashes[0];
+			}
 		}
 	}
 
 	//@dev Any Plug transfer this will be called beforehand (updating the transfer time)
 	// If a Plug is now an Alchemist, it's timestamp won't be updated so that it never loses juice
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override
-    {	
+	function _beforeTokenTransfer(address from, address to, uint256 tokenId) 
+		internal virtual override
+    {
     	// If the "1.5 years" have passed, don't change birthday
-    	if (_exists(tokenId) && !isAlchemist(tokenId)) {
+    	if (_exists(tokenId) && countDaysPassed(tokenId) < 557) {
     		_setBirthday(tokenId);
     	}
+    	emit PlugTransferred(from, to);
     }
 
-
-    //@dev Mint a single Plug
-	function mint721(address recipient) public virtual override onlyOwner returns (uint256)
-	{
-		_tokenIds.increment();
-
-		uint256 newId = _tokenIds.current();
-		_safeMint(recipient, newId);
-		_setBirthday(newId); //setup this token & its "birthday"
-		emit ERC721Minted(newId);
-
-		return newId;
-	}
-
-
-	/*** "THE PLUG" FUNCTIONS 
-		 & PUBLIC FACING FUNCTIONS FOR CHANGES **/
-
-	//@dev Get the last transfer time for a tokenId
-	function getBirthday(uint256 tokenId) public view returns (uint)
-	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): URI query for nonexistent token");
-		return _birthdays[tokenId];
-	}
-
-	//@dev Determine if a token has reached alchemist status
-	function isAlchemist(uint256 tokenId) public view returns (bool)
-	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): Alchemist query for nonexistent token");
-		return countDaysPassed(tokenId) >= 557;
-	}
-
-	//@dev List the owners for a certain level (determined by _assetHash)
-	// We'll need this for airdrops and benefits
-	function listLevelOwners(string memory _assetHash) public view isSquad returns (address[] memory)
-	{
-		require(_hashExists(_assetHash), "Plug (ERC721Metadata): IPFS hash nonexistent");
-
-		address[] memory levelOwners = new address[](MAX_NUM_PLUGS);
-		uint counter = 0;
-
-		// Go thru list of created token id's (existing Plugs) so far
-		uint tokenId;
-		uint lastTokenId = _tokenIds.current();
-		for (tokenId = 1; tokenId <= lastTokenId; tokenId++) {
-
-			// Find the IPFS hash associated with this token ID
-			string memory hash = _tokenHash(tokenId);
-
-			// If this is equal to the hash we're looking for (assetHash)
-			// then determine the owner of the token and add it to our list
-			if (_stringsEqual(hash, _assetHash)) {
-				address owner = ownerOf(tokenId);
-				levelOwners[counter] = owner;
-				counter++;
-			}
-		}
-
-		return levelOwners;
-	}
-
-
-	/*** HELPER FUNCTIONS ***/
-
-	//@dev Set the last transfer time for a tokenId
-	function _setBirthday(uint256 tokenId) private
+    //@dev Set the last transfer time for a tokenId
+	function _setBirthday(uint256 tokenId) 
+		private
 	{
 		_birthdays[tokenId] = block.timestamp;
 	}
 
-	//@dev Retuns number of minutes that have passed since transfer/mint
-	function countMinutesPassed(uint256 tokenId) public view returns (uint256) 
+	//@dev List the owners for a certain level (determined by _assetHash)
+	// We'll need this for airdrops and benefits
+	function listPlugOwnersForHash(string memory assetHash) 
+		public view returns (address[] memory)
 	{
-	    require(_exists(tokenId), 
-	    	"Plug (ERC721Metadata): time (minutes) query for nonexistent token");
-		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
+		require(_hashExists(assetHash), "Plug: nonexistent hash");
+
+		address[] memory levelOwners = new address[](MAX_NUM_TOKENS);
+
+		uint16 tokenId;
+		uint16 counter;
+		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
+			if (_stringsEqual(_tokenHash(tokenId), assetHash)) {
+				levelOwners[counter] = ownerOf(tokenId);
+				counter++;
+			}
+		}
+		return levelOwners;
 	}
 
-	//@dev Returns number of hours that have passed since transfer/mint
-	function countHoursPassed(uint256 tokenId) public view returns (uint256) 
+	//@dev List the owners of a category of the Plug (Nomad, Chicago, or St. Louis)
+	function listPlugOwnersForType(uint8 group)
+		groupInRange(group) public view returns (address[] memory)
 	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): time (hours) query for nonexistent token");
-		return uint256((block.timestamp - _birthdays[tokenId]) / 1 hours);
+		address[] memory typeOwners = new address[](MAX_NUM_TOKENS);
+
+		uint16 tokenId;
+		uint16 counter;
+		if (group == 0) {
+			//nomad
+			for (tokenId = 177; tokenId <= MAX_NUM_TOKENS; tokenId++) {
+				if (tokenId % 88 != 0 && _exists(tokenId)) {
+					typeOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
+			}
+		} else if (group == 1) {
+			//chicago
+			for (tokenId = 1; tokenId <= 176; tokenId++) {
+				if (_exists(tokenId)) {
+					typeOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
+			}
+		} else {
+			//st. louis
+			for (tokenId = 177; tokenId <= MAX_NUM_TOKENS; tokenId++) {
+				if (tokenId % 88 == 0 && _exists(tokenId)) {
+					typeOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
+			}
+		}
+		return typeOwners;
 	}
+
+    // --------------------
+    // MINTING & PURCHASING
+    // --------------------
+
+    //@dev Allows owners to mint for free
+    function mint(address to) 
+    	isSquad public virtual override returns (uint256)
+    {
+    	return _mintInternal(to);
+    }
+
+	//@dev Purchase & mint multiple Plugs
+    function purchase(
+    	address payable to, 
+    	uint256 numToMint
+    ) whitelistDisabled batchLimit(numToMint) plugsAvailable(numToMint) 
+      public payable 
+      returns (bool)
+    {
+    	require(msg.value >= numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
+    	//send change if too much was sent
+        if (msg.value > 0) {
+	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * numToMint);
+    		if (diff > 0) {
+    	    	to.transfer(diff);
+    		}
+      	}
+    	uint8 i;//mint `numToMint` Plugs to address `to`
+    	for (i = 0; i < numToMint; i++) {
+    		_mintInternal(to);
+    	}
+    	return true;
+    }
+
+    //@dev A whitelist controlled version of `purchaseMultiple`
+    function whitelistPurchase(
+    	address payable to, 
+    	uint256 numToMint
+    ) whitelistEnabled onlyWhitelist(to) batchLimit(numToMint) plugsAvailable(numToMint)
+      public payable 
+      returns (bool)
+    {
+    	require(msg.value >= numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
+    	//send change if too much was sent
+        if (msg.value > 0) {
+	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * numToMint);
+    		if (diff > 0) {
+    	    	to.transfer(diff);
+    		}
+      	}
+    	uint8 i;//mint `_num` Plugs to address `_to`
+    	for (i = 0; i < numToMint; i++) {
+    		_mintInternal(to);
+    	}
+    	return true;
+    }
+
+	//@dev Mints a single Plug & sets up the initial birthday 
+	function _mintInternal(address to) 
+		plugsAvailable(1) internal virtual returns (uint256)
+	{
+		_tokenIds.increment();
+		uint256 newId = _tokenIds.current();
+		_safeMint(to, newId);
+		_setBirthday(newId);
+		emit ERC721Minted(newId);
+
+		return newId;
+	}
+	
+	// ----
+	// TIME
+	// ----
 
 	//@dev Returns number of days that have passed since transfer/mint
-	function countDaysPassed(uint256 tokenId) public view returns (uint256) 
+	function countDaysPassed(uint256 tokenId) 
+		tokenExists(tokenId) public view returns (uint256) 
 	{
-		require(_exists(tokenId), 
-			"Plug (ERC721Metadata): time (days) query for nonexistent token");
 		return uint256((block.timestamp - _birthdays[tokenId]) / 1 days);
 	}
 }
