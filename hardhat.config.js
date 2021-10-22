@@ -9,8 +9,6 @@ require('hardhat-abi-exporter');
 
 const { STAGING_ALCHEMY_API_URL, 
         STAGING_PRIVATE_KEY,
-        JACK_PRIVATE_KEY,
-        JACK_PRIVATE_KEY,
         PRODUCTION_ALCHEMY_API_URL,
         PRODUCTION_PRIVATE_KEY } = process.env;
 
@@ -49,7 +47,11 @@ module.exports = {
       hardhat: {},
       rinkeby: {
          url: STAGING_ALCHEMY_API_URL,
-         accounts: [`0x${STAGING_PRIVATE_KEY}`, `0x${JACK_PRIVATE_KEY}`]
+         accounts: [`0x${STAGING_PRIVATE_KEY}`]
+      },
+      ropsten: {
+         url: STAGING_ALCHEMY_API_URL,
+         accounts: [`0x${STAGING_PRIVATE_KEY}`]
       },
       // mainnet: {
       // 	url: PRODUCTION_ALCHEMY_API_URL,

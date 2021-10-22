@@ -6,7 +6,7 @@
  * Created: August 3, 2021
  *
  * Price: 0.0888 ETH
- * Dev Address: 0x28C2DDF40fbF2Ca39Ef500838aC78445d4D59687
+ * Dev Address: 0x8d9605b08246C4597DA3807A1C82F1b51bE72ff8
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -189,7 +189,7 @@ contract Plug is Kasbeer721 {
 	//@dev List the owners for a certain level (determined by _assetHash)
 	// We'll need this for airdrops and benefits
 	function listPlugOwnersForHash(string memory _assetHash) 
-		isSquad public view returns (address[] memory)
+		public view returns (address[] memory)
 	{
 		require(_hashExists(_assetHash), "Plug: nonexistent hash");
 
@@ -208,7 +208,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev List the owners of a category of the Plug (Nomad, Chicago, or St. Louis)
 	function listPlugOwnersForType(uint8 group)
-		isSquad groupInRange(group) public view returns (address[] memory)
+		groupInRange(group) public view returns (address[] memory)
 	{
 		address[] memory typeOwners = new address[](MAX_NUM_TOKENS);
 
