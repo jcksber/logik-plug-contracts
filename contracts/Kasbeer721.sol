@@ -31,7 +31,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		// Add my personal address
 		addToSquad(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
 		addToWhitelist(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
-		bulkAddToWhitelist(firstWhitelist);
+		//bulkAddToWhitelist(firstWhitelist);
 	}
 
 	// -----------

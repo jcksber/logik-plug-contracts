@@ -6,7 +6,7 @@
  * Created: August 3, 2021
  *
  * Price: 0.0888 ETH
- * Rinkeby: 0xEF8822E6E273C300fC14B6aC553A1EC0a93c94b4
+ * Rinkeby: 0xe051890777dC2Ba4f956FcF92b3cfEf9Aae3F7De
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.

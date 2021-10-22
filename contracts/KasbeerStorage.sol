@@ -39,34 +39,33 @@ contract KasbeerStorage {
 
 	//@dev Initial whitelist (phase 1)
 	//address [INIT_WHITELIST_SIZE] firstWhitelist = [];
-	address [0] firstWhitelist = [];//temporary
 
 	//@dev Initial production hashes
 	//Our list of IPFS hashes for each of the "Nomad" 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] normHashes = ["QmZqQ3A92mJbWaiRm8V8aQM4Ms2R8CBanZbsvorsqF2B9w",
-									  "QmXSFCcQzhHc1YG4VPMtLpqaCQ9ixaGUZXkNvC12WnWV1S",
-									  "QmTja6dgUXQURvWxi7kQmBHpXVKz413Qodgy7WWaQf7upK",
-									  "QmSrufzXcpN38JKRK3vSwx5vQLwW7Lpk7uERUqZ2swePBS",
-									  "QmVspk2z5CxUqdRrYrqaKf396t28sjbRdGEUDjrd3WLGEJ",
-									  "QmXUi4eS1FouJmwaZFnAxARhkJ8kLGDGcnZcgaW8CBGpmV",
-									  "QmQ6VhtxVFAXGqQGytCsRS7qLx57sNdLne8cxDCVaUy895",
-									  "QmbsYqEXRxZAkdGoJcpQJwj8mF9re1KwLJJpdKgLze6PXa"];
+	string [NUM_ASSETS] normHashes = ["QmZzB15bPgTqyHzULMFK1jNdbbDGVGCX4PJNbyGGMqLCjL",
+									  "QmeXZGeywxRRDK5mSBHNVnUzGv7Kv2ATfLHydPfT5LpbZr",
+									  "QmYTf2HE8XycQD9uXshiVtXqNedS83WycJvS2SpWAPfx5b",
+									  "QmYXjEkeio2nbMqy3DA7z2LwYFDyq1itbzdujGSoCsFwpN",
+									  "QmWmvRqpT59QU9rDT28fiKgK6g8vUjRD2TSSeeBPr9aBNm",
+									  "QmWtMb73QgSgkL7mY8PQEt6tgufMovXWF8ecurp2RD7X6R",
+									  "Qmbd4uEwtPBfw1XASkgPijqhZDL2nZcRwPbueYaETuAfGt",
+									  "QmayAeQafrWUHV3xb8DnXTGLn97xnh7X2Z957Ss9AtfkAD"];
 	//Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] chiHashes = ["Qmaopi7ggB9g4VUTrcyEBbng5tPoA18xKmFuc4NBa4NprS",
-									 "QmfPSqaXgA7RX5JeBTG9957hu2Nab9EVfyqZkRumaXszJ6",
-									 "QmSCs6GudPdTpz8mBvzkw2rmhi2mVnGBLL2AiiBghkN6iH",
-									 "QmZGqgxMKbZ5BBDwWAAyUVfYq1uUhgYLKUTDdj2cCNFU4A",
-									 "QmU6QdNob38HT6iD2FjbJVNCjxk2GydVbuFiWKnvmkGEfP",
-									 "QmNfQG1DHST73SCxMJeujPBpAvzzN2tj5E31TMwwS7CDdZ",
-									 "Qmf8smxvPw4JmnyR1pWSYzYvyw7CpZxU1uoRw4k1izqkoy",
-									 "QmYsUU1s3Q2XVpmqbDRuzok3bYUVZHkAbBLTEPpe9aaUgJ"];
+	string [NUM_ASSETS] chiHashes = ["QmNsSUji2wX4E8xmv8vynmSUCACPdCh7NznVSGMQ3hwLC3",
+									 "QmYPq4zFLyREaZsPwZzXB3w94JVYdgFHGgRAuM6CK6PMes",
+									 "QmbrATHXTkiyNijkfQcEMGT7ujpunsoLNTaupMYW922jp3",
+									 "QmWaj5VHcBXgAQnct88tbthVmv1ecX7ft2aGGqMAt4N52p",
+									 "QmTyFgbJXX2vUCZSjraKubXfE4NVr4nVrKtg3GK4ysscDX",
+									 "QmQxQoAe47CUXtGY9NTA6dRgTJuDtM4HDqz9kW2UK1VHtU",
+									 "QmaXYexRBrbr6Uv89cGyWXWCbyaoQDhy3hHJuktSTWFXtJ",
+									 "QmeSQdMYLECcSfCSkMenPYuNL2v42YQEEA4HJiP36Zn7Z6"];
 	//Our list of IPFS hashes for each of the "Chicago" 8 Plugs (varying juice levels)
-	string [NUM_ASSETS] stlHashes = ["QmZ5mc6n4bjecJBRRbP9uy6P7GFfkau7dCvNXEhCpdztfJ",
-									 "QmWXmi1vFjGLuBCR7wrZ41hh949z8AMgYZxYyPEohvpip3",
-									 "QmbGSvuGDPup1A3FMtk92y5kTBrWpGKxjRMju5UXbVVpfY",
-									 "QmXuM5wbVDyJxySrnwC6XV2iJKUyJSawu6vdwmAYewzRCh",
-									 "QmbJMzuDtQZn4heKNfyjHh6uu4fZC5hiSFq3ypUeeKoHEm",
-									 "QmTHc9uMkNDmJHyz1KjZN5P3p1bJGtTFhv6RTXr48sXQNT",
-									 "QmWKpChXGjvEg8FB8bnz2pniPfywZFwj6aUx4uD6NXHfq5",
-									 "QmV3tboVKBMo9K2Fd1rGAoGFY3QKoEUERNFbspGvphjHVc"];
+	string [NUM_ASSETS] stlHashes = ["QmcB5AqhpNA8o5RT3VTeDsqNBn6VGEaXzeTKuomakTNueM",
+									 "QmcjP9d54RcmPXgGt6XxNavr7dtQDAhAnatKjJ5a1Bqbmc",
+									 "QmV3uFvGgGQdN4Ub81LWVnp3qjwMpKDvVwQmBzBNzAjWxB",
+									 "Qmc3fWuQTxAgsBYK2g4z5VrK47nvfCrWHFNa5zA8DDoUbs",
+									 "QmWRPStH4RRMrFzAJcTs2znP7hbVctbLHPUvEn9vXWSTfk",
+									 "QmVobnLvtSvgrWssFyWAPCUQFvKsonRMYMYRQPsPSaQHTK",
+									 "QmQvGuuRgKxqTcAA7xhGdZ5u2EzDKvWGYb1dMXz2ECwyZi",
+									 "QmdurJn1GYVz1DcNgqbMTqnCKKFxpjsFuhoS7bnfBp2YGk"];
 }
