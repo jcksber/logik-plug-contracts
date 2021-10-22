@@ -456,12 +456,12 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_assetHash",
-        "type": "string"
+        "internalType": "uint8",
+        "name": "group",
+        "type": "uint8"
       }
     ],
-    "name": "listPlugOwnersForHash",
+    "name": "listPlugOwnersForGroup",
     "outputs": [
       {
         "internalType": "address[]",
@@ -475,12 +475,12 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "group",
-        "type": "uint8"
+        "internalType": "string",
+        "name": "_assetHash",
+        "type": "string"
       }
     ],
-    "name": "listPlugOwnersForType",
+    "name": "listPlugOwnersForHash",
     "outputs": [
       {
         "internalType": "address[]",
@@ -886,14 +886,9 @@
   {
     "inputs": [
       {
-        "internalType": "address payable",
+        "internalType": "address",
         "name": "wallet",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       }
     ],
     "name": "withdraw",

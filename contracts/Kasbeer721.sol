@@ -31,7 +31,7 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 		// Add my personal address
 		addToSquad(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
 		addToWhitelist(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
-		bulkAddToWhitelist(firstWhitelist);
+		//bulkAddToWhitelist(firstWhitelist);
 	}
 
 	// -----------
@@ -172,16 +172,16 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	}
 
 	//@dev Allows us to withdraw funds collected
-	function withdraw(address payable wallet, uint256 amount)
-		onlyOwner public
+	function withdraw(address wallet)
+		isSquad public
 	{
-		require(amount <= address(this).balance,"Kasbeer721: Insufficient funds to withdraw");
-		wallet.transfer(amount);
+		uint256 amount =  address(this).balance;
+		payable(wallet).transfer(amount);
 	}
 
 	//@dev Destroy contract and reclaim leftover funds
     function kill() 
-    	onlyOwner public 
+    	isSquad public 
     {
         selfdestruct(payable(msg.sender));
     }
@@ -222,7 +222,9 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
     }
 
     //@dev EIP-2981
-    function royaltyInfo(uint256 tokenId, uint256 salePrice) external view onlyValidTokenId(tokenId) returns (address receiver, uint256 amount) {
+    function royaltyInfo(uint256 tokenId, uint256 salePrice) 
+    	external view onlyValidTokenId(tokenId) returns (address receiver, uint256 amount) 
+    {
         uint256 ourCut = SafeMath.div(SafeMath.mul(salePrice, royaltyFeeBps), 10000);
         return (payoutAddress, ourCut);
     }

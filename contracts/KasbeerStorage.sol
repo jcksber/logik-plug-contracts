@@ -32,6 +32,7 @@ contract KasbeerStorage {
 	// uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
 	uint constant TOKEN_WEI_PRICE = 1000000000000000;
 	uint16 constant INIT_WHITELIST_SIZE = 150;
+	address ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
 
 	//@dev Properties
 	string internal contractUri;
@@ -39,7 +40,6 @@ contract KasbeerStorage {
 
 	//@dev Initial whitelist (phase 1)
 	//address [INIT_WHITELIST_SIZE] firstWhitelist = [];
-	address [0] firstWhitelist = [];//temporary
 
 	//@dev Initial production hashes
 	//Our list of IPFS hashes for each of the "Nomad" 8 Plugs (varying juice levels)

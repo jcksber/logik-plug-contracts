@@ -194,19 +194,33 @@ contract Plug is Kasbeer721 {
 
 		address[] memory levelOwners = new address[](MAX_NUM_TOKENS);
 
+		bool seen;
 		uint16 tokenId;
 		uint16 counter;
 		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
 			if (_stringsEqual(_tokenHash(tokenId), _assetHash)) {
-				levelOwners[counter] = ownerOf(tokenId);
-				counter++;
+				uint16 i;
+				for (i = 0; i < MAX_NUM_TOKENS; i++) {
+					//stop further execution of this loop if we at the end
+					if (levelOwners[i] == ZERO_ADDRESS) {
+						break;
+					}
+					if (levelOwners[i] == ownerOf(tokenId)) {
+						seen = true;
+					}
+				}
+				if (!seen) {
+					levelOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
+				seen = false;//reset for next iteration
 			}
 		}
 		return levelOwners;
 	}
 
 	//@dev List the owners of a category of the Plug (Nomad, Chicago, or St. Louis)
-	function listPlugOwnersForType(uint8 group)
+	function listPlugOwnersForGroup(uint8 group)
 		groupInRange(group) public view returns (address[] memory)
 	{
 		address[] memory typeOwners = new address[](MAX_NUM_TOKENS);
@@ -247,7 +261,7 @@ contract Plug is Kasbeer721 {
 
     //@dev Allows owners to mint for free
     function mint(address _to) 
-    	isSquad public virtual override returns (uint256)
+    	isSquad plugsAvailable(1) public virtual override returns (uint256)
     {
     	return _mintInternal(_to);
     }
@@ -300,7 +314,7 @@ contract Plug is Kasbeer721 {
 
 	//@dev Mints a single Plug & sets up the initial birthday 
 	function _mintInternal(address _to) 
-		plugsAvailable(1) internal virtual returns (uint256)
+		internal virtual returns (uint256)
 	{
 		_tokenIds.increment();
 		uint256 newId = _tokenIds.current();

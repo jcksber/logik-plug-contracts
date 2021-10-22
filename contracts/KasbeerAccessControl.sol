@@ -38,7 +38,7 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Add `a` to the squad
 	function addToSquad(address _a)
-		onlyOwner public
+		isSquad public
 	{
 		require(!isInSquad(_a), "KasbeerAccessControl: Address already in squad.");
 		_squad[_a] = true;
@@ -46,7 +46,7 @@ contract KasbeerAccessControl is Ownable {
 
 	//@dev Remove `a` from the squad
 	function removeFromSquad(address a_)
-		onlyOwner public
+		isSquad public
 	{
 		require(isInSquad(a_), "KasbeerAccessControl: Address already not in squad.");
 		_squad[a_] = false;
