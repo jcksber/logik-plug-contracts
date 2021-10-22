@@ -6,7 +6,7 @@
  * Created: August 3, 2021
  *
  * Price: 0.0888 ETH
- * Rinkeby: 0xe051890777dC2Ba4f956FcF92b3cfEf9Aae3F7De
+ * Rinkeby: 0xf9d798514eb5eA645C90D8633FcC3DA17da8288e
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -40,7 +40,7 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	constructor() Kasbeer721("the minute Plug v4", "") {
+	constructor() Kasbeer721("the Plug test", "PLUGt") {
 		whitelistActive = true;
 		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik
@@ -52,15 +52,15 @@ contract Plug is Kasbeer721 {
 	// RESTRICTORS
 	// -----------
 
-	modifier batchLimit(uint256 _numToMint)
+	modifier batchLimit(uint256 numToMint)
 	{
-		require(1 <= _numToMint && _numToMint <= 8, "Plug: mint between 1 and 8");
+		require(1 <= numToMint && numToMint <= 8, "Plug: mint between 1 and 8");
 		_;
 	}
 
-	modifier plugsAvailable(uint256 _numToMint)
+	modifier plugsAvailable(uint256 numToMint)
 	{
-		require(_tokenIds.current() + _numToMint <= MAX_NUM_TOKENS, 
+		require(_tokenIds.current() + numToMint <= MAX_NUM_TOKENS, 
 			"Plug: not enough Plugs remaining to mint");
 		_;
 	}
@@ -96,7 +96,7 @@ contract Plug is Kasbeer721 {
 		}
 
 		// Calculate days gone by for this particular token 
-		uint daysPassed = countMinutesPassed(tokenId);//NOTE: CHANGE FOR PRODUCTION!
+		uint daysPassed = countDaysPassed(tokenId);//NOTE: CHANGE FOR PRODUCTION!
 
 		// Based on the number of days that have gone by, return the appropriate state of the Plug
 		if (daysPassed >= 557) {
@@ -172,7 +172,7 @@ contract Plug is Kasbeer721 {
 		internal virtual override
     {
     	// If the "1.5 years" have passed, don't change birthday
-    	if (_exists(tokenId) && countMinutesPassed(tokenId) < 557) {//NOTE: change for prod!
+    	if (_exists(tokenId) && countDaysPassed(tokenId) < 557) {
     		_setBirthday(tokenId);
     	}
     	emit PlugTransferred(from, to);
@@ -187,17 +187,17 @@ contract Plug is Kasbeer721 {
 
 	//@dev List the owners for a certain level (determined by _assetHash)
 	// We'll need this for airdrops and benefits
-	function listPlugOwnersForHash(string memory _assetHash) 
+	function listPlugOwnersForHash(string memory assetHash) 
 		public view returns (address[] memory)
 	{
-		require(_hashExists(_assetHash), "Plug: nonexistent hash");
+		require(_hashExists(assetHash), "Plug: nonexistent hash");
 
 		address[] memory levelOwners = new address[](MAX_NUM_TOKENS);
 
 		uint16 tokenId;
 		uint16 counter;
 		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
-			if (_stringsEqual(_tokenHash(tokenId), _assetHash)) {
+			if (_stringsEqual(_tokenHash(tokenId), assetHash)) {
 				levelOwners[counter] = ownerOf(tokenId);
 				counter++;
 			}
@@ -246,65 +246,65 @@ contract Plug is Kasbeer721 {
     // --------------------
 
     //@dev Allows owners to mint for free
-    function mint(address _to) 
+    function mint(address to) 
     	isSquad public virtual override returns (uint256)
     {
-    	return _mintInternal(_to);
+    	return _mintInternal(to);
     }
 
 	//@dev Purchase & mint multiple Plugs
     function purchase(
-    	address payable _to, 
-    	uint256 _numToMint
-    ) whitelistDisabled batchLimit(_numToMint) plugsAvailable(_numToMint) 
+    	address payable to, 
+    	uint256 numToMint
+    ) whitelistDisabled batchLimit(numToMint) plugsAvailable(numToMint) 
       public payable 
       returns (bool)
     {
-    	require(msg.value >= _numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
+    	require(msg.value >= numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
     	//send change if too much was sent
         if (msg.value > 0) {
-	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * _numToMint);
+	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * numToMint);
     		if (diff > 0) {
-    	    	_to.transfer(diff);
+    	    	to.transfer(diff);
     		}
       	}
-    	uint8 i;//mint `_num` Plugs to address `_to`
-    	for (i = 0; i < _numToMint; i++) {
-    		_mintInternal(_to);
+    	uint8 i;//mint `numToMint` Plugs to address `to`
+    	for (i = 0; i < numToMint; i++) {
+    		_mintInternal(to);
     	}
     	return true;
     }
 
     //@dev A whitelist controlled version of `purchaseMultiple`
     function whitelistPurchase(
-    	address payable _to, 
-    	uint256 _numToMint
-    ) whitelistEnabled onlyWhitelist(_to) batchLimit(_numToMint) plugsAvailable(_numToMint)
+    	address payable to, 
+    	uint256 numToMint
+    ) whitelistEnabled onlyWhitelist(to) batchLimit(numToMint) plugsAvailable(numToMint)
       public payable 
       returns (bool)
     {
-    	require(msg.value >= _numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
+    	require(msg.value >= numToMint * TOKEN_WEI_PRICE, "Plug: not enough ether");
     	//send change if too much was sent
         if (msg.value > 0) {
-	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * _numToMint);
+	    	uint256 diff = msg.value.sub(TOKEN_WEI_PRICE * numToMint);
     		if (diff > 0) {
-    	    	_to.transfer(diff);
+    	    	to.transfer(diff);
     		}
       	}
     	uint8 i;//mint `_num` Plugs to address `_to`
-    	for (i = 0; i < _numToMint; i++) {
-    		_mintInternal(_to);
+    	for (i = 0; i < numToMint; i++) {
+    		_mintInternal(to);
     	}
     	return true;
     }
 
 	//@dev Mints a single Plug & sets up the initial birthday 
-	function _mintInternal(address _to) 
+	function _mintInternal(address to) 
 		plugsAvailable(1) internal virtual returns (uint256)
 	{
 		_tokenIds.increment();
 		uint256 newId = _tokenIds.current();
-		_safeMint(_to, newId);
+		_safeMint(to, newId);
 		_setBirthday(newId);
 		emit ERC721Minted(newId);
 
@@ -314,13 +314,6 @@ contract Plug is Kasbeer721 {
 	// ----
 	// TIME
 	// ----
-
-	//@dev Retuns number of minutes that have passed since transfer/mint
-	function countMinutesPassed(uint256 tokenId) 
-		tokenExists(tokenId) public view returns (uint256) 
-	{
-		return uint256((block.timestamp - _birthdays[tokenId]) / 1 minutes);
-	}
 
 	//@dev Returns number of days that have passed since transfer/mint
 	function countDaysPassed(uint256 tokenId) 

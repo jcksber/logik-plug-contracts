@@ -29,8 +29,7 @@ contract KasbeerStorage {
 	//@dev Important numbers
 	uint constant NUM_ASSETS = 8;
 	uint constant MAX_NUM_TOKENS = 888;
-	// uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
-	uint constant TOKEN_WEI_PRICE = 1000000000000000;
+	uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
 	uint16 constant INIT_WHITELIST_SIZE = 150;
 
 	//@dev Properties

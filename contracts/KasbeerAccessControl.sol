@@ -37,19 +37,19 @@ contract KasbeerAccessControl is Ownable {
 	}
 
 	//@dev Add `a` to the squad
-	function addToSquad(address _a)
+	function addToSquad(address a)
 		onlyOwner public
 	{
-		require(!isInSquad(_a), "KasbeerAccessControl: Address already in squad.");
-		_squad[_a] = true;
+		require(!isInSquad(a), "KasbeerAccessControl: Address already in squad.");
+		_squad[a] = true;
 	}
 
 	//@dev Remove `a` from the squad
-	function removeFromSquad(address a_)
+	function removeFromSquad(address a)
 		onlyOwner public
 	{
-		require(isInSquad(a_), "KasbeerAccessControl: Address already not in squad.");
-		_squad[a_] = false;
+		require(isInSquad(a), "KasbeerAccessControl: Address already not in squad.");
+		_squad[a] = false;
 	}
 
 	// ---------
@@ -106,31 +106,31 @@ contract KasbeerAccessControl is Ownable {
 	}
 
 	//@dev Add a single address to whitelist
-	function addToWhitelist(address _a) 
+	function addToWhitelist(address a) 
 		isSquad public
 	{
-		require(!isInWhitelist(_a), "KasbeerAccessControl: already whitelisted"); 
+		require(!isInWhitelist(a), "KasbeerAccessControl: already whitelisted"); 
 		//here we care if address already whitelisted to save on gas fees
-		_whitelist[_a] = true;
+		_whitelist[a] = true;
 	}
 
 	//@dev Remove a single address from the whitelist
-	function removeFromWhitelist(address a_)
+	function removeFromWhitelist(address a)
 		isSquad public
 	{
-		require(isInWhitelist(a_), "KasbeerAccessControl: not in whitelist");
-		_whitelist[a_] = false;
+		require(isInWhitelist(a), "KasbeerAccessControl: not in whitelist");
+		_whitelist[a] = false;
 	}
 
 	//@dev Add a list of addresses to the whitelist
-	function bulkAddToWhitelist(address[] memory _addys) 
+	function bulkAddToWhitelist(address[] memory addys) 
 		isSquad public
 	{
-		require(_addys.length > 1, "KasbeerAccessControl: use `addToWhitelist` instead");
+		require(addys.length > 1, "KasbeerAccessControl: use `addToWhitelist` instead");
 		uint8 i;
-		for (i = 0; i < _addys.length; i++) {
-			if (!_whitelist[_addys[i]]) {
-				_whitelist[_addys[i]] = true;
+		for (i = 0; i < addys.length; i++) {
+			if (!_whitelist[addys[i]]) {
+				_whitelist[addys[i]] = true;
 			}
 		}
 	}

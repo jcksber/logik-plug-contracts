@@ -25,8 +25,8 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	event ERC721Minted(uint256 indexed tokenId);
 	event ERC721Burned(uint256 indexed tokenId);
 	
-	constructor(string memory _temp_name, string memory _temp_symbol) 
-		ERC721(_temp_name, _temp_symbol)
+	constructor(string memory temp_name, string memory temp_symbol) 
+		ERC721(temp_name, temp_symbol)
 	{
 		// Add my personal address
 		addToSquad(0xB9699469c0b4dD7B1Dda11dA7678Fa4eFD51211b);
@@ -75,13 +75,13 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	}
 
 	//@dev Allows owners to mint for free
-    function mint(address _to) 
+    function mint(address to) 
     	isSquad public virtual returns (uint256)
     {
     	_tokenIds.increment();
 
 		uint256 newId = _tokenIds.current();
-		_safeMint(_to, newId);
+		_safeMint(to, newId);
 		emit ERC721Minted(newId);
 
 		return newId;
@@ -146,14 +146,14 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	}
 
 	//@dev Determine if '_assetHash' is one of the IPFS hashes in asset hashes
-	function _hashExists(string memory _assetHash) 
+	function _hashExists(string memory assetHash) 
 		internal view returns (bool) 
 	{
 		uint8 i;
 		for (i = 0; i < NUM_ASSETS; i++) {
-			if (_stringsEqual(_assetHash, normHashes[i]) || 
-				_stringsEqual(_assetHash, chiHashes[i]) ||
-				_stringsEqual(_assetHash, stlHashes[i])) {
+			if (_stringsEqual(assetHash, normHashes[i]) || 
+				_stringsEqual(assetHash, chiHashes[i]) ||
+				_stringsEqual(assetHash, stlHashes[i])) {
 				return true;
 			}
 		}
@@ -173,9 +173,10 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 
 	//@dev Allows us to withdraw funds collected
 	function withdraw(address payable wallet, uint256 amount)
-		onlyOwner public
+		isSquad public
 	{
-		require(amount <= address(this).balance,"Kasbeer721: Insufficient funds to withdraw");
+		require(amount <= address(this).balance,
+			"Kasbeer721: Insufficient funds to withdraw");
 		wallet.transfer(amount);
 	}
 
@@ -198,10 +199,10 @@ contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
 	}
 
 	//@dev Ability to change the contract URI
-	function updateContractUri(string memory _updatedContractUri) 
+	function updateContractUri(string memory updatedContractUri) 
 		isSquad public
 	{
-        contractUri = _updatedContractUri;
+        contractUri = updatedContractUri;
     }
 	
     // -----------------

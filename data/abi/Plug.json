@@ -154,7 +154,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_a",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -167,7 +167,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_a",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -217,7 +217,7 @@
     "inputs": [
       {
         "internalType": "address[]",
-        "name": "_addys",
+        "name": "addys",
         "type": "address[]"
       }
     ],
@@ -261,25 +261,6 @@
       }
     ],
     "name": "countDaysPassed",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "countMinutesPassed",
     "outputs": [
       {
         "internalType": "uint256",
@@ -457,7 +438,7 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_assetHash",
+        "name": "assetHash",
         "type": "string"
       }
     ],
@@ -495,7 +476,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_to",
+        "name": "to",
         "type": "address"
       }
     ],
@@ -572,12 +553,12 @@
     "inputs": [
       {
         "internalType": "address payable",
-        "name": "_to",
+        "name": "to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "_numToMint",
+        "name": "numToMint",
         "type": "uint256"
       }
     ],
@@ -596,7 +577,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "a_",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -609,7 +590,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "a_",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -827,7 +808,7 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_updatedContractUri",
+        "name": "updatedContractUri",
         "type": "string"
       }
     ],
@@ -863,12 +844,12 @@
     "inputs": [
       {
         "internalType": "address payable",
-        "name": "_to",
+        "name": "to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "_numToMint",
+        "name": "numToMint",
         "type": "uint256"
       }
     ],

@@ -29,7 +29,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_a",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -42,7 +42,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_a",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -55,7 +55,7 @@
     "inputs": [
       {
         "internalType": "address[]",
-        "name": "_addys",
+        "name": "addys",
         "type": "address[]"
       }
     ],
@@ -126,7 +126,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "a_",
+        "name": "a",
         "type": "address"
       }
     ],
@@ -139,7 +139,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "a_",
+        "name": "a",
         "type": "address"
       }
     ],
