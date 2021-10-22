@@ -32,7 +32,6 @@ contract KasbeerStorage {
 	// uint constant TOKEN_WEI_PRICE = 88800000000000000;//0.0888 ETH
 	uint constant TOKEN_WEI_PRICE = 1000000000000000;
 	uint16 constant INIT_WHITELIST_SIZE = 150;
-	address ZERO_ADDRESS = 0x0000000000000000000000000000000000000000;
 
 	//@dev Properties
 	string internal contractUri;

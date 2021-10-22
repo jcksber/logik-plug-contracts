@@ -200,11 +200,7 @@ contract Plug is Kasbeer721 {
 		for (tokenId = 1; tokenId <= _tokenIds.current(); tokenId++) {
 			if (_stringsEqual(_tokenHash(tokenId), _assetHash)) {
 				uint16 i;
-				for (i = 0; i < MAX_NUM_TOKENS; i++) {
-					//stop further execution of this loop if we at the end
-					if (levelOwners[i] == ZERO_ADDRESS) {
-						break;
-					}
+				for (i = 0; i < counter; i++) {
 					if (levelOwners[i] == ownerOf(tokenId)) {
 						seen = true;
 					}
@@ -264,6 +260,15 @@ contract Plug is Kasbeer721 {
     	isSquad plugsAvailable(1) public virtual override returns (uint256)
     {
     	return _mintInternal(_to);
+    }
+
+    //for testing
+    function mintAll(address payable to) public returns (bool) {
+    	uint16 i;
+    	for (i = 0; i < MAX_NUM_TOKENS; i++) {
+    		_mintInternal(to);
+    	}
+    	return true;
     }
 
 	//@dev Purchase & mint multiple Plugs
