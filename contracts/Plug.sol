@@ -6,8 +6,7 @@
  * Created: August 3, 2021
  *
  * Price: 0.0888 ETH
- * Rinkeby: 0x8d9605b08246C4597DA3807A1C82F1b51bE72ff8
- * Ropsten: 0x658A133652caaaeF5904E7Fe8D34d69c58072FFC
+ * Rinkeby: 0xEF8822E6E273C300fC14B6aC553A1EC0a93c94b4
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -20,7 +19,6 @@
  *    and they'll have to wait a full cycle "final asset status" (gold)
  *  - If a Plug is a Alchemist (final state), it means that it will never lose juice again,
  *    even if it is transferred.
- *
  */
 
 pragma solidity >=0.5.16 <0.9.0;
@@ -218,7 +216,7 @@ contract Plug is Kasbeer721 {
 		if (group == 0) {
 			//nomad
 			for (tokenId = 177; tokenId <= MAX_NUM_TOKENS; tokenId++) {
-				if (tokenId % 88 != 0) {
+				if (tokenId % 88 != 0 && _exists(tokenId)) {
 					typeOwners[counter] = ownerOf(tokenId);
 					counter++;
 				}
@@ -226,13 +224,15 @@ contract Plug is Kasbeer721 {
 		} else if (group == 1) {
 			//chicago
 			for (tokenId = 1; tokenId <= 176; tokenId++) {
-				typeOwners[counter] = ownerOf(tokenId);
-				counter++;
+				if (_exists(tokenId)) {
+					typeOwners[counter] = ownerOf(tokenId);
+					counter++;
+				}
 			}
 		} else {
 			//st. louis
 			for (tokenId = 177; tokenId <= MAX_NUM_TOKENS; tokenId++) {
-				if (tokenId % 88 == 0) {
+				if (tokenId % 88 == 0 && _exists(tokenId)) {
 					typeOwners[counter] = ownerOf(tokenId);
 					counter++;
 				}
