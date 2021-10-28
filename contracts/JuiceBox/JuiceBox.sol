@@ -25,13 +25,10 @@ import "./JuiceBox721.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
-contract Plug is Kasbeer721 {
+contract Plug is JuiceBox721 {
 
 	using Counters for Counters.Counter;
 	using SafeMath for uint256;
-
-	//@dev Emitted when token is transferred
-	event PlugTransferred(address indexed from, address indexed to);
 
 	//@dev This is how we'll keep track of who has already minted a JuiceBox
 	mapping (address => bool) internal _boxHolders;
@@ -106,12 +103,6 @@ contract Plug is Kasbeer721 {
 		return hash;
 	}
 
-	//@dev Update `_boxHolders` so that `a` cannot claim another juice box
-	function _markAsClaimed(address a) private
-	{
-		_boxHolders[a] = true;
-	}
-
     // ------------------
     // MINTING & CLAIMING
     // ------------------
@@ -128,13 +119,13 @@ contract Plug is Kasbeer721 {
     //@dev Claim a JuiceBox if you're a Plug holder
     function claim(address payable to, uint16 numPlugs) 
     	whitelistEnabled onlyWhitelist(to) boxAvailable public payable 
-    	returns (bool)
+    	returns (uint256 tid, string memory hash)
     {
     	require(!_boxHolders[a], "JuiceBox: cannot claim more than 1");
 
-    	uint256 tid = _mintInternal(to);
-    	string memory hash = _assignHash(tid, numPlugs);
-    	return _hashExists(hash);
+    	tid = _mintInternal(to);
+    	hash = _assignHash(tid, numPlugs);
+    	return (tid, hash);
     }
 
 	//@dev Mints a single Plug & sets up the initial birthday 
@@ -148,6 +139,12 @@ contract Plug is Kasbeer721 {
 		emit JuiceBoxMinted(newId);
 
 		return newId;
+	}
+
+	//@dev Update `_boxHolders` so that `a` cannot claim another juice box
+	function _markAsClaimed(address a) private
+	{
+		_boxHolders[a] = true;
 	}
 
 	// ----------
