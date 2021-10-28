@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 //@title A storage contract for relevant data
 //@author Jack Kasbeer (@jcksber, @satoshigoat)
-contract KasbeerStorage {
+contract PlugStorage {
 
 	//@dev These take care of token id incrementing
 	using Counters for Counters.Counter;

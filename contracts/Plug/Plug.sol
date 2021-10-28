@@ -7,6 +7,7 @@
  *
  * Price: 0.0888 ETH
  * Rinkeby: 0xf9d798514eb5eA645C90D8633FcC3DA17da8288e
+ * Mainnet: 0x2Bb501A0374ff3Af41f2009509E9D6a36D56A6c0
  *
  * Description: An ERC-721 token that will change based on (1) time held by a single owner and
  * 				(2) trades between owners; the different versions give you access to airdrops.
@@ -25,11 +26,11 @@ pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./Kasbeer721.sol";
+import "./Plug721.sol";
 
 //@title The Plug
 //@author Jack Kasbeer (gh:@jcksber, tw:@satoshigoat)
-contract Plug is Kasbeer721 {
+contract Plug is Plug721 {
 
 	using Counters for Counters.Counter;
 	using SafeMath for uint256;
@@ -40,7 +41,7 @@ contract Plug is Kasbeer721 {
 	//@dev How we keep track of how many days a person has held a Plug
 	mapping(uint256 => uint) internal _birthdays; //tokenID -> UTCTime
 
-	constructor() Kasbeer721("the Plug", "PLUG") {
+	constructor() Plug721("the Plug", "PLUG") {
 		whitelistActive = true;
 		contractUri = "ipfs://QmYUDei8kuEHrPTyEMrWDQSLEtQwzDS16bpFwZab6RZN5j";
 		payoutAddress = 0x6b8C6E15818C74895c31A1C91390b3d42B336799;//logik

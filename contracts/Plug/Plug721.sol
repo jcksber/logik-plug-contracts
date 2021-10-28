@@ -10,14 +10,14 @@ pragma solidity >=0.5.16 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./KasbeerStorage.sol";
-import "./KasbeerAccessControl.sol";
-import "./LibPart.sol";
+import "./PlugStorage.sol";
+import "../KasbeerAccessControl.sol";
+import "../LibPart.sol";
 
 
 //@title Kasbeer Made Contract for an ERC721
 //@author Jack Kasbeer (git:@jcksber, tw:@satoshigoat)
-contract Kasbeer721 is ERC721, KasbeerAccessControl, KasbeerStorage {
+contract Plug721 is ERC721, KasbeerAccessControl, PlugStorage {
 
 	using Counters for Counters.Counter;
 	using SafeMath for uint256;
